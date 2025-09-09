@@ -369,7 +369,7 @@ export default function MyTasksPage() {
 			<SlideModalContainer isOpen={showModalTaskDelete} noFade={false}>
 				<MyTaskReadModal
 					taskId={modalTaskId}
-					handleModalDisplay={handleModalTaskInfoDisplay}
+					handleModalDisplay={handleModalTaskDeleteDisplay}
 				></MyTaskReadModal>
 			</SlideModalContainer>
 
