@@ -11,6 +11,7 @@ import { createBrowserRouter } from 'react-router';
 
 import RootLayout from './pages/root_layout';
 import DebugLayout from './pages/debug_layout';
+import ProtectLayout from './pages/protect_layout';
 
 /**
  * PAGES
@@ -18,20 +19,26 @@ import DebugLayout from './pages/debug_layout';
 
 import LoginPage from './pages/auth/login';
 import DashboardPage from './pages/dashboard';
+import SettingsPage from './pages/dashboard/settings';
+import ProfilePage from './pages/dashboard/profile';
+import ChartsPage from './pages/dashboard/charts';
+import LogsPage from './pages/dashboard/logs';
+import AccessPage from './pages/dashboard/access';
+import TasksPage from './pages/dashboard/tasks';
 
 const protectedRoutes = [
 	{
 		path: '/dashboard',
 		children: [
 			{ index: true, Component: DashboardPage },
-			// { path: 'settings', Component: SettingsPage },
-			// { path: 'tasks', Component: TaskPage },
+			{ path: 'settings', Component: SettingsPage },
+			{ path: 'tasks', Component: TasksPage },
 			// { path: 'teams', Component: TeamsPage },
-			// { path: 'profile', Component: ProfilePage },
+			{ path: 'profile', Component: ProfilePage },
 			// { path: 'my_tasks', Component: MyTasksPage },
-			// { path: 'charts', Component: ChartsPage },
-			// { path: 'access', Component: AccessPage },
-			// { path: 'logs', Component: LogsPage },
+			{ path: 'charts', Component: ChartsPage },
+			{ path: 'access', Component: AccessPage },
+			{ path: 'logs', Component: LogsPage },
 		],
 	},
 ];
@@ -75,10 +82,10 @@ export const router = createBrowserRouter([
 		],
 	},
 
-	// {
-	// 	Component: ProtectLayout,
-	// 	children: protectedRoutes,
-	// },
+	{
+		Component: ProtectLayout,
+		children: protectedRoutes,
+	},
 
 	// WILD CARD
 	{

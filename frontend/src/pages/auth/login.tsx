@@ -87,7 +87,7 @@ export default function LoginPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							classes={'fill-white'}
+							className={'fill-white'}
 						></SvgComponent>
 						<input
 							onChange={handleEmailChange}
@@ -102,7 +102,7 @@ export default function LoginPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="lock"
-							classes={'fill-white'}
+							className={'fill-white'}
 						></SvgComponent>
 						<input
 							onChange={handlePasswordChange}
@@ -147,7 +147,7 @@ export default function LoginPage() {
 						>
 							<SvgComponent
 								iconName="facebook"
-								classes={'fill-white'}
+								className={'fill-white'}
 							></SvgComponent>
 							<p>Facebook</p>
 						</div>
@@ -158,7 +158,7 @@ export default function LoginPage() {
 						>
 							<SvgComponent
 								iconName="github"
-								classes={'fill-white'}
+								className={'fill-white'}
 							></SvgComponent>
 							<p>Github</p>
 						</div>
@@ -169,7 +169,7 @@ export default function LoginPage() {
 						>
 							<SvgComponent
 								iconName="google"
-								classes={'fill-white'}
+								className={'fill-white'}
 							></SvgComponent>
 
 							<p>Google</p>
