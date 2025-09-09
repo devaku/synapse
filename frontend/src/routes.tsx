@@ -25,6 +25,7 @@ import ChartsPage from './pages/dashboard/charts';
 import LogsPage from './pages/dashboard/logs';
 import AccessPage from './pages/dashboard/access';
 import TasksPage from './pages/dashboard/tasks';
+import TeamsPage from './pages/dashboard/teams';
 
 const protectedRoutes = [
 	{
@@ -33,7 +34,7 @@ const protectedRoutes = [
 			{ index: true, Component: DashboardPage },
 			{ path: 'settings', Component: SettingsPage },
 			{ path: 'tasks', Component: TasksPage },
-			// { path: 'teams', Component: TeamsPage },
+			{ path: 'teams', Component: TeamsPage },
 			{ path: 'profile', Component: ProfilePage },
 			// { path: 'my_tasks', Component: MyTasksPage },
 			{ path: 'charts', Component: ChartsPage },
