@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
+		"format": "npx prettier . --write --config ../.prettierrc.json",
 		"lint": "eslint .",
 		"preview": "vite preview"
 	},
