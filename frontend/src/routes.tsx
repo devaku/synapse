@@ -12,6 +12,7 @@ import { createBrowserRouter } from 'react-router';
 import RootLayout from './pages/root_layout';
 import DebugLayout from './pages/debug_layout';
 import ProtectLayout from './pages/protect_layout';
+import DashboardLayout from './pages/dashboard/layout';
 
 /**
  * PAGES
@@ -26,17 +27,19 @@ import LogsPage from './pages/dashboard/logs';
 import AccessPage from './pages/dashboard/access';
 import TasksPage from './pages/dashboard/tasks';
 import TeamsPage from './pages/dashboard/teams';
+import MyTasksPage from './pages/dashboard/my_tasks';
 
 const protectedRoutes = [
 	{
 		path: '/dashboard',
+		Component: DashboardLayout,
 		children: [
 			{ index: true, Component: DashboardPage },
 			{ path: 'settings', Component: SettingsPage },
 			{ path: 'tasks', Component: TasksPage },
 			{ path: 'teams', Component: TeamsPage },
 			{ path: 'profile', Component: ProfilePage },
-			// { path: 'my_tasks', Component: MyTasksPage },
+			{ path: 'my_tasks', Component: MyTasksPage },
 			{ path: 'charts', Component: ChartsPage },
 			{ path: 'access', Component: AccessPage },
 			{ path: 'logs', Component: LogsPage },

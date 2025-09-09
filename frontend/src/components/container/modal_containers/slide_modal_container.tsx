@@ -54,7 +54,7 @@ export default function SlideModalContainer({
 		return createPortal(
 			<div
 				className={
-					'absolute top-0 w-screen h-screen flex justify-end dim-background ' +
+					'absolute top-0 w-full overflow-hidden flex grow items-end justify-end dim-background ' +
 					handleFade()
 				}
 				onClick={(e) => {
@@ -67,7 +67,7 @@ export default function SlideModalContainer({
 						(playAnimation ? '-right-0' : '-right-200')
 					}
 				>
-					<div className="bg-white h-screen w-xl">{children}</div>
+					<div className="h-screen bg-white w-xl">{children}</div>
 				</div>
 			</div>,
 			document.body

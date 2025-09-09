@@ -3,13 +3,11 @@ import { useState } from 'react';
 
 type myTaskDeleteModal = {
 	handleModalDisplay: () => void;
-	handleModalCloseAll: () => void;
 	taskId: number;
 };
 
 export default function MyTaskDeleteModal({
 	handleModalDisplay,
-	handleModalCloseAll,
 	taskId,
 }: myTaskDeleteModal) {
 	const [deletionRequestSuccess, setDeletionRequestSuccess] =
@@ -27,7 +25,7 @@ export default function MyTaskDeleteModal({
 	}
 
 	function handleModalClose() {
-		handleModalCloseAll();
+		handleModalDisplay();
 	}
 
 	if (deletionRequestSuccess) {

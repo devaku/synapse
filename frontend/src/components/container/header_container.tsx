@@ -7,7 +7,7 @@ export default function HeaderContainer({
 	pageTitle: string;
 }) {
 	return (
-		<div className="h-full w-full flex flex-col">
+		<div className="w-full flex flex-col">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-gray-100 items-center justify-between">
 				{/* Left Side */}

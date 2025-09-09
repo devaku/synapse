@@ -27,7 +27,7 @@ export default function Sidebar() {
 	// }
 
 	return (
-		<div className="h-full flex flex-col max-w-47.5 ttg-bg-dark-blue px-3 pt-3">
+		<div className="h-screen flex flex-col max-w-47.5 ttg-bg-dark-blue px-3 pt-3">
 			<img src={TTGLogo} alt="TTG Logo" className="mb-10" />
 			<div className="flex flex-col justify-between flex-1 overflow-y-auto">
 				{/* Tab Buttons */}

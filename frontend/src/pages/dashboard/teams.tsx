@@ -339,8 +339,7 @@ export default function TeamsPage() {
 	}
 
 	return (
-		<main className="flex flex-row h-screen w-full">
-			<Sidebar />
+		<>
 			<HeaderContainer pageTitle={'Teams'}>
 				<div className="flex flex-row justify-between items-center p-2.5">
 					<SearchBar />
@@ -374,6 +373,6 @@ export default function TeamsPage() {
 					handleModalDisplay={handleModalDisplayAddTeam}
 				></AddTeamModal>
 			</SlideModalContainer>
-		</main>
+		</>
 	);
 }

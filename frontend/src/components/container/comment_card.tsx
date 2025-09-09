@@ -1,4 +1,4 @@
-import TTGLogo from '../assets/images/ttglogo/TTG_Profile.png';
+import TTGLogo from '../../assets/images/ttglogo/TTG_Profile.png';
 
 type commentCardProps = {
 	profile_picture_url: string;
