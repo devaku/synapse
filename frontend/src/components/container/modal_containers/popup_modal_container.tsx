@@ -2,7 +2,7 @@ import { createPortal } from 'react-dom';
 import { useState, useEffect } from 'react';
 
 type ModalContainer = {
-	isOpen: Boolean;
+	isOpen: boolean;
 	children: React.ReactNode;
 };
 
