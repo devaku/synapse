@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+/* COLORS */
+
+.ttg-bg-green {
+	background-color: #7bb863;
+}
+
+.ttg-bg-purple {
+	background-color: #737acb;
+}
+
+.ttg-bg-dark-blue {
+	background-color: #153243;
+}
+
+.ttg-bg-brown {
+	background-color: #333333;
+}
+
+.ttg-bg-white {
+	background-color: #ffffff;
+}
+
+/* Animations */
+
+.slide-in {
+	transition: right 0.5s;
+}
+
+.dim-background {
+	transition: background-color 0.5s;
+}
+
+.fade {
+	transition: opacity 0.5s;
+}
