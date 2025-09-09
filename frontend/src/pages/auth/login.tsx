@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { useState } from 'react';
-import SvgComponent from '../../components/svg_component';
+import SvgComponent from '../../components/ui/svg_component';
 
 import AuthContainer from '../../components/container/auth_container';
 // import { useGoogleAuthContext } from '../../lib/contexts/GoogleAuthContext';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 
 // import { useMainAuthContext } from '../../lib/contexts/MainAuthContext';
 
-import Button from '../../components/button';
+import Button from '../../components/ui/button';
 
 // import { LoginEmailPassword } from '../../lib/services/django/auth_api';
 // import ErrorModal from '../../components/modals/generic/error_modal';

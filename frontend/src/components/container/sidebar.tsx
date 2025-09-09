@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import TTGLogo from '../assets/images/ttglogo/TTG_Spiral_Logo_White.png';
-import SidebarButton from './sidebar_button';
+import TTGLogo from '@/assets/images/ttglogo/TTG_Spiral_Logo_White.png';
+import SidebarButton from '../ui/sidebar_button';
 import { useNavigate } from 'react-router';
 
 export default function Sidebar() {

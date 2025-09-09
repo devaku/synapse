@@ -1,4 +1,4 @@
-import Sidebar from '../../components/sidebar';
+import Sidebar from '../../components/container/sidebar';
 import HeaderContainer from '../../components/container/header_container';
 
 export default function DashboardPage() {

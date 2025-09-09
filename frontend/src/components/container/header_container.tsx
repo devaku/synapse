@@ -1,4 +1,4 @@
-import SvgComponent from '../svg_component';
+import SvgComponent from '../ui/svg_component';
 export default function HeaderContainer({
 	children,
 	pageTitle,

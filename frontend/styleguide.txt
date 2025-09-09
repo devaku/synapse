@@ -1,0 +1,7 @@
+STYLE GUIDE
+
+FILENAMES:
+snake_case: popup_modal.tsx
+
+Component function: PascalCase
+Regular Function: camelCase
