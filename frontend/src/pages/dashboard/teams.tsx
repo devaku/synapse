@@ -3,15 +3,15 @@ import Button from '../../components/ui/button';
 import HeaderContainer from '../../components/container/header_container';
 
 import SearchBar from '../../components/ui/searchbar';
-import Sidebar from '../../components/container/sidebar';
 import Table from '../../components/container/table';
 
 import { useEffect, useState } from 'react';
 import { DeleteTeam, ReadAllTeams } from '../../lib/services/team_service';
 import SvgComponent from '../../components/ui/svg_component';
-import StatusPill from '../../components/ui/status_pill';
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
-import AddTeamModal from '../../components/modals/teams/add_team';
+import TeamCreateModal from '../../components/modals/teams/team_create';
+import TeamReadModal from '../../components/modals/teams/team_read';
+import TeamUpdateModal from '../../components/modals/teams/team_update';
 
 type tableData = {
 	columnName: string[];
@@ -19,136 +19,33 @@ type tableData = {
 };
 
 export default function TeamsPage() {
-	// let columnName = ['Team', 'Group Count', 'Total Tasks'];
-	// let rowData = [
-	// 	[
-	// 		'Team A',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team B',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team C',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team D',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team E',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team F',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team G',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team H',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team I',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team J',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team K',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team L',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team M',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team N',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team O',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team P',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team Q',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team R',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team S',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team T',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team U',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team V',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team W',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team X',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// 	[
-	// 		'Team Y',
-	// 		Math.floor(Math.random() * 21),
-	// 		Math.floor(Math.random() * 100) + 1,
-	// 	],
-	// ];
+	// [{"id":3,"name":"Last Team","description":"Last team for now"}]
 
-	const [showModalAddTeam, setShowModalAddTeam] = useState(false);
+	let mockTeamsResponse = [
+		{
+			id: 1,
+			name: 'First Team',
+			description: 'DESCRIPTION',
+		},
+		{
+			id: 2,
+			name: 'Second Team',
+			description: 'DESCRIPTION',
+		},
+		{
+			id: 3,
+			name: 'Third Team',
+			description: 'DESCRIPTION',
+		},
+	];
+
+	/**
+	 * MODAL STATES
+	 */
+	const [showModalCreateTeam, setShowModalCreateTeam] = useState(false);
+	const [showModalReadTeam, setShowModalReadTeam] = useState(false);
+	const [showModalUpdateTeam, setShowModalUpdateTeam] = useState(false);
+
 	const [tableData, setTableData] = useState<tableData>({
 		columnName: [],
 		rowData: [],
@@ -167,10 +64,10 @@ export default function TeamsPage() {
 
 	useEffect(() => {
 		async function start() {
-			await refreshTable();
+			// await refreshTable();
 		}
 		start();
-	}, [showModalAddTeam]);
+	}, [showModalCreateTeam]);
 
 	/**
 	 * Extracts the values given by the API response
@@ -203,7 +100,8 @@ export default function TeamsPage() {
 	 */
 
 	async function refreshTable() {
-		let data = await ReadAllTeams();
+		// let data = await ReadAllTeams();
+		let data = mockTeamsResponse;
 		if (data.length > 0) {
 			loadTeams(data);
 		} else {
@@ -287,14 +185,18 @@ export default function TeamsPage() {
 		let { id } = dataObject;
 
 		function handleClickInfo() {
-			console.log('info was clicked!');
+			setShowModalReadTeam(!showModalReadTeam);
+		}
+
+		function handleClickEdit() {
+			setShowModalUpdateTeam(!showModalUpdateTeam);
 		}
 
 		async function handleClickDelete() {
 			// TODO: Add modal handling for error here
 			try {
-				await DeleteTeam(id);
-				await refreshTable();
+				// await DeleteTeam(id);
+				// await refreshTable();
 			} catch (error) {
 				console.log(error);
 			}
@@ -305,6 +207,14 @@ export default function TeamsPage() {
 				<button className="cursor-pointer" onClick={handleClickInfo}>
 					<SvgComponent
 						iconName="INFO"
+						width={16}
+						height={16}
+						className=""
+					/>
+				</button>
+				<button className="cursor-pointer" onClick={handleClickEdit}>
+					<SvgComponent
+						iconName="WRENCH"
 						width={16}
 						height={16}
 						className=""
@@ -326,16 +236,20 @@ export default function TeamsPage() {
 	 * Handler functions
 	 */
 
-	function handleModalDisplayAddTeam() {
-		setShowModalAddTeam(!showModalAddTeam);
+	function handleModalDisplayCreateTeam() {
+		setShowModalCreateTeam(!showModalCreateTeam);
 	}
 
-	function handleClickAddTeam() {
-		setShowModalAddTeam(true);
+	function handleModalDisplayReadTeam() {
+		setShowModalReadTeam(!showModalReadTeam);
 	}
 
-	function handleClickEditTeam() {
-		console.log('Edit Team button clicked');
+	function handleModalDisplayEditTeam() {
+		setShowModalUpdateTeam(!showModalUpdateTeam);
+	}
+
+	function handleClickCreateTeam() {
+		setShowModalCreateTeam(true);
 	}
 
 	return (
@@ -346,13 +260,8 @@ export default function TeamsPage() {
 					<div className="flex flex-row gap-15">
 						<Button
 							buttonType="add"
-							buttonText="Add Team"
-							buttonOnClick={handleClickAddTeam}
-						/>
-						<Button
-							buttonType="edit"
-							buttonText="Edit Team"
-							buttonOnClick={handleClickEditTeam}
+							buttonText="Create Team"
+							buttonOnClick={handleClickCreateTeam}
 						/>
 					</div>
 				</div>
@@ -368,10 +277,20 @@ export default function TeamsPage() {
 					)}
 				</div>
 			</HeaderContainer>
-			<SlideModalContainer isOpen={showModalAddTeam} noFade={false}>
-				<AddTeamModal
-					handleModalDisplay={handleModalDisplayAddTeam}
-				></AddTeamModal>
+			<SlideModalContainer isOpen={showModalCreateTeam} noFade={false}>
+				<TeamCreateModal
+					handleModalDisplay={handleModalDisplayCreateTeam}
+				></TeamCreateModal>
+			</SlideModalContainer>
+			<SlideModalContainer isOpen={showModalReadTeam} noFade={false}>
+				<TeamReadModal
+					handleModalDisplay={handleModalDisplayReadTeam}
+				></TeamReadModal>
+			</SlideModalContainer>
+			<SlideModalContainer isOpen={showModalUpdateTeam} noFade={false}>
+				<TeamUpdateModal
+					handleModalDisplay={handleModalDisplayEditTeam}
+				></TeamUpdateModal>
 			</SlideModalContainer>
 		</>
 	);
