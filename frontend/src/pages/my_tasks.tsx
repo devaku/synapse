@@ -258,26 +258,16 @@ export default function MyTasksPage() {
 			return (
 				<>
 					<button
-						className="cursor-pointer"
+						className="cursor-pointer w-6 h-6"
 						onClick={handleClickInfo}
 					>
-						<SvgComponent
-							iconName="INFO"
-							width={16}
-							height={16}
-							className=""
-						/>
+						<SvgComponent iconName="INFO" className="" />
 					</button>
 					<button
-						className="cursor-pointer"
+						className="cursor-pointer w-6 h-6"
 						onClick={handleClickDelete}
 					>
-						<SvgComponent
-							iconName="TRASHCAN"
-							width={24}
-							height={24}
-							className=""
-						/>
+						<SvgComponent iconName="TRASHCAN" className="" />
 					</button>
 				</>
 			);
@@ -287,15 +277,10 @@ export default function MyTasksPage() {
 			return (
 				<>
 					<button
-						className="cursor-pointer"
+						className="cursor-pointer w-6 h-6"
 						onClick={handleClickInfo}
 					>
-						<SvgComponent
-							iconName="INFO"
-							width={16}
-							height={16}
-							className=""
-						/>
+						<SvgComponent iconName="INFO" className="" />
 					</button>
 				</>
 			);

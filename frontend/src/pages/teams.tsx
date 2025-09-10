@@ -204,29 +204,23 @@ export default function TeamsPage() {
 
 		return (
 			<>
-				<button className="cursor-pointer" onClick={handleClickInfo}>
-					<SvgComponent
-						iconName="INFO"
-						width={16}
-						height={16}
-						className=""
-					/>
+				<button
+					className="cursor-pointer w-6 h-6"
+					onClick={handleClickInfo}
+				>
+					<SvgComponent iconName="INFO" className="" />
 				</button>
-				<button className="cursor-pointer" onClick={handleClickEdit}>
-					<SvgComponent
-						iconName="WRENCH"
-						width={16}
-						height={16}
-						className=""
-					/>
+				<button
+					className="cursor-pointer w-6 h-6"
+					onClick={handleClickEdit}
+				>
+					<SvgComponent iconName="WRENCH" className="" />
 				</button>
-				<button className="cursor-pointer" onClick={handleClickDelete}>
-					<SvgComponent
-						iconName="TRASHCAN"
-						width={24}
-						height={24}
-						className=""
-					/>
+				<button
+					className="cursor-pointer w-6 h-6"
+					onClick={handleClickDelete}
+				>
+					<SvgComponent iconName="TRASHCAN" className="" />
 				</button>
 			</>
 		);

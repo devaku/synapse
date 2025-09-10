@@ -46,8 +46,6 @@ export default function Table({
 						<button>
 							<SvgComponent
 								iconName="Sort"
-								width={16}
-								height={16}
 								className="fill-[#9E9E9E]"
 							/>
 						</button>

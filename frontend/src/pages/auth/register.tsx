@@ -89,7 +89,7 @@ export default function RegisterPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handleFirstNameChange}
@@ -104,7 +104,7 @@ export default function RegisterPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handleLastNameChange}
@@ -119,7 +119,7 @@ export default function RegisterPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handleEmailChange}
@@ -134,7 +134,7 @@ export default function RegisterPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handlePhoneChange}
@@ -149,7 +149,7 @@ export default function RegisterPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handleUsernameChange}
@@ -164,7 +164,7 @@ export default function RegisterPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="lock"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handlePasswordChange}
