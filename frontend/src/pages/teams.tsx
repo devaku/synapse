@@ -1,17 +1,17 @@
 import * as _ from 'lodash';
-import Button from '../../components/ui/button';
-import HeaderContainer from '../../components/container/header_container';
+import Button from '../components/ui/button';
+import HeaderContainer from '../components/container/header_container';
 
-import SearchBar from '../../components/ui/searchbar';
-import Table from '../../components/container/table';
+import SearchBar from '../components/ui/searchbar';
+import Table from '../components/container/table';
 
 import { useEffect, useState } from 'react';
-import { DeleteTeam, ReadAllTeams } from '../../lib/services/team_service';
-import SvgComponent from '../../components/ui/svg_component';
-import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
-import TeamCreateModal from '../../components/modals/teams/team_create';
-import TeamReadModal from '../../components/modals/teams/team_read';
-import TeamUpdateModal from '../../components/modals/teams/team_update';
+import { DeleteTeam, ReadAllTeams } from '../lib/services/team_service';
+import SvgComponent from '../components/ui/svg_component';
+import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
+import TeamCreateModal from '../components/modals/teams/team_create';
+import TeamReadModal from '../components/modals/teams/team_read';
+import TeamUpdateModal from '../components/modals/teams/team_update';
 
 type tableData = {
 	columnName: string[];

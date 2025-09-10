@@ -1,19 +1,19 @@
 import * as _ from 'lodash';
-import HeaderContainer from '../../components/container/header_container';
+import HeaderContainer from '../components/container/header_container';
 
-import Table from '../../components/container/table';
-import SearchBar from '../../components/ui/searchbar';
-import SvgComponent from '../../components/ui/svg_component';
-import StatusPill from '../../components/ui/status_pill';
+import Table from '../components/container/table';
+import SearchBar from '../components/ui/searchbar';
+import SvgComponent from '../components/ui/svg_component';
+import StatusPill from '../components/ui/status_pill';
 
 /**
  * MODALS
  */
 
-import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
-import MyTaskReadModal from '../../components/modals/my_tasks/my_task_read';
-import MyTaskDeleteModal from '../../components/modals/my_tasks/my_task_delete';
-import NotificationModal from '../../components/modals/my_tasks/notifications';
+import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
+import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
+import MyTaskDeleteModal from '../components/modals/my_tasks/my_task_delete';
+import NotificationModal from '../components/modals/my_tasks/notifications';
 
 import { useState, useEffect } from 'react';
 
@@ -325,7 +325,7 @@ export default function MyTasksPage() {
 
 	return (
 		<>
-			<HeaderContainer pageTitle={'Teams'}>
+			<HeaderContainer pageTitle={'My Tasks'}>
 				{/* TABLES */}
 				<div className="flex w-full gap-1">
 					{/* TASKS TABLE */}
