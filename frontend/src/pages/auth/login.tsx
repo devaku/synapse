@@ -50,7 +50,7 @@ export default function LoginPage() {
 			// loginSetCookies(user_id, access_token, refresh_token);
 
 			// Redirect to dashboard
-			navigate('/dashboard');
+			navigate('/home');
 		} catch (error) {
 			alert(error);
 		}

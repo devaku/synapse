@@ -53,7 +53,12 @@ export default function Table({
 						</button>
 					</div>
 				))}
-				<div className="flex flex-row justify-between">Actions</div>
+
+				{withActions ? (
+					<div className="flex flex-row justify-between">Actions</div>
+				) : (
+					''
+				)}
 			</div>
 			{/* Rows of Content */}
 			<div className="overflow-y-auto flex-1 min-h-0">

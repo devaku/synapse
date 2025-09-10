@@ -1,14 +1,19 @@
 import * as _ from 'lodash';
-import HeaderContainer from '../../components/container/header_container';
+import HeaderContainer from '../components/container/header_container';
 
-import Sidebar from '../../components/container/sidebar';
-import Table from '../../components/container/table';
-import SearchBar from '../../components/ui/searchbar';
-import SvgComponent from '../../components/ui/svg_component';
-import StatusPill from '../../components/ui/status_pill';
-import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
-import MyTaskReadModal from '../../components/modals/my_tasks/my_task_read';
-import NotificationModal from '../../components/modals/my_tasks/notifications';
+import Table from '../components/container/table';
+import SearchBar from '../components/ui/searchbar';
+import SvgComponent from '../components/ui/svg_component';
+import StatusPill from '../components/ui/status_pill';
+
+/**
+ * MODALS
+ */
+
+import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
+import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
+import MyTaskDeleteModal from '../components/modals/my_tasks/my_task_delete';
+import NotificationModal from '../components/modals/my_tasks/notifications';
 
 import { useState, useEffect } from 'react';
 
@@ -319,9 +324,8 @@ export default function MyTasksPage() {
 	// for when there are new tasks coming in from the socket
 
 	return (
-		<main className="flex flex-row h-screen w-full">
-			<Sidebar />
-			<HeaderContainer pageTitle={'Teams'}>
+		<>
+			<HeaderContainer pageTitle={'My Tasks'}>
 				{/* TABLES */}
 				<div className="flex w-full gap-1">
 					{/* TASKS TABLE */}
@@ -367,10 +371,10 @@ export default function MyTasksPage() {
 				></MyTaskReadModal>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalTaskDelete} noFade={false}>
-				<MyTaskReadModal
+				<MyTaskDeleteModal
 					taskId={modalTaskId}
 					handleModalDisplay={handleModalTaskDeleteDisplay}
-				></MyTaskReadModal>
+				></MyTaskDeleteModal>
 			</SlideModalContainer>
 
 			{/* NOTIFICATION MODALS */}
@@ -380,6 +384,6 @@ export default function MyTasksPage() {
 					handleModalDisplay={handleModalNotificationDisplay}
 				></NotificationModal>
 			</SlideModalContainer>
-		</main>
+		</>
 	);
 }

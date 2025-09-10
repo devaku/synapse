@@ -66,14 +66,14 @@ export default function RegisterPage() {
 			// loginSetCookies(user_id, access_token, refresh_token);
 
 			// Redirect to dashboard
-			navigate('/dashboard');
+			navigate('/home');
 		} catch (error) {
 			alert(error);
 		}
 	}
 
 	function handleCancelClick() {
-		window.location.href = '/';
+		navigate('/');
 	}
 
 	return (
