@@ -50,7 +50,7 @@ export default function LoginPage() {
 			// loginSetCookies(user_id, access_token, refresh_token);
 
 			// Redirect to dashboard
-			navigate('/dashboard');
+			navigate('/home');
 		} catch (error) {
 			alert(error);
 		}
@@ -87,7 +87,7 @@ export default function LoginPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="email"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handleEmailChange}
@@ -102,7 +102,7 @@ export default function LoginPage() {
 					<div className="flex flex-row gap-2 border-b-2 border-b-white p-2">
 						<SvgComponent
 							iconName="lock"
-							className={'fill-white'}
+							className={'invert'}
 						></SvgComponent>
 						<input
 							onChange={handlePasswordChange}
@@ -147,7 +147,7 @@ export default function LoginPage() {
 						>
 							<SvgComponent
 								iconName="facebook"
-								className={'fill-white'}
+								className={'invert'}
 							></SvgComponent>
 							<p>Facebook</p>
 						</div>
@@ -158,7 +158,7 @@ export default function LoginPage() {
 						>
 							<SvgComponent
 								iconName="github"
-								className={'fill-white'}
+								className={'invert'}
 							></SvgComponent>
 							<p>Github</p>
 						</div>
@@ -169,7 +169,7 @@ export default function LoginPage() {
 						>
 							<SvgComponent
 								iconName="google"
-								className={'fill-white'}
+								className={'invert w-6 h-6'}
 							></SvgComponent>
 
 							<p>Google</p>

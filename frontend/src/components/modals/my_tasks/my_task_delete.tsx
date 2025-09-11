@@ -30,12 +30,24 @@ export default function MyTaskDeleteModal({
 
 	if (deletionRequestSuccess) {
 		return (
-			<div>
-				<div>DELETION REQUEST SENT SUCCESSFULLY</div>
-				<div className="">
+			<div className="flex flex-col gap-2 mx-5 pb-2 overflow-y-auto h-screen">
+				{/* TITLE */}
+				<div className="p-2">
+					<p className="text-2xl">Deletion Request</p>
+				</div>
+				{/* Reason */}
+				<div className="mb-2 p-2">
+					<p className="mb-2 text-xl">Sent</p>
+					<p className="mb-2">
+						Your request for task deletion has been noted and sent.
+					</p>
+				</div>
+
+				{/* BUTTONS */}
+				<div className="flex">
 					<Button
 						buttonType="add"
-						buttonText="Submit"
+						buttonText="Continue"
 						buttonOnClick={() => handleModalClose()}
 					/>
 				</div>
@@ -46,7 +58,7 @@ export default function MyTaskDeleteModal({
 			<div className="flex flex-col gap-2 mx-5 pb-2 overflow-y-auto h-screen">
 				{/* TITLE */}
 				<div className="p-2">
-					<p className="text-5xl">Deletion Request</p>
+					<p className="text-2xl">Deletion Request</p>
 				</div>
 				{/* Reason */}
 				<div className="mb-2 p-2">

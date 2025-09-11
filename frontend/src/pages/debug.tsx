@@ -17,6 +17,14 @@ export default function DebugPage() {
 
 	const onSubmit = (data: any) => console.log(data);
 
+	function handleCustomSubmit(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+
+		console.log(e.currentTarget[0]);
+		let a = e.currentTarget[0] as HTMLInputElement;
+		console.log(a.value);
+	}
+
 	return (
 		<div className="p-10">
 			<div>This is the debug page</div>
@@ -105,6 +113,15 @@ export default function DebugPage() {
 							type="submit"
 						/>
 					</div>
+				</form>
+			</div>
+
+			{/* ANOTHER FORM */}
+			<div>
+				<form onSubmit={handleCustomSubmit}>
+					<label htmlFor="">Description: </label>
+					<input type="text" name="description" id="" />
+					<button type="submit">Submit</button>
 				</form>
 			</div>
 		</div>

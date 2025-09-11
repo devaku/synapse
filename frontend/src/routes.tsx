@@ -12,29 +12,33 @@ import { createBrowserRouter } from 'react-router';
 import RootLayout from './pages/root_layout';
 import DebugLayout from './pages/debug_layout';
 import ProtectLayout from './pages/protect_layout';
-import DashboardLayout from './pages/dashboard/layout';
+import DashboardLayout from './pages/layout';
 
 /**
  * PAGES
  */
 
+import RegisterPage from './pages/auth/register';
+import ForgotPasswordPage from './pages/auth/forgot_password';
+import LoggedOutPage from './pages/auth/logged_out';
+
 import LoginPage from './pages/auth/login';
-import DashboardPage from './pages/dashboard';
-import SettingsPage from './pages/dashboard/settings';
-import ProfilePage from './pages/dashboard/profile';
-import ChartsPage from './pages/dashboard/charts';
-import LogsPage from './pages/dashboard/logs';
-import AccessPage from './pages/dashboard/access';
-import TasksPage from './pages/dashboard/tasks';
-import TeamsPage from './pages/dashboard/teams';
-import MyTasksPage from './pages/dashboard/my_tasks';
+import DebugPage from './pages/debug';
+import HomePage from './pages/home';
+import SettingsPage from './pages/settings';
+import ProfilePage from './pages/profile';
+import ChartsPage from './pages/charts';
+import LogsPage from './pages/logs';
+import AccessPage from './pages/access';
+import TasksPage from './pages/tasks';
+import TeamsPage from './pages/teams';
+import MyTasksPage from './pages/my_tasks';
 
 const protectedRoutes = [
 	{
-		path: '/dashboard',
 		Component: DashboardLayout,
 		children: [
-			{ index: true, Component: DashboardPage },
+			{ path: 'home', index: true, Component: HomePage },
 			{ path: 'settings', Component: SettingsPage },
 			{ path: 'tasks', Component: TasksPage },
 			{ path: 'teams', Component: TeamsPage },
@@ -61,7 +65,7 @@ export const router = createBrowserRouter([
 				children: [
 					{
 						index: true,
-						// Component: DebugPage,
+						Component: DebugPage,
 					},
 				],
 			},
@@ -76,9 +80,9 @@ export const router = createBrowserRouter([
 				Component: LoginPage,
 			},
 
-			// { path: '/register', Component: RegisterPage },
-			// { path: 'forgot_password', Component: ForgotPasswordPage },
-			// { path: 'logged_out', Component: LoggedOutPage },
+			{ path: 'register', Component: RegisterPage },
+			{ path: 'forgot_password', Component: ForgotPasswordPage },
+			{ path: 'logged_out', Component: LoggedOutPage },
 			/**
 			 * PROTECTED ROUTES
 			 */
