@@ -34,14 +34,45 @@ export default function NotificationModal({
 	}
 
 	return (
-		<div className="flex flex-col">
-			<Button
-				buttonType="add"
-				buttonText="Close Modal"
-				buttonOnClick={() => handleModalClose()}
-			/>
-			NOTIFICATION ID: {notificationId}
-			THIS IS THE NOTIFICATION MODAL
+		<div className="flex flex-col gap-1 px-2">
+			{/* TITLE */}
+			<div className="">
+				<p className="text-2xl">Notification Title</p>
+			</div>
+			{/* Subtitle */}
+			<div className="mb-2">
+				<p className="mb-2 text-xl">Message from: PERSON</p>
+				<p className="mb-2">
+					Lorem ipsum dolor sit amet consectetur adipisicing elit.
+					Omnis, quidem exercitationem nulla aliquid quas est
+					perferendis mollitia, nostrum nisi vero delectus eos
+					temporibus alias consequatur deserunt impedit tempore libero
+					tempora!
+				</p>
+			</div>
+			{/* Information */}
+			<div className="">
+				<div className="flex">
+					<div className="min-w-32">Sent: </div>
+					<div>{new Date().toDateString()}</div>
+				</div>
+				<div className="flex">
+					<div className="min-w-32">Read: </div>
+					<div>{new Date().toDateString()}</div>
+				</div>
+				<div className="flex">
+					<div className="min-w-32">Sent by: </div>
+					<div>PERSON</div>
+				</div>
+			</div>
+			{/* BUTTONS */}
+			<div className="flex">
+				<Button
+					buttonType="add"
+					buttonText="Back"
+					buttonOnClick={() => handleModalClose()}
+				/>
+			</div>
 		</div>
 	);
 }

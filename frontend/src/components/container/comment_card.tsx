@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import TTGLogo from '../../assets/images/ttglogo/TTG_Profile.png';
 
 type commentCardProps = {
@@ -7,12 +8,19 @@ type commentCardProps = {
 	timestamp: string;
 };
 
+import { useState } from 'react';
+
 export default function CommentCard({
 	profile_picture_url,
 	name,
 	comment,
 	timestamp,
 }: commentCardProps) {
+	let schema = {
+		id: 'number',
+	};
+
+	useEffect(() => {}, []);
 	return (
 		<div>
 			{/* Profile */}

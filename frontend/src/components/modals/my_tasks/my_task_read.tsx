@@ -54,7 +54,7 @@ export default function MyTaskReadModal({
 		<div className="flex flex-col gap-2 mx-5 pb-2 overflow-y-auto h-screen">
 			{/* TITLE */}
 			<div className="p-2">
-				<p className="text-5xl">Task 1</p>
+				<p className="text-2xl">Task 1</p>
 				<div className="mt-3">
 					<StatusPill text={'PENDING'}></StatusPill>
 				</div>

@@ -1,8 +1,8 @@
 // profile_page.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import HeaderContainer from '../../components/container/header_container';
-import SvgComponent from '../../components/ui/svg_component';
+import HeaderContainer from '../components/container/header_container';
+import SvgComponent from '../components/ui/svg_component';
 
 type EditProfileFormProps = {
 	fullName: string;
