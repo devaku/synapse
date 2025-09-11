@@ -26,7 +26,7 @@ function EditProfileForm({
 	onCancel,
 }: EditProfileFormProps) {
 	return (
-		<div className="mt-8 md:mt-0 bg-[#153243]/90 backdrop-blur-sm p-6 rounded w-[300px] text-white shadow-lg">
+		<div className="mt-8 md:mt-0 bg-[#153243]/90 backdrop-blur-sm p-6 w-[300px] text-white shadow-lg">
 			<h3 className="text-lg mb-4 text-center">Edit Profile</h3>
 			<div className="space-y-2">
 				<input
@@ -73,11 +73,14 @@ function EditProfileForm({
 
 export default function ProfilePage() {
 	const navigate = useNavigate();
+
+	// Profile state
 	const [showEditPopup, setShowEditPopup] = useState(false);
 	const [fullName, setFullName] = useState('John Tartigrade Doe');
 	const [email, setEmail] = useState('johndoe@email.com');
 	const [phoneNumber, setPhoneNumber] = useState('1-(368)-123-4567');
 
+	// Save handler
 	const handleSave = () => {
 		setShowEditPopup(false);
 	};
