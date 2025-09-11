@@ -24,7 +24,7 @@ export default function SidebarButton({
 					navigate(routePath);
 				}}
 			>
-				<SvgComponent iconName={iconPath} className="fill-white" />
+				<SvgComponent iconName={iconPath} className="invert" />
 				<div className="max-md:hidden">
 					{tabName}
 				</div>
@@ -38,7 +38,7 @@ export default function SidebarButton({
 					navigate(routePath);
 				}}
 			>
-				<SvgComponent iconName={iconPath} className="fill-white" />
+				<SvgComponent iconName={iconPath} className="invert" />
 				<div className="max-md:hidden">
 					{tabName}
 				</div>

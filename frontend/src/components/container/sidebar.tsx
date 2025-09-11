@@ -37,32 +37,32 @@ export default function Sidebar() {
 				<div className="flex flex-col gap-7.5 px-5 max-sm:px-0 max-sm:items-center max-sm:h-10">
 					<SidebarButton
 						tabName="Home"
-						routePath="/dashboard"
+						routePath="/home"
 						iconPath="Home"
 					/>
 					<SidebarButton
 						tabName="Tasks"
-						routePath="/dashboard/tasks"
+						routePath="/tasks"
 						iconPath="Tasks"
 					/>
 					<SidebarButton
 						tabName="Teams"
-						routePath="/dashboard/teams"
+						routePath="/teams"
 						iconPath="Teams"
 					/>
 					<SidebarButton
 						tabName="My Tasks"
-						routePath="/dashboard/my_tasks"
+						routePath="/my_tasks"
 						iconPath="My Tasks"
 					/>
 					<SidebarButton
 						tabName="Charts"
-						routePath="/dashboard/charts"
+						routePath="/charts"
 						iconPath="Charts"
 					/>
 					<SidebarButton
 						tabName="Access"
-						routePath="/dashboard/access"
+						routePath="/access"
 						iconPath="Access"
 					/>
 
@@ -70,7 +70,7 @@ export default function Sidebar() {
 					{adminPrivileges && (
 						<SidebarButton
 							tabName="Logs"
-							routePath="/dashboard/logs"
+							routePath="/logs"
 							iconPath="Logs"
 						/>
 					)}
