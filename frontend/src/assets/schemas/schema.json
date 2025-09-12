@@ -1,7 +1,7 @@
 {
-	"userProfile": [
+	"AccessRequest": [
 		{
-			"name": "firstName",
+			"name": "FirstName",
 			"type": "string"
 		},
 		{
@@ -9,56 +9,12 @@
 			"type": "string"
 		},
 		{
-			"name": "email",
+			"name": "Repo Name",
 			"type": "text"
 		},
 		{
-			"name": "age",
+			"name": "Access Level",
 			"type": "number"
-		},
-		{
-			"name": "isActive",
-			"type": "boolean"
-		}
-	],
-	"taskForm": [
-		{
-			"name": "title",
-			"type": "string"
-		},
-		{
-			"name": "description",
-			"type": "text"
-		},
-		{
-			"name": "priority",
-			"type": "number"
-		},
-		{
-			"name": "isCompleted",
-			"type": "boolean"
-		},
-		{
-			"name": "estimatedHours",
-			"type": "number"
-		}
-	],
-	"teamSettings": [
-		{
-			"name": "teamName",
-			"type": "string"
-		},
-		{
-			"name": "allowPublicAccess",
-			"type": "boolean"
-		},
-		{
-			"name": "maxMembers",
-			"type": "number"
-		},
-		{
-			"name": "projectDescription",
-			"type": "text"
 		}
 	]
 }

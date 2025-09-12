@@ -8,11 +8,16 @@ import Button from '../components/ui/button';
 import * as _ from 'lodash';
 import DynamicModalExample from '../components/modals/generic/dynamic_modal_example';
 import { useState, useEffect } from 'react';
+import DynamicModal, {type FieldMetadata} from '../components/modals/generic/dynamic_modal';
+import schema from '../assets/schemas/schema.json';
+
 
 type tableData = {
 	columnName: string[];
 	rowData: any[];
 };
+
+
 
 export default function MyAccesssPage() {
 	let mockAccessAPIResponse = [
@@ -50,10 +55,19 @@ export default function MyAccesssPage() {
 	const [showModalAccessInfo, setShowModalAccessInfo] =
 		useState<boolean>(false);
 	const [modalAccessId, setModalAccessId] = useState<number>(0);
+	const [formState, setFormState] = useState<Record<string, any>>({});
 
+
+		// Handle form state updates from the dynamic modal
+	const handleFormStateChange = (newState: Record<string, any>) => {
+		setFormState(newState);
+	};
+
+	
 	/**
 	 * INTERNAL FUNCTIONS
 	 */
+
 
 	useEffect(() => {
 		async function start() {
@@ -225,6 +239,10 @@ export default function MyAccesssPage() {
 		setShowModalCreateAccess(true);
 	}
 
+	function handleModalAccessCreateDisplay() {
+		setShowModalCreateAccess(false);
+	}
+
 	// TODO: There should be a listener function here that auto updates the tables
 	// for when there are new Accesss coming in from the socket
 
@@ -258,7 +276,6 @@ export default function MyAccesssPage() {
 						</div>
 					</div>
 				</div>
-				<DynamicModalExample />
 			</HeaderContainer>
 			{/* Access MODALS */}
 			<SlideModalContainer isOpen={showModalAccessInfo} noFade={false}>
@@ -293,13 +310,13 @@ export default function MyAccesssPage() {
 				</div>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalCreateAccess} noFade={false}>
-				<div>
-					<h1>Create Access Request</h1>
-					<p>Form goes here...</p>
-					<button onClick={() => setShowModalCreateAccess(false)}>
-						Close
-					</button>
-				</div>
+				<DynamicModal
+					metadata={schema['AccessRequest'] as FieldMetadata[]}
+					onStateChange={handleFormStateChange}
+				/>
+				<button onClick={handleModalAccessCreateDisplay}>
+					Close
+				</button>
 			</SlideModalContainer>
 		</main>
 	);
