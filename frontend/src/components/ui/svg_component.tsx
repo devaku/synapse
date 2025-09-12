@@ -1,12 +1,29 @@
+import ACCESS from '../../assets/images/svgs/access.svg';
+import CHART from '@/assets/images/svgs/chart.svg';
+import EMAIL from '@/assets/images/svgs/email.svg';
+import FACEBOOK from '@/assets/images/svgs/facebook.svg';
+import FILTER from '@/assets/images/svgs/filter.svg';
+import GITHUB from '@/assets/images/svgs/github.svg';
+import GOOGLE from '@/assets/images/svgs/google.svg';
+import HOME from '@/assets/images/svgs/home.svg';
+import INFO from '@/assets/images/svgs/info.svg';
+import LOCK from '@/assets/images/svgs/lock.svg';
+import LOGS from '@/assets/images/svgs/logs.svg';
+import MY_TASKS from '@/assets/images/svgs/my_tasks.svg';
+import PROFILE from '../../assets/images/svgs/profile.svg';
+import SEARCH from '@/assets/images/svgs/search.svg';
+import SORT from '@/assets/images/svgs/sort.svg';
+import TEAMS from '@/assets/images/svgs/teams.svg';
+import TRASHCAN from '@/assets/images/svgs/trashcan.svg';
+import WRENCH from '@/assets/images/svgs/wrench.svg';
+
 type svgProps = {
 	iconName: string;
 	className?: string;
-	height?: number;
-	width?: number;
 };
 
 export default function SvgComponent(props: svgProps) {
-	let { iconName, className: classes, height = 24, width = 24 } = props;
+	let { iconName, className: classes } = props;
 
 	// Converted to uppercase to avoid
 	// spelling mistakes
@@ -19,264 +36,79 @@ export default function SvgComponent(props: svgProps) {
 	 */
 	switch (iconName) {
 		case 'ACCESS':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-					className="feather feather-github fill-white"
-					width={width}
-					height={height}
-				>
-					<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-				</svg>
-			);
+			html = <img className={classes} src={ACCESS} alt="" />;
 			break;
 
 		case 'CHARTS':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className="fill-white"
-				>
-					<path d="M5 9v8h-2v-8h2zm2-2h-6v12h6v-12zm6-4v14h-2v-14h2zm2-2h-6v18h6v-18zm6 13v3h-2v-3h2zm2-2h-6v7h6v-7zm1 9h-24v2h24v-2z" />
-				</svg>
-			);
+			html = <img className={classes} src={CHART} alt="" />;
 			break;
 
 		case 'EMAIL':
-			html = (
-				<svg
-					className={classes}
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-				>
-					<path d="M12 2.02c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 12.55l-5.992-4.57h11.983l-5.991 4.57zm0 1.288l-6-4.629v6.771h12v-6.771l-6 4.629z" />
-				</svg>
-			);
+			html = <img className={classes} src={EMAIL} alt="" />;
 			break;
 
 		case 'FACEBOOK':
-			html = (
-				<svg
-					className={classes}
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-				>
-					<path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 10h-2v2h2v6h3v-6h1.82l.18-2h-2v-.833c0-.478.096-.667.558-.667h1.442v-2.5h-2.404c-1.798 0-2.596.792-2.596 2.308v1.692z" />
-				</svg>
-			);
+			html = <img className={classes} src={FACEBOOK} alt="" />;
 			break;
 
 		case 'FILTER':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className={classes}
-				>
-					<path d="M19.479 2l-7.479 12.543v5.924l-1-.6v-5.324l-7.479-12.543h15.958zm3.521-2h-23l9 15.094v5.906l5 3v-8.906l9-15.094z" />
-				</svg>
-			);
+			html = <img className={classes} src={FILTER} alt="" />;
 			break;
 
 		case 'GITHUB':
-			html = (
-				<svg
-					className={classes}
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-				>
-					<path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 6c-3.313 0-6 2.686-6 6 0 2.651 1.719 4.9 4.104 5.693.3.056.396-.13.396-.289v-1.117c-1.669.363-2.017-.707-2.017-.707-.272-.693-.666-.878-.666-.878-.544-.373.041-.365.041-.365.603.042.92.619.92.619.535.917 1.403.652 1.746.499.054-.388.209-.652.381-.802-1.333-.152-2.733-.667-2.733-2.965 0-.655.234-1.19.618-1.61-.062-.153-.268-.764.058-1.59 0 0 .504-.161 1.65.615.479-.133.992-.199 1.502-.202.51.002 1.023.069 1.503.202 1.146-.776 1.648-.615 1.648-.615.327.826.121 1.437.06 1.588.385.42.617.955.617 1.61 0 2.305-1.404 2.812-2.74 2.96.216.186.412.551.412 1.111v1.646c0 .16.096.347.4.288 2.383-.793 4.1-3.041 4.1-5.691 0-3.314-2.687-6-6-6z" />
-				</svg>
-			);
+			html = <img className={classes} src={GITHUB} alt="" />;
 			break;
 
 		case 'GOOGLE':
-			html = (
-				<svg
-					className={classes}
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 50 50"
-					width={width}
-					height={height}
-				>
-					<path d="M 25.996094 48 C 13.3125 48 2.992188 37.683594 2.992188 25 C 2.992188 12.316406 13.3125 2 25.996094 2 C 31.742188 2 37.242188 4.128906 41.488281 7.996094 L 42.261719 8.703125 L 34.675781 16.289063 L 33.972656 15.6875 C 31.746094 13.78125 28.914063 12.730469 25.996094 12.730469 C 19.230469 12.730469 13.722656 18.234375 13.722656 25 C 13.722656 31.765625 19.230469 37.269531 25.996094 37.269531 C 30.875 37.269531 34.730469 34.777344 36.546875 30.53125 L 24.996094 30.53125 L 24.996094 20.175781 L 47.546875 20.207031 L 47.714844 21 C 48.890625 26.582031 47.949219 34.792969 43.183594 40.667969 C 39.238281 45.53125 33.457031 48 25.996094 48 Z" />
-				</svg>
-			);
+			html = <img className={classes} src={GOOGLE} alt="" />;
 			break;
 
 		case 'HOME':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className="fill-white"
-				>
-					<path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z" />
-				</svg>
-			);
+			html = <img className={classes} src={HOME} alt="" />;
 			break;
 
 		case 'INFO':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className={classes}
-				>
-					<path d="M13.25 7c0 .69-.56 1.25-1.25 1.25s-1.25-.56-1.25-1.25.56-1.25 1.25-1.25 1.25.56 1.25 1.25zm10.75 5c0 6.627-5.373 12-12 12s-12-5.373-12-12 5.373-12 12-12 12 5.373 12 12zm-2 0c0-5.514-4.486-10-10-10s-10 4.486-10 10 4.486 10 10 10 10-4.486 10-10zm-13-2v2h2v6h2v-8h-4z" />
-				</svg>
-			);
+			html = <img className={classes} src={INFO} alt="" />;
 			break;
 
 		case 'LOCK':
-			html = (
-				<svg
-					className={classes}
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-				>
-					<path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4 17h-8v-6h8v6zm-6-6v-2c0-1.104.897-2 2-2s2 .896 2 2v2h1v-2c0-1.656-1.343-3-3-3s-3 1.344-3 3v2h1z" />
-				</svg>
-			);
+			html = <img className={classes} src={LOCK} alt="" />;
 			break;
 
 		case 'LOGS':
-			html = (
-				<svg
-					width={width}
-					height={height}
-					xmlns="http://www.w3.org/2000/svg"
-					fillRule="evenodd"
-					clipRule="evenodd"
-					className="fill-white"
-				>
-					<path d="M16 2v7h-2v-5h-12v16h12v-5h2v7h-16v-20h16zm2 9v-4l6 5-6 5v-4h-10v-2h10z" />
-				</svg>
-			);
+			html = <img className={classes} src={LOGS} alt="" />;
 			break;
 
 		case 'MY TASKS':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className="fill-white"
-				>
-					<path d="M5.759 4l.038.069c1.444 2.646 2.691 4.931 7.141 4.931h9.062v11h-20v-16h3.759zm1.179-2h-6.938v20h24v-15h-11.062c-3.719 0-4.188-1.812-6-5zm6.171 3h10.891v-3h-14.604c1.39 2.574 1.63 3 3.713 3z" />
-				</svg>
-			);
+			html = <img className={classes} src={MY_TASKS} alt="" />;
 			break;
 
 		case 'PROFILE':
-			html = (
-				<svg
-					width={width}
-					height={height}
-					xmlns="http://www.w3.org/2000/svg"
-					fillRule="evenodd"
-					clipRule="evenodd"
-				>
-					<path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm8.127 19.41c-.282-.401-.772-.654-1.624-.85-3.848-.906-4.097-1.501-4.352-2.059-.259-.565-.19-1.23.205-1.977 1.726-3.257 2.09-6.024 1.027-7.79-.674-1.119-1.875-1.734-3.383-1.734-1.521 0-2.732.626-3.409 1.763-1.066 1.789-.693 4.544 1.049 7.757.402.742.476 1.406.22 1.974-.265.586-.611 1.19-4.365 2.066-.852.196-1.342.449-1.623.848 2.012 2.207 4.91 3.592 8.128 3.592s6.115-1.385 8.127-3.59zm.65-.782c1.395-1.844 2.223-4.14 2.223-6.628 0-6.071-4.929-11-11-11s-11 4.929-11 11c0 2.487.827 4.783 2.222 6.626.409-.452 1.049-.81 2.049-1.041 2.025-.462 3.376-.836 3.678-1.502.122-.272.061-.628-.188-1.087-1.917-3.535-2.282-6.641-1.03-8.745.853-1.431 2.408-2.251 4.269-2.251 1.845 0 3.391.808 4.24 2.218 1.251 2.079.896 5.195-1 8.774-.245.463-.304.821-.179 1.094.305.668 1.644 1.038 3.667 1.499 1 .23 1.64.59 2.049 1.043z" />
-				</svg>
-			);
+			html = <img className={classes} src={PROFILE} alt="" />;
 			break;
 
 		case 'SEARCH':
-			html = (
-				<svg
-					className={classes}
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-				>
-					<path d="M10 2C5.029 2 1 6.029 1 11c0 4.971 4.029 9 9 9 2.086 0 4.008-.707 5.528-1.885l4.293 4.293 1.414-1.414-4.293-4.293C19.293 15.008 21 12.086 21 11c0-4.971-4.029-9-9-9zm0 2c3.859 0 7 3.141 7 7 0 3.859-3.141 7-7 7-3.859 0-7-3.141-7-7 0-3.859 3.141-7 7-7z" />
-				</svg>
-			);
+			html = <img className={classes} src={SEARCH} alt="" />;
 			break;
 
 		case 'SORT':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className={classes}
-				>
-					<path d="M12 0l8 10h-16l8-10zm8 14h-16l8 10 8-10z" />
-				</svg>
-			);
+			html = <img className={classes} src={SORT} alt="" />;
 			break;
 
 		case 'TASKS':
-			html = (
-				<svg
-					width={width}
-					height={height}
-					xmlns="http://www.w3.org/2000/svg"
-					fillRule="evenodd"
-					clipRule="evenodd"
-					className="fill-white"
-				>
-					<path d="M17.825 24h-15.825v-24h10.189c3.162 0 9.811 7.223 9.811 9.614v10.071l-2-2v-7.228c0-4.107-6-2.457-6-2.457s1.517-6-2.638-6h-7.362v20h11.825l2 2zm-2.026-4.858c-.799.542-1.762.858-2.799.858-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1-.294 1.932-.801 2.714l4.801 4.872-1.414 1.414-4.787-4.858zm-2.799-7.142c1.656 0 3 1.344 3 3s-1.344 3-3 3-3-1.344-3-3 1.344-3 3-3z" />
-				</svg>
-			);
+			html = <img className={classes} src={MY_TASKS} alt="" />;
 			break;
 
 		case 'TEAMS':
-			html = (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width={width}
-					height={height}
-					viewBox="0 0 24 24"
-					className="fill-white"
-				>
-					<path d="M17.997 18h-11.995l-.002-.623c0-1.259.1-1.986 1.588-2.33 1.684-.389 3.344-.736 2.545-2.209-2.366-4.363-.674-6.838 1.866-6.838 2.491 0 4.226 2.383 1.866 6.839-.775 1.464.826 1.812 2.545 2.209 1.49.344 1.589 1.072 1.589 2.333l-.002.619zm4.811-2.214c-1.29-.298-2.49-.559-1.909-1.657 1.769-3.342.469-5.129-1.4-5.129-1.265 0-2.248.817-2.248 2.324 0 3.903 2.268 1.77 2.246 6.676h4.501l.002-.463c0-.946-.074-1.493-1.192-1.751zm-22.806 2.214h4.501c-.021-4.906 2.246-2.772 2.246-6.676 0-1.507-.983-2.324-2.248-2.324-1.869 0-3.169 1.787-1.399 5.129.581 1.099-.619 1.359-1.909 1.657-1.119.258-1.193.805-1.193 1.751l.002.463z" />
-				</svg>
-			);
+			html = <img className={classes} src={TEAMS} alt="" />;
 			break;
 
 		case 'TRASHCAN':
-			html = (
-				<svg
-					width={width}
-					height={height}
-					xmlns="http://www.w3.org/2000/svg"
-					fillRule="evenodd"
-					clipRule="evenodd"
-					className={classes}
-				>
-					<path d="M19 24h-14c-1.104 0-2-.896-2-2v-17h-1v-2h6v-1.5c0-.827.673-1.5 1.5-1.5h5c.825 0 1.5.671 1.5 1.5v1.5h6v2h-1v17c0 1.104-.896 2-2 2zm0-19h-14v16.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-16.5zm-7 7.586l3.293-3.293 1.414 1.414-3.293 3.293 3.293 3.293-1.414 1.414-3.293-3.293-3.293 3.293-1.414-1.414 3.293-3.293-3.293-3.293 1.414-1.414 3.293 3.293zm2-10.586h-4v1h4v-1z" />
-				</svg>
-			);
+			html = <img className={classes} src={TRASHCAN} alt="" />;
+			break;
 
+		case 'WRENCH':
+			html = <img className={classes} src={WRENCH} alt="" />;
 			break;
 	}
 

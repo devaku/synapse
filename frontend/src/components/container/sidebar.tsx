@@ -1,5 +1,5 @@
-/* eslint-disable prettier/prettier */
 import TTGLogo from '@/assets/images/ttglogo/TTG_Spiral_Logo_White.png';
+import TTGIcon from '@/assets/images/ttglogo/TTG_Icon.ico';
 import SidebarButton from '../ui/sidebar_button';
 import { useNavigate } from 'react-router';
 
@@ -26,52 +26,59 @@ export default function Sidebar() {
 	// 	navigate('/');
 	// }
 
+	const adminPrivileges = true; // TODO: Change this to actual check
+
 	return (
-		<div className="h-screen flex flex-col max-w-47.5 ttg-bg-dark-blue px-3 pt-3">
-			<img src={TTGLogo} alt="TTG Logo" className="mb-10" />
+		<div className="h-screen flex flex-col items-center w-50 max-md:w-20 ttg-bg-dark-blue px-3 pt-3">
+			<img src={TTGLogo} alt="TTG Logo" className="mb-10 max-h-10 max-md:hidden" />
+			<img src={TTGIcon} alt="TTG Icon" className="mb-10 max-h-10 max-w-10 max-md:visible md:hidden" />
 			<div className="flex flex-col justify-between flex-1 overflow-y-auto">
 				{/* Tab Buttons */}
-				<div className="flex flex-col gap-7.5 px-5 overflow-">
+				<div className="flex flex-col gap-7.5 px-5 max-sm:px-0 max-sm:items-center max-sm:h-10">
 					<SidebarButton
 						tabName="Home"
-						routePath="/dashboard"
+						routePath="/home"
 						iconPath="Home"
 					/>
 					<SidebarButton
 						tabName="Tasks"
-						routePath="/dashboard/tasks"
+						routePath="/tasks"
 						iconPath="Tasks"
 					/>
 					<SidebarButton
 						tabName="Teams"
-						routePath="/dashboard/teams"
+						routePath="/teams"
 						iconPath="Teams"
 					/>
 					<SidebarButton
 						tabName="My Tasks"
-						routePath="/dashboard/my_tasks"
+						routePath="/my_tasks"
 						iconPath="My Tasks"
 					/>
 					<SidebarButton
 						tabName="Charts"
-						routePath="/dashboard/charts"
+						routePath="/charts"
 						iconPath="Charts"
 					/>
 					<SidebarButton
 						tabName="Access"
-						routePath="/dashboard/access"
+						routePath="/access"
 						iconPath="Access"
 					/>
-					<SidebarButton
-						tabName="Logs"
-						routePath="/dashboard/logs"
-						iconPath="Logs"
-					/>
+
+					{/* Admin Privileges for accessing logs and stuff unless not necessary */}
+					{adminPrivileges && (
+						<SidebarButton
+							tabName="Logs"
+							routePath="/logs"
+							iconPath="Logs"
+						/>
+					)}
 				</div>
 			</div>
-			{/* Login Section */}
-			<div className="text-center mt-10">
-				<div className="h-[1px] bg-white "></div>
+			{/* Logout Section */}
+			<div className="text-center mt-10 w-full">
+				<div className="h-[1px] bg-white"></div>
 				<button
 					className="text-white my-10 cursor-pointer"
 					onClick={() => {

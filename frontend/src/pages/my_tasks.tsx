@@ -1,16 +1,22 @@
 import * as _ from 'lodash';
-import HeaderContainer from '../../components/container/header_container';
+import HeaderContainer from '../components/container/header_container';
 
-import Sidebar from '../../components/container/sidebar';
-import Table from '../../components/container/table';
-import SearchBar from '../../components/ui/searchbar';
-import SvgComponent from '../../components/ui/svg_component';
-import StatusPill from '../../components/ui/status_pill';
-import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
-import MyTaskReadModal from '../../components/modals/my_tasks/my_task_read';
-import NotificationModal from '../../components/modals/my_tasks/notifications';
+import Table from '../components/container/table';
+import SearchBar from '../components/ui/searchbar';
+import SvgComponent from '../components/ui/svg_component';
+import StatusPill from '../components/ui/status_pill';
+
+/**
+ * MODALS
+ */
+
+import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
+import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
+import MyTaskDeleteModal from '../components/modals/my_tasks/my_task_delete';
+import NotificationModal from '../components/modals/my_tasks/notifications';
 
 import { useState, useEffect } from 'react';
+import TableV2 from '../components/container/table_v2';
 
 type tableData = {
 	columnName: string[];
@@ -253,26 +259,16 @@ export default function MyTasksPage() {
 			return (
 				<>
 					<button
-						className="cursor-pointer"
+						className="cursor-pointer w-6 h-6"
 						onClick={handleClickInfo}
 					>
-						<SvgComponent
-							iconName="INFO"
-							width={16}
-							height={16}
-							className=""
-						/>
+						<SvgComponent iconName="INFO" className="" />
 					</button>
 					<button
-						className="cursor-pointer"
+						className="cursor-pointer w-6 h-6"
 						onClick={handleClickDelete}
 					>
-						<SvgComponent
-							iconName="TRASHCAN"
-							width={24}
-							height={24}
-							className=""
-						/>
+						<SvgComponent iconName="TRASHCAN" className="" />
 					</button>
 				</>
 			);
@@ -282,15 +278,10 @@ export default function MyTasksPage() {
 			return (
 				<>
 					<button
-						className="cursor-pointer"
+						className="cursor-pointer w-6 h-6"
 						onClick={handleClickInfo}
 					>
-						<SvgComponent
-							iconName="INFO"
-							width={16}
-							height={16}
-							className=""
-						/>
+						<SvgComponent iconName="INFO" className="" />
 					</button>
 				</>
 			);
@@ -319,9 +310,8 @@ export default function MyTasksPage() {
 	// for when there are new tasks coming in from the socket
 
 	return (
-		<main className="flex flex-row h-screen w-full">
-			<Sidebar />
-			<HeaderContainer pageTitle={'Teams'}>
+		<>
+			<HeaderContainer pageTitle={'My Tasks'}>
 				{/* TABLES */}
 				<div className="flex w-full gap-1">
 					{/* TASKS TABLE */}
@@ -329,11 +319,11 @@ export default function MyTasksPage() {
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
-								<Table
+								<TableV2
 									columnName={myTaskTableData.columnName}
 									rowData={myTaskTableData.rowData}
 									withActions={true}
-								></Table>
+								></TableV2>
 							) : (
 								<div>Table is empty!</div>
 							)}
@@ -345,13 +335,13 @@ export default function MyTasksPage() {
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
-								<Table
+								<TableV2
 									columnName={
 										notificationTableData.columnName
 									}
 									rowData={notificationTableData.rowData}
 									withActions={true}
-								></Table>
+								></TableV2>
 							) : (
 								<div>Table is empty!</div>
 							)}
@@ -367,10 +357,10 @@ export default function MyTasksPage() {
 				></MyTaskReadModal>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalTaskDelete} noFade={false}>
-				<MyTaskReadModal
+				<MyTaskDeleteModal
 					taskId={modalTaskId}
 					handleModalDisplay={handleModalTaskDeleteDisplay}
-				></MyTaskReadModal>
+				></MyTaskDeleteModal>
 			</SlideModalContainer>
 
 			{/* NOTIFICATION MODALS */}
@@ -380,6 +370,6 @@ export default function MyTasksPage() {
 					handleModalDisplay={handleModalNotificationDisplay}
 				></NotificationModal>
 			</SlideModalContainer>
-		</main>
+		</>
 	);
 }
