@@ -8,16 +8,15 @@ import Button from '../components/ui/button';
 import * as _ from 'lodash';
 import DynamicModalExample from '../components/modals/generic/dynamic_modal_example';
 import { useState, useEffect } from 'react';
-import DynamicModal, {type FieldMetadata} from '../components/modals/generic/dynamic_modal';
+import DynamicModal, {
+	type FieldMetadata,
+} from '../components/modals/generic/dynamic_modal';
 import schema from '../assets/schemas/schema.json';
-
 
 type tableData = {
 	columnName: string[];
 	rowData: any[];
 };
-
-
 
 export default function MyAccesssPage() {
 	let mockAccessAPIResponse = [
@@ -57,17 +56,14 @@ export default function MyAccesssPage() {
 	const [modalAccessId, setModalAccessId] = useState<number>(0);
 	const [formState, setFormState] = useState<Record<string, any>>({});
 
-
-		// Handle form state updates from the dynamic modal
+	// Handle form state updates from the dynamic modal
 	const handleFormStateChange = (newState: Record<string, any>) => {
 		setFormState(newState);
 	};
 
-	
 	/**
 	 * INTERNAL FUNCTIONS
 	 */
-
 
 	useEffect(() => {
 		async function start() {
@@ -314,9 +310,7 @@ export default function MyAccesssPage() {
 					metadata={schema['AccessRequest'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>
-				<button onClick={handleModalAccessCreateDisplay}>
-					Close
-				</button>
+				<button onClick={handleModalAccessCreateDisplay}>Close</button>
 			</SlideModalContainer>
 		</main>
 	);
