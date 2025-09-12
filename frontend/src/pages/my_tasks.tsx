@@ -16,6 +16,7 @@ import MyTaskDeleteModal from '../components/modals/my_tasks/my_task_delete';
 import NotificationModal from '../components/modals/my_tasks/notifications';
 
 import { useState, useEffect } from 'react';
+import TableV2 from '../components/container/table_v2';
 
 type tableData = {
 	columnName: string[];
@@ -318,11 +319,11 @@ export default function MyTasksPage() {
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
-								<Table
+								<TableV2
 									columnName={myTaskTableData.columnName}
 									rowData={myTaskTableData.rowData}
 									withActions={true}
-								></Table>
+								></TableV2>
 							) : (
 								<div>Table is empty!</div>
 							)}
@@ -334,13 +335,13 @@ export default function MyTasksPage() {
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
-								<Table
+								<TableV2
 									columnName={
 										notificationTableData.columnName
 									}
 									rowData={notificationTableData.rowData}
 									withActions={true}
-								></Table>
+								></TableV2>
 							) : (
 								<div>Table is empty!</div>
 							)}
