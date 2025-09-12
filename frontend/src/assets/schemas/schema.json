@@ -1,0 +1,64 @@
+{
+	"userProfile": [
+		{
+			"name": "firstName",
+			"type": "string"
+		},
+		{
+			"name": "lastName",
+			"type": "string"
+		},
+		{
+			"name": "email",
+			"type": "text"
+		},
+		{
+			"name": "age",
+			"type": "number"
+		},
+		{
+			"name": "isActive",
+			"type": "boolean"
+		}
+	],
+	"taskForm": [
+		{
+			"name": "title",
+			"type": "string"
+		},
+		{
+			"name": "description",
+			"type": "text"
+		},
+		{
+			"name": "priority",
+			"type": "number"
+		},
+		{
+			"name": "isCompleted",
+			"type": "boolean"
+		},
+		{
+			"name": "estimatedHours",
+			"type": "number"
+		}
+	],
+	"teamSettings": [
+		{
+			"name": "teamName",
+			"type": "string"
+		},
+		{
+			"name": "allowPublicAccess",
+			"type": "boolean"
+		},
+		{
+			"name": "maxMembers",
+			"type": "number"
+		},
+		{
+			"name": "projectDescription",
+			"type": "text"
+		}
+	]
+}
