@@ -43,12 +43,12 @@ export default function Table({
 				{columnName.map((item, index) => (
 					<div className="w-full flex flex-row" key={index}>
 						{item}
-						<button>
+						<div>
 							<SvgComponent
 								iconName="Sort"
 								className="fill-[#9E9E9E]"
 							/>
-						</button>
+						</div>
 					</div>
 				))}
 
