@@ -4,6 +4,8 @@ notes.txt
 # Backend
 backend/dist
 backend/node_modules
+backend/database/generated/prisma
+backend/.env
 
 # Frontend
 # Logs
