@@ -1,0 +1,20 @@
+{
+	"AccessRequest": [
+		{
+			"name": "FirstName",
+			"type": "string"
+		},
+		{
+			"name": "lastName",
+			"type": "string"
+		},
+		{
+			"name": "Repo Name",
+			"type": "text"
+		},
+		{
+			"name": "Access Level",
+			"type": "number"
+		}
+	]
+}

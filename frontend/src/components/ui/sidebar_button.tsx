@@ -25,9 +25,7 @@ export default function SidebarButton({
 				}}
 			>
 				<SvgComponent iconName={iconPath} className="invert" />
-				<div className="max-md:hidden">
-					{tabName}
-				</div>
+				<div className="max-md:hidden">{tabName}</div>
 			</button>
 		);
 	} else {
@@ -39,9 +37,7 @@ export default function SidebarButton({
 				}}
 			>
 				<SvgComponent iconName={iconPath} className="invert" />
-				<div className="max-md:hidden">
-					{tabName}
-				</div>
+				<div className="max-md:hidden">{tabName}</div>
 			</button>
 		);
 	}

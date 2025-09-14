@@ -7,7 +7,6 @@ export default function HeaderContainer({
 	children: React.ReactNode;
 	pageTitle: string;
 }) {
-
 	const navigate = useNavigate();
 
 	return (
@@ -20,7 +19,7 @@ export default function HeaderContainer({
 				</div>
 				{/* Right Side */}
 				<div className="flex flex-row h-10 gap-9.5 px-5 overflow-y-auto">
-					<button 
+					<button
 						className="text-black cursor-pointer"
 						onClick={() => {
 							navigate('/dashboard/settings');
@@ -28,8 +27,8 @@ export default function HeaderContainer({
 					>
 						settings
 					</button>
-					<div 
-						className='cursor-pointer flex items-center'
+					<div
+						className="cursor-pointer flex items-center"
 						onClick={() => {
 							navigate('/dashboard/profile');
 						}}
