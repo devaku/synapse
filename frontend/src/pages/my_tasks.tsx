@@ -313,9 +313,9 @@ export default function MyTasksPage() {
 		<>
 			<HeaderContainer pageTitle={'My Tasks'}>
 				{/* TABLES */}
-				<div className="flex w-full gap-1">
+				<div className="flex gap-5 max-lg:flex-col">
 					{/* TASKS TABLE */}
-					<div className="w-full">
+					<div className="">
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
@@ -331,7 +331,7 @@ export default function MyTasksPage() {
 					</div>
 
 					{/* NOTIFICATION TABLE */}
-					<div className="w-full">
+					<div className="">
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
