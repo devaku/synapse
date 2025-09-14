@@ -22,7 +22,7 @@ export default function HeaderContainer({
 					<button
 						className="text-black cursor-pointer"
 						onClick={() => {
-							navigate('/dashboard/settings');
+							navigate('/settings');
 						}}
 					>
 						settings
@@ -30,7 +30,7 @@ export default function HeaderContainer({
 					<div
 						className="cursor-pointer flex items-center"
 						onClick={() => {
-							navigate('/dashboard/profile');
+							navigate('/profile');
 						}}
 					>
 						<SvgComponent iconName="Profile" />
@@ -38,7 +38,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="overflow-y-auto p-10 mb-10 flex-1 min-h-0">
+			<div className="overflow-y-auto p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>

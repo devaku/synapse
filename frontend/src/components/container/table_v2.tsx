@@ -15,9 +15,9 @@ export default function TableV2({
 		<div className="w-full h-full flex flex-col">
 			<table>
 				{/* Header */}
-				<thead>
+				<thead className="">
 					{columnName.map((item, index) => (
-						<th className="p-1 w-fit" key={index}>
+						<th className="px-3 h-10" key={index}>
 							<div className="flex flex-row items-center align-middle">
 								{item}
 								<div>
@@ -31,7 +31,7 @@ export default function TableV2({
 					))}
 
 					{withActions ? (
-						<th className="flex items-center align-middle">
+						<th className="flex w-fit px-3 h-10 items-center align-middle">
 							Actions
 						</th>
 					) : (
@@ -39,7 +39,7 @@ export default function TableV2({
 					)}
 				</thead>
 				{/* Body Content */}
-				<tbody>
+				<tbody className="text-left">
 					{rowData.map((row: [], rowIndex: number) => (
 						<tr
 							className=""
@@ -58,14 +58,34 @@ export default function TableV2({
 									// Actions are placed at the very end
 									if (cellIndex == row.length - 1) {
 										return (
-											<td className="" key={cellIndex}>
-												{cell}
+											<td
+												className="flex px-3 h-10 items-center align-middle"
+												key={cellIndex}
+											>
+												<div className='"grid grid-flow-col justify-items-center"'>
+													{cell}
+												</div>
+											</td>
+										);
+									} else if (
+										columnName[cellIndex]?.toLowerCase() ===
+										'status'
+									) {
+										return (
+											<td
+												className="px-3 h-10"
+												key={cellIndex}
+											>
+												<div className="">{cell}</div>
 											</td>
 										);
 									} else {
 										return (
-											<td className="" key={cellIndex}>
-												<div className="overflow-x-auto whitespace-nowrap">
+											<td
+												className="px-3 h-10 w-fit overflow-x-auto text-nowrap"
+												key={cellIndex}
+											>
+												<div className="overflow-x-auto">
 													{cell}
 												</div>
 											</td>
