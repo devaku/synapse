@@ -1,25 +1,11 @@
 @import 'tailwindcss';
 
-/* COLORS */
-
-.ttg-bg-green {
-	background-color: #7bb863;
-}
-
-.ttg-bg-purple {
-	background-color: #737acb;
-}
-
-.ttg-bg-dark-blue {
-	background-color: #153243;
-}
-
-.ttg-bg-brown {
-	background-color: #333333;
-}
-
-.ttg-bg-white {
-	background-color: #ffffff;
+@theme {
+	--color-ttg-green: #7bb863;
+	--color-ttg-purple: #737acb;
+	--color-ttg-dark-blue: #153243;
+	--color-ttg-brown: #333333;
+	--colorttg-white: #ffffff;
 }
 
 /* Animations */
