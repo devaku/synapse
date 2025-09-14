@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Express",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/index.ts", // Adjust this path
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ], // Path to compiled JS
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
+        },
+        {
+            "name": "Vite + React + TS: Chrome Debug",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "breakOnLoad": true,
+            "sourceMaps": true,
+            "trace": true
+        },
+        // {
+        //     "name": "Vite + React + TS: Attach to Chrome",
+        //     "type": "chrome",
+        //     "request": "attach",
+        //     "port": 9222,
+        //     "webRoot": "${workspaceFolder}/src"
+        // }
+    ],
+}

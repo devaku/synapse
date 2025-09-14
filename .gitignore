@@ -2,6 +2,7 @@
 notes.txt
 
 # Backend
+backend/dist
 backend/node_modules
 
 # Frontend
@@ -20,7 +21,6 @@ frontend/dist-ssr
 *.local
 
 # Editor directories and files
-.vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
