@@ -1,0 +1,17 @@
+{
+	"dependencies": {
+		"express": "^5.1.0"
+	},
+	"name": "backend",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"devDependencies": {},
+	"scripts": {
+		"compose:up": "docker compose -p synapse_backend up --build",
+		"compose:down": "docker compose -p synapse_backend down",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": ""
+}
