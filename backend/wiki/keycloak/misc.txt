@@ -1,0 +1,7 @@
+https://www.keycloak.org/docs/latest/server_admin/index.html#_per_realm_admin_permissions
+
+Dedicated Admin Console:
+
+http://localhost:4000/admin/{realm-name}/console
+
+http://localhost:4000/admin/synapse_realm/console
