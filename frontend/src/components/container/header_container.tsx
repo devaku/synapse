@@ -18,7 +18,7 @@ export default function HeaderContainer({
 					{pageTitle}
 				</div>
 				{/* Right Side */}
-				<div className="flex flex-row h-10 gap-9.5 px-5">
+				<div className="flex flex-row h-10 gap-9.5 px-5 overflow-y-auto">
 					<button
 						className="text-black cursor-pointer"
 						onClick={() => {
