@@ -20,12 +20,6 @@
 	--color-ttg-black: #ffffff;
 }
 
-/* Defaulting */
-
-h1, h2, p {
-	color: var(--color-ttg-black)
-}
-
 /* Animations */
 
 .slide-in {

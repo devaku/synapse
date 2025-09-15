@@ -65,9 +65,9 @@ export default function SettingsPage() {
 		);
 	}
 
-	const [activeRadio, setActiveRadio] = useState('Light');
-
 	function RadioGroup({ radios }: { radios: Array<Radio> }) {
+		const [activeRadio, setActiveRadio] = useState(radios[0].name);
+		
 		return (
 			<div className="flex my-5 ml-5">
 				{radios.map((radio) => (
