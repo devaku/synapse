@@ -43,17 +43,20 @@ export default function Table({
 				{columnName.map((item, index) => (
 					<div className="w-full flex flex-row" key={index}>
 						{item}
-						<button>
+						<div>
 							<SvgComponent
 								iconName="Sort"
-								width={16}
-								height={16}
 								className="fill-[#9E9E9E]"
 							/>
-						</button>
+						</div>
 					</div>
 				))}
-				<div className="flex flex-row justify-between">Actions</div>
+
+				{withActions ? (
+					<div className="flex flex-row justify-between">Actions</div>
+				) : (
+					''
+				)}
 			</div>
 			{/* Rows of Content */}
 			<div className="overflow-y-auto flex-1 min-h-0">

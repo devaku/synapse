@@ -1,6 +1,7 @@
 import PopupModalContainer from '../components/container/modal_containers/popup_modal_container';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import HeaderContainer from '../components/container/header_container';
 
 export default function DebugPage() {
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -16,6 +17,14 @@ export default function DebugPage() {
 	} = useForm();
 
 	const onSubmit = (data: any) => console.log(data);
+
+	function handleCustomSubmit(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+
+		console.log(e.currentTarget[0]);
+		let a = e.currentTarget[0] as HTMLInputElement;
+		console.log(a.value);
+	}
 
 	return (
 		<div className="p-10">
@@ -107,6 +116,19 @@ export default function DebugPage() {
 					</div>
 				</form>
 			</div>
+
+			{/* ANOTHER FORM */}
+			<div>
+				<form onSubmit={handleCustomSubmit}>
+					<label htmlFor="">Description: </label>
+					<input type="text" name="description" id="" />
+					<button type="submit">Submit</button>
+				</form>
+			</div>
+
+			<HeaderContainer pageTitle={'Debug Page'}>
+				<div>This is inside the header container</div>
+			</HeaderContainer>
 		</div>
 	);
 }

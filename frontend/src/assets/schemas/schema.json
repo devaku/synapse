@@ -1,0 +1,42 @@
+{
+	"AccessRequest": [
+		{
+			"name": "FirstName",
+			"type": "string"
+		},
+		{
+			"name": "lastName",
+			"type": "string"
+		},
+		{
+			"name": "Repo Name",
+			"type": "text"
+		},
+		{
+			"name": "Access Level",
+			"type": "number"
+		}
+	],
+	"CreateEditTask": [
+		{
+			"name": "Name",
+			"type": "text"
+		},
+		{
+			"name": "Due_date",
+			"type": "date"
+		},
+		{
+			"name": "Asigned_by",
+			"type": "text"
+		},
+		{
+			"name": "Images",
+			"type": "file"
+		},
+		{
+			"name": "Status",
+			"type": "text"
+		}
+	]
+}
