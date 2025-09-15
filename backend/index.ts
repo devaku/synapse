@@ -6,7 +6,7 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 
-import router from './src/routes';
+import router from './src/routes/main';
 
 app.use(router);
 
