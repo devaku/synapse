@@ -1,8 +1,9 @@
 import express from 'express';
-import { createTask } from '../controllers/tasks-controller';
+import { createTask, readTask } from '../controllers/tasks-controller';
 
 const taskRouter = express.Router();
 
-taskRouter.post('/task', express.json(), (req, res) => createTask(req, res));
+taskRouter.get('/tasks', express.json(), readTask);
+taskRouter.post('/tasks', express.json(), createTask);
 
 export default taskRouter;

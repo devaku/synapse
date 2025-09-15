@@ -10,3 +10,8 @@ export async function createTask(task: taskType) {
 
 	return taskRow;
 }
+
+export async function readAllTask() {
+	const taskRow = await prisma.task.findMany();
+	return taskRow;
+}
