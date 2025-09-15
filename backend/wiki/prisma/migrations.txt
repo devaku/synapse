@@ -1,0 +1,9 @@
+https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations#how-to-edit-a-migration-file
+
+
+Reset the database
+npx prisma migrate reset
+
+Create a migration
+npx prisma migrate dev --name <MIGRATION NAME>
+
