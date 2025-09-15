@@ -47,9 +47,13 @@ export async function createKeycloakUser(token: string) {
 			email: 'user2@email.com',
 			emailVerified: true,
 			enabled: true,
-			credentials: {
-				value: 'user2',
-			},
+			credentials: [
+				{
+					type: 'password',
+					value: 'user2',
+					temporary: false,
+				},
+			],
 		};
 
 		let response = await axios({
