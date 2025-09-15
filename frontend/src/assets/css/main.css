@@ -16,8 +16,14 @@
 	--color-ttg-purple: #737acb;
 	--color-ttg-dark-blue: #153243;
 	--color-ttg-brown: #333333;
-	--color-ttg-white: #000000;
+	--color-ttg-white: #222222;
 	--color-ttg-black: #ffffff;
+}
+
+/* Defaulting */
+
+h1, h2, p {
+	color: var(--color-ttg-black)
 }
 
 /* Animations */

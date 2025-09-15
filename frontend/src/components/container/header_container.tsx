@@ -11,7 +11,7 @@ export default function HeaderContainer({
 	const navigate = useNavigate();
 
 	return (
-		<div className="w-full flex flex-col">
+		<div className="w-full flex flex-col bg-ttg-white">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-gray-100 items-center justify-between">
 				{/* Left Side */}

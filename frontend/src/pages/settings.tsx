@@ -66,7 +66,11 @@ export default function SettingsPage() {
 					<Radio 
 						name={radio.name}
 						selected={radio.name === activeRadio}
-						onClick={() => setActiveRadio(radio.name)}
+						onClick={() => {
+							setActiveRadio(radio.name)
+							if (radio.onClick === undefined) { return }
+							radio.onClick()
+						}}
 					/>
 				))}
 			</div>
@@ -78,7 +82,7 @@ export default function SettingsPage() {
 			<TabGroup tabs={
 				[
 					{name: 'Appearance', content: 
-						<div>
+						<div className=''>
 							<div className='flex flex-col gap-2 mt-5'>
 								<h2 className='text-3xl font-semibold'>Theme</h2>
 								<p>Choose from either a light or dark theme.</p>
@@ -86,8 +90,8 @@ export default function SettingsPage() {
 							
 							<RadioGroup radios={
 								[
-									{name: "Light"},
-									{name: "Dark"}
+									{name: "Light", onClick: (() => (document.documentElement.setAttribute('class', '')))},
+									{name: "Dark", onClick: (() => (document.documentElement.setAttribute('class', 'dark')))}
 								]
 							}/>
 
