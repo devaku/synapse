@@ -6,7 +6,7 @@ export default function AuthContainer({
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="flex flex-row ttg-bg-dark-blue px-5 h-screen">
+		<div className="flex flex-row bg-ttg-dark-blue px-5 h-screen">
 			{/* Login */}
 			<div className="flex flex-row items-center justify-center flex-1 w-1/2">
 				{children}
