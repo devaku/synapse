@@ -29,7 +29,7 @@ export default function Sidebar() {
 	const adminPrivileges = true; // TODO: Change this to actual check
 
 	return (
-		<div className="h-screen flex flex-col items-center md:w-50 max-md:w-20 ttg-bg-dark-blue px-3 pt-3">
+		<div className="h-screen flex flex-col items-center md:w-50 max-md:w-20 bg-ttg-dark-blue px-3 pt-3">
 			<img
 				src={TTGLogo}
 				alt="TTG Logo"
