@@ -7,11 +7,10 @@ export default function HeaderContainer({
 	children: React.ReactNode;
 	pageTitle: string;
 }) {
-
 	const navigate = useNavigate();
 
 	return (
-		<div className="w-full flex flex-col">
+		<div className="w-full flex flex-col bg-ttg-white text-ttg-black">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-gray-100 items-center justify-between">
 				{/* Left Side */}
@@ -20,18 +19,18 @@ export default function HeaderContainer({
 				</div>
 				{/* Right Side */}
 				<div className="flex flex-row h-10 gap-9.5 px-5 overflow-y-auto">
-					<button 
+					<button
 						className="text-black cursor-pointer"
 						onClick={() => {
-							navigate('/dashboard/settings');
+							navigate('/settings');
 						}}
 					>
 						settings
 					</button>
-					<div 
-						className='cursor-pointer flex items-center'
+					<div
+						className="cursor-pointer flex items-center"
 						onClick={() => {
-							navigate('/dashboard/profile');
+							navigate('/profile');
 						}}
 					>
 						<SvgComponent iconName="Profile" />
@@ -39,7 +38,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="overflow-y-auto p-10 mb-10 flex-1 min-h-0">
+			<div className="overflow-y-auto p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>

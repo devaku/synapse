@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../lib/hooks/auth/useAuth';
 import keycloak from '../lib/services/auth/keycloak';
+import HeaderContainer from '../components/container/header_container';
 
 export default function DebugPage() {
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -131,6 +132,10 @@ export default function DebugPage() {
 					<button type="submit">Submit</button>
 				</form>
 			</div>
+
+			<HeaderContainer pageTitle={'Debug Page'}>
+				<div>This is inside the header container</div>
+			</HeaderContainer>
 		</div>
 	);
 }

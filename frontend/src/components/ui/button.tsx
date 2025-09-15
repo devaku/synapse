@@ -10,10 +10,10 @@ export default function Button(props: buttonProps) {
 
 	switch (buttonType) {
 		case 'green':
-			style = `cursor-pointer text-center text-black p-2 rounded-2xl ttg-bg-green `;
+			style = `cursor-pointer text-center text-black p-2 rounded-2xl bg-ttg-green `;
 			break;
 		case 'purple':
-			style = `cursor-pointer text-center text-black p-2 rounded-2xl ttg-bg-purple `;
+			style = `cursor-pointer text-center text-black p-2 rounded-2xl bg-ttg-purple `;
 			break;
 		case 'edit':
 			style =

@@ -13,6 +13,9 @@ import TeamCreateModal from '../components/modals/teams/team_create';
 import TeamReadModal from '../components/modals/teams/team_read';
 import TeamUpdateModal from '../components/modals/teams/team_update';
 
+// new import for our reusable modal hook
+import { useModal } from '../hooks/useModal';
+
 type tableData = {
 	columnName: string[];
 	rowData: any[];
@@ -41,10 +44,12 @@ export default function TeamsPage() {
 
 	/**
 	 * MODAL STATES
+	 * old way: const [showModalCreateTeam, setShowModalCreateTeam] = useState(false)
+	 * new way: using our useModal hook so we don’t repeat code
 	 */
-	const [showModalCreateTeam, setShowModalCreateTeam] = useState(false);
-	const [showModalReadTeam, setShowModalReadTeam] = useState(false);
-	const [showModalUpdateTeam, setShowModalUpdateTeam] = useState(false);
+	const createTeamModal = useModal();
+	const readTeamModal = useModal();
+	const updateTeamModal = useModal();
 
 	const [tableData, setTableData] = useState<tableData>({
 		columnName: [],
@@ -64,10 +69,11 @@ export default function TeamsPage() {
 
 	useEffect(() => {
 		async function start() {
+			// refresh table after closing or creating if you want
 			// await refreshTable();
 		}
 		start();
-	}, [showModalCreateTeam]);
+	}, [createTeamModal.isOpen]);
 
 	/**
 	 * Extracts the values given by the API response
@@ -184,14 +190,6 @@ export default function TeamsPage() {
 
 		let { id } = dataObject;
 
-		function handleClickInfo() {
-			setShowModalReadTeam(!showModalReadTeam);
-		}
-
-		function handleClickEdit() {
-			setShowModalUpdateTeam(!showModalUpdateTeam);
-		}
-
 		async function handleClickDelete() {
 			// TODO: Add modal handling for error here
 			try {
@@ -206,13 +204,13 @@ export default function TeamsPage() {
 			<>
 				<button
 					className="cursor-pointer w-6 h-6"
-					onClick={handleClickInfo}
+					onClick={readTeamModal.toggle} // new hook handles open/close
 				>
 					<SvgComponent iconName="INFO" className="" />
 				</button>
 				<button
 					className="cursor-pointer w-6 h-6"
-					onClick={handleClickEdit}
+					onClick={updateTeamModal.toggle} // same deal here
 				>
 					<SvgComponent iconName="WRENCH" className="" />
 				</button>
@@ -228,23 +226,8 @@ export default function TeamsPage() {
 
 	/**
 	 * Handler functions
+	 * old ones (setShowModalX) not needed anymore since useModal gives us .open, .close, .toggle
 	 */
-
-	function handleModalDisplayCreateTeam() {
-		setShowModalCreateTeam(!showModalCreateTeam);
-	}
-
-	function handleModalDisplayReadTeam() {
-		setShowModalReadTeam(!showModalReadTeam);
-	}
-
-	function handleModalDisplayEditTeam() {
-		setShowModalUpdateTeam(!showModalUpdateTeam);
-	}
-
-	function handleClickCreateTeam() {
-		setShowModalCreateTeam(true);
-	}
 
 	return (
 		<>
@@ -255,7 +238,7 @@ export default function TeamsPage() {
 						<Button
 							buttonType="add"
 							buttonText="Create Team"
-							buttonOnClick={handleClickCreateTeam}
+							buttonOnClick={createTeamModal.open} // just open directly
 						/>
 					</div>
 				</div>
@@ -271,19 +254,25 @@ export default function TeamsPage() {
 					)}
 				</div>
 			</HeaderContainer>
-			<SlideModalContainer isOpen={showModalCreateTeam} noFade={false}>
+
+			{/* Create Modal */}
+			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
 				<TeamCreateModal
-					handleModalDisplay={handleModalDisplayCreateTeam}
+					handleModalDisplay={createTeamModal.toggle}
 				></TeamCreateModal>
 			</SlideModalContainer>
-			<SlideModalContainer isOpen={showModalReadTeam} noFade={false}>
+
+			{/* Read Modal */}
+			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
 				<TeamReadModal
-					handleModalDisplay={handleModalDisplayReadTeam}
+					handleModalDisplay={readTeamModal.toggle}
 				></TeamReadModal>
 			</SlideModalContainer>
-			<SlideModalContainer isOpen={showModalUpdateTeam} noFade={false}>
+
+			{/* Update Modal */}
+			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
 				<TeamUpdateModal
-					handleModalDisplay={handleModalDisplayEditTeam}
+					handleModalDisplay={updateTeamModal.toggle}
 				></TeamUpdateModal>
 			</SlideModalContainer>
 		</>
