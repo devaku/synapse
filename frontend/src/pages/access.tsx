@@ -6,7 +6,6 @@ import StatusPill from '../components/ui/status_pill';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import Button from '../components/ui/button';
 import * as _ from 'lodash';
-import DynamicModalExample from '../components/modals/generic/dynamic_modal_example';
 import { useState, useEffect } from 'react';
 import DynamicModal, {
 	type FieldMetadata,
@@ -45,14 +44,8 @@ export default function MyAccesssPage() {
 		rowData: [],
 	});
 	const [showModalCreateAccess, setShowModalCreateAccess] = useState(false);
-	const [notificationTableData, setNotificationTableData] =
-		useState<tableData>({
-			columnName: [],
-			rowData: [],
-		});
+	const [showModalAccessInfo, setShowModalAccessInfo] = useState(false);
 
-	const [showModalAccessInfo, setShowModalAccessInfo] =
-		useState<boolean>(false);
 	const [modalAccessId, setModalAccessId] = useState<number>(0);
 	const [formState, setFormState] = useState<Record<string, any>>({});
 
