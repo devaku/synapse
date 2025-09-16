@@ -18,7 +18,7 @@ import LoginCallback from './pages/auth/callback/login_callback';
 import RootLayout from './pages/root_layout';
 import DebugLayout from './pages/debug_layout';
 import ProtectLayout from './pages/protect_layout';
-import DashboardLayout from './pages/layout';
+import DashboardLayout from './pages/dashboard_layout';
 
 /**
  * PAGES
