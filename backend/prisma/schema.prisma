@@ -64,7 +64,7 @@ model Task {
 
     createdBy      Int
     createdByUser  User      @relation("TaskCreatedBy", fields: [createdBy], references: [id])
-    assignedTo     Int
+    assignedTo     Int?
     assignedToUser User?     @relation("TaskAssignedTo", fields: [assignedTo], references: [id])
     priority       String
     name           String    @db.VarChar(255)
