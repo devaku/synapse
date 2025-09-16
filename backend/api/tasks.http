@@ -16,11 +16,13 @@ Content-Type: application/json
 
 ###
 
-// Read a task
+// Read ALL tasks
 GET {{localurl}}/tasks HTTP/1.1
 
 # {
-#   "statusText": "success",
+#   "statusCode": 200,
+#   "statusText": "OK",
+#   "message": "Data was retrieved successfully.",
 #   "data": [
 #     {
 #       "id": 1,
@@ -32,7 +34,31 @@ GET {{localurl}}/tasks HTTP/1.1
 #       "image": null,
 #       "startDate": null,
 #       "completeDate": null,
-#       "createdAt": "2025-09-15T21:33:54.927Z"
+#       "createdAt": "2025-09-16T20:46:43.355Z"
+#     },
+#     {
+#       "id": 2,
+#       "createdBy": 2,
+#       "assignedTo": null,
+#       "priority": "URGENT",
+#       "name": "task 2",
+#       "description": "2nd Task",
+#       "image": null,
+#       "startDate": null,
+#       "completeDate": null,
+#       "createdAt": "2025-09-16T20:46:43.359Z"
+#     },
+#     {
+#       "id": 3,
+#       "createdBy": 2,
+#       "assignedTo": null,
+#       "priority": "URGENT",
+#       "name": "task 3",
+#       "description": "This is the third task",
+#       "image": null,
+#       "startDate": null,
+#       "completeDate": null,
+#       "createdAt": "2025-09-16T20:46:43.361Z"
 #     }
 #   ]
 # }
