@@ -14,7 +14,7 @@ import DynamicModal, {
 import schema from '../assets/schemas/schema.json';
 
 // new import for our reusable modal hook
-import { useModal } from '../hooks/useModal';
+import { useModal } from '../lib/hooks/ui/useModal';
 import StatusPill from '../components/ui/status_pill';
 
 type tableData = {
