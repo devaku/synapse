@@ -35,7 +35,7 @@ For steps 4 and 5, the latest files must be requested from the developer who has
     2. Sign in
     3. Navigate to Manage Realms > Create Realm
 6. Run the migrations for the local database using the command: `npx prisma migrate dev`
-7. Lastly, seed the database using `npm run db:seed`
+7. Lastly, seed the database using `npm run db:seed`. The command resets the database, runs all migrations, and then seeds it. Helpful when dealing with pesky ID issues.
 8. To run the application, run the command `npm run dev`
 9. To confirm the server is working, navigate to `http://localhost:8080/api/v1/debug` and it should return a json response.
 

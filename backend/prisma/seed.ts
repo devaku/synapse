@@ -1,7 +1,7 @@
 import { PrismaClient } from '../database/generated/prisma';
 const prisma = new PrismaClient();
 
-let userSeeds = [
+let userAndTeamSeeds = [
 	{
 		username: 'admin1',
 		email: 'admin1@email.com',
@@ -58,14 +58,47 @@ let userSeeds = [
 	},
 ];
 
+let taskSeeds = [
+	{
+		createdBy: 2,
+		priority: 'URGENT',
+		name: 'task 1',
+		description: 'This is a task',
+	},
+	{
+		createdBy: 2,
+		priority: 'URGENT',
+		name: 'task 2',
+		description: '2nd Task',
+	},
+	{
+		createdBy: 2,
+		priority: 'URGENT',
+		name: 'task 3',
+		description: 'This is the third task',
+	},
+];
+
 async function seed() {
-	// Clean tables
+	
+    // Clean tables
 	await prisma.user.deleteMany({});
 	await prisma.team.deleteMany({});
+	await prisma.task.deleteMany({});
 
-	for (let index = 0; index < userSeeds.length; index++) {
-		const element = userSeeds[index];
+	// Insert user and teams
+	for (let index = 0; index < userAndTeamSeeds.length; index++) {
+		const element = userAndTeamSeeds[index];
 		await prisma.user.create({
+			data: {
+				...element,
+			},
+		});
+	}
+
+	for (let index = 0; index < taskSeeds.length; index++) {
+		const element = taskSeeds[index];
+		await prisma.task.create({
 			data: {
 				...element,
 			},
