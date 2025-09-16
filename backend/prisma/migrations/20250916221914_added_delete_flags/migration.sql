@@ -1,0 +1,20 @@
+-- AlterTable
+ALTER TABLE "synapse"."Comment" ADD COLUMN     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "isDeleted" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "synapse"."Logs" ADD COLUMN     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "isDeleted" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "synapse"."Notification" ADD COLUMN     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "isDeleted" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "synapse"."Task" ADD COLUMN     "isDeleted" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "synapse"."Team" ADD COLUMN     "isDeleted" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "synapse"."User" ADD COLUMN     "isDeleted" INTEGER NOT NULL DEFAULT 0;

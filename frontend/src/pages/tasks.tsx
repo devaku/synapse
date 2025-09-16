@@ -1,22 +1,32 @@
 import * as _ from 'lodash';
-import Button from '../components/ui/button';
-import HeaderContainer from '../components/container/header_container';
-
-import SearchBar from '../components/ui/searchbar';
-import Table from '../components/container/table';
-
 import { useEffect, useState } from 'react';
+
+/**
+ * COMPONENTS
+ */
+import Button from '../components/ui/button';
+import SearchBar from '../components/ui/searchbar';
 import SvgComponent from '../components/ui/svg_component';
+import Table from '../components/container/table';
+import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import DynamicModal, {
 	type FieldMetadata,
 } from '../components/modals/generic/dynamic_modal';
+import { useModal } from '../lib/hooks/ui/useModal';
+
+/**
+ * DATA
+ */
 import schema from '../assets/schemas/schema.json';
 
-// new import for our reusable modal hook
-import { useModal } from '../lib/hooks/ui/useModal';
-import StatusPill from '../components/ui/status_pill';
+/**
+ * SERVICES
+ */
 
+import { readAllTasks } from '../lib/services/api/task';
+
+// This needs to be put the types.tsx
 type tableData = {
 	columnName: string[];
 	rowData: any[];
@@ -24,8 +34,6 @@ type tableData = {
 };
 
 export default function TasksPage() {
-	// [{"id":3,"name":"Last Task","description":"Last Task for now"}]
-
 	let mockTasksResponse = [
 		{
 			id: 1,
@@ -122,8 +130,8 @@ export default function TasksPage() {
 	 */
 
 	async function refreshTable() {
-		// let data = await ReadAllTasks();
-		let data = mockTasksResponse;
+		let data = await readAllTasks();
+		console.log(data);
 		if (data.length > 0) {
 			loadTasks(data);
 		} else {

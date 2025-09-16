@@ -11,5 +11,6 @@ backend/database/generated/prisma
 backend/.env
 
 # Frontend
+frontend/src/scratch
 frontend/dist
 frontend/dist-ssr

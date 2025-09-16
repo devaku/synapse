@@ -5,10 +5,12 @@ import { jsonResponse } from '../types';
 export function buildResponse(statusCode: number, message: string, data?: any) {
 	let finalData;
 	if (data) {
-		if (data.length > 0) {
-			finalData = data;
+		if (Array.isArray(data)) {
+			if (data.length > 0) {
+				finalData = data;
+			}
 		} else {
-			finalData = [...data];
+			finalData = [data];
 		}
 	}
 

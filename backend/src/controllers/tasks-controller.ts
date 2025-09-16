@@ -44,3 +44,18 @@ export async function readTask(req: Request, res: Response) {
 		res.status(500).json(finalResponse);
 	}
 }
+
+export async function deleteTask(req: Request, res: Response) {
+	try {
+		const taskId = Number(req.params.id);
+		const task = await taskService.deleteTask(taskId);
+		let message = 'Row was deleted successfully.';
+
+		let finalResponse = buildResponse(200, message, task);
+
+		res.status(200).json(finalResponse);
+	} catch (error) {
+		let finalResponse = buildError(500, 'There was an error', error);
+		res.status(500).json(finalResponse);
+	}
+}
