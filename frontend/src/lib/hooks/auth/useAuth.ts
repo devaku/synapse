@@ -6,7 +6,9 @@ const useAuth = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false); // tracking auth status
 	const [token, setToken] = useState<string | null>(null);
 	useEffect(() => {
-		if (isRun.current) return; // Ensures init only runs once
+		if (isRun.current) {
+			return;
+		} // Ensures init only runs once
 		isRun.current = true;
 		keycloak
 			.init({ onLoad: 'login-required' }) // or "check-sso"

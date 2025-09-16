@@ -14,7 +14,7 @@ import TeamReadModal from '../components/modals/teams/team_read';
 import TeamUpdateModal from '../components/modals/teams/team_update';
 
 // new import for our reusable modal hook
-import { useModal } from '../hooks/useModal';
+import { useModal } from '../lib/hooks/ui/useModal';
 
 type tableData = {
 	columnName: string[];

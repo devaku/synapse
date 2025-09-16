@@ -1,0 +1,10 @@
+{
+	"realm": "synapse_realm",
+	"auth-server-url": "http://localhost:4000/",
+	"ssl-required": "external",
+	"resource": "client_synapse",
+	"public-client": true,
+	"verify-token-audience": true,
+	"use-resource-role-mappings": true,
+	"confidential-port": 0
+}

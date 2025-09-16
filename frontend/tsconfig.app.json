@@ -16,6 +16,7 @@
         "verbatimModuleSyntax": true,
         "moduleDetection": "force",
         "noEmit": true,
+        "resolveJsonModule": true, /* Enable importing .json files. */
         "jsx": "react-jsx",
         /* Linting */
         "strict": true,

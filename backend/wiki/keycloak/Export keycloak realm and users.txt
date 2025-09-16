@@ -15,6 +15,6 @@ You should get a JSON file saved into the /import folder mentioned.
 THEN. Using an external terminal (CMD) type this command:
 
 docker cp {your-containers-id}:/opt/keycloak/data/import/{your-realm-id}-realm.json /{your-desired-location-on-host}
-docker cp synapse_auth:/opt/keycloak/data/import/synapse_realm.json C:\Users\Valeen\Desktop\CODES
+docker cp synapse_auth:/opt/keycloak/data/import/synapse_realm-realm.json C:\Users\Valeen\Desktop\CODES
 
 You should now have your json file ready for importing.
