@@ -1,13 +1,20 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
+import router from './src/routes/main';
+import session from 'express-session';
+import { keycloak, sessionMiddleware } from './src/lib/keycloak-helper';
 
 const app = express();
-dotenv.config();
-
 const PORT = process.env.PORT;
 
-import router from './src/routes/main';
+// Load the ENV settings
+dotenv.config();
 
+// Load session
+app.use(sessionMiddleware);
+app.use(keycloak.middleware());
+
+// Load the routes
 app.use(router);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {

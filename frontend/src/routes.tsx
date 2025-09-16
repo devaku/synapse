@@ -78,6 +78,7 @@ export const router = createBrowserRouter([
 
 			// Login to Keycloak
 			{ path: '/auth/callback/login', Component: LoginCallback },
+			{ path: '/auth/callback/logout', Component: LoginCallback },
 
 			{
 				index: true,
