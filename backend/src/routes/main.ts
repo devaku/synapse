@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { Request, Response } from 'express';
+import { verifyJwt } from '../middlewares/auth-middleware';
 import debugRouter from './debug';
 import taskRouter from './tasks';
 
