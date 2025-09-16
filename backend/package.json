@@ -8,6 +8,7 @@
 		"dist": "nodemon dist/index.js",
 		"compose:up": "docker compose -p synapse_backend up --build",
 		"compose:down": "docker compose -p synapse_backend down",
+		"compose:stop": "docker compose -p synapse_backend stop",
 		"db:reset": "",
 		"db:seed": "ts-node prisma/seed.ts",
 		"build": "tsc",

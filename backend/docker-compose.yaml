@@ -16,8 +16,10 @@ services:
             - '4001:5432'
         volumes:
             - postgres_data:/var/lib/postgresql/data
-        # networks:
-        #     - synapse_network
+
+        # Needs to be removed in final release
+        networks:
+            - synapse_network
 
     keycloak_service:
         container_name: synapse_auth
@@ -28,28 +30,34 @@ services:
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
 
+
+            # IMPORTANT. These database settings need to be removed
+            # In final release
             # Database Type
-            # KC_DB: postgres
+            KC_DB: postgres
 
-            # # Name of the SERVICE
-            # # That is running the database
-            # KC_DB_URL_HOST: postgres_service
+            # Name of the SERVICE
+            # That is running the database
+            KC_DB_URL_HOST: postgres_service
 
-            # # Database Credentials
-            # # Should be the same as the one in the DB setup
-            # KC_DB_URL_DATABASE: synapse_db
-            # KC_DB_USERNAME: myuser
-            # KC_DB_PASSWORD: mypassword
+            # Database Credentials
+            # Should be the same as the one in the DB setup
+            KC_DB_URL_DATABASE: synapse_db
+            KC_DB_USERNAME: myuser
+            KC_DB_PASSWORD: mypassword
 
+        # Needs to be removed in final release
         # Reference the SERVICE
-        # depends_on:
-        #     - postgres_service
-        # networks:
-        #     - synapse_network
+        depends_on:
+            - postgres_service
+        networks:
+            - synapse_network
+
         command: start-dev
 
 volumes:
     postgres_data:
 
-# networks:
-#     synapse_network:
+# Needs to be removed in final release
+networks:
+    synapse_network:
