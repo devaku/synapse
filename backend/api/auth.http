@@ -1,0 +1,8 @@
+POST http://localhost:4000/realms/synapse_realm/protocol/openid-connect/token HTTP/1.1
+Content-type: application/x-www-form-urlencoded
+
+realm=synapse_realm
+&username=admin1
+&password=admin1
+&grant_type=password
+&client_id=client_synapse

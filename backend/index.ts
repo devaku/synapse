@@ -1,8 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import router from './src/routes/main';
+import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import { keycloak, sessionMiddleware } from './src/lib/keycloak-helper';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -10,9 +11,25 @@ const PORT = process.env.PORT;
 // Load the ENV settings
 dotenv.config();
 
-// Load session
-app.use(sessionMiddleware);
-app.use(keycloak.middleware());
+// Load CORS
+app.use(
+	cors({
+		origin: 'http://localhost:3000',
+		credentials: true,
+	})
+);
+
+// Parse the cookies attached to the request
+app.use(cookieParser());
+
+// app.use((req: Request, res: Response, next: NextFunction) => {
+// 	console.log('HEADERS');
+// 	console.log(req.headers);
+// 	console.log('COOKIES');
+// 	console.log(req.cookies);
+
+// 	next();
+// });
 
 // Load the routes
 app.use(router);

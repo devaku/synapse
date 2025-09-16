@@ -2,13 +2,12 @@ import PopupModalContainer from '../components/container/modal_containers/popup_
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../lib/hooks/auth/useAuth';
-import keycloak from '../lib/services/auth/keycloak';
 import HeaderContainer from '../components/container/header_container';
 
 export default function DebugPage() {
 	const [showModal, setShowModal] = useState<boolean>(false);
 
-	const { isAuthenticated, token } = useAuth();
+	const { keycloak, isAuthenticated, token } = useAuth();
 
 	function handleModalDisplay() {
 		setShowModal(!showModal);

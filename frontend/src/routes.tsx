@@ -15,10 +15,10 @@ import LoginCallback from './pages/auth/callback/login_callback';
  * LAYOUTS
  */
 
-import RootLayout from './pages/root_layout';
-import DebugLayout from './pages/debug_layout';
-import ProtectLayout from './pages/protect_layout';
-import DashboardLayout from './pages/layout';
+import RootLayout from './components/layouts/root_layout';
+import DebugLayout from './components/layouts/debug_layout';
+import ProtectLayout from './components/layouts/protect_layout';
+import DashboardLayout from './components/layouts/dashboard_layout';
 
 /**
  * PAGES

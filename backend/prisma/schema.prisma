@@ -25,6 +25,7 @@ model User {
     phone        Int?
     createdAt    DateTime       @default(now()) @db.Timestamp(6)
     Notification Notification[]
+    isDeleted    Int            @default(0)
     Logs         Logs[]
 
     createdTasks  Task[]    @relation("TaskCreatedBy")
@@ -38,30 +39,34 @@ model Team {
     description  String?        @db.VarChar(255)
     User         User[]
     createdAt    DateTime       @default(now()) @db.Timestamp(6)
+    isDeleted    Int            @default(0)
     Notification Notification[]
 }
 
 model Notification {
-    id          Int    @id @default(autoincrement())
-    name        String @db.VarChar(255)
-    description String @db.VarChar(255)
+    id          Int      @id @default(autoincrement())
+    name        String   @db.VarChar(255)
+    description String   @db.VarChar(255)
     userId      Int
-    user        User   @relation(fields: [userId], references: [id])
+    user        User     @relation(fields: [userId], references: [id])
     teamId      Int?
-    team        Team?  @relation(fields: [teamId], references: [id])
+    team        Team?    @relation(fields: [teamId], references: [id])
+    createdAt   DateTime @default(now()) @db.Timestamp(6)
+    isDeleted   Int      @default(0)
 }
 
 model Logs {
-    id          Int    @id @default(autoincrement())
-    name        String @db.VarChar(255)
-    description String @db.VarChar(255)
+    id          Int      @id @default(autoincrement())
+    name        String   @db.VarChar(255)
+    description String   @db.VarChar(255)
     userId      Int
-    user        User   @relation(fields: [userId], references: [id])
+    user        User     @relation(fields: [userId], references: [id])
+    createdAt   DateTime @default(now()) @db.Timestamp(6)
+    isDeleted   Int      @default(0)
 }
 
 model Task {
-    id Int @id @default(autoincrement())
-
+    id             Int       @id @default(autoincrement())
     createdBy      Int
     createdByUser  User      @relation("TaskCreatedBy", fields: [createdBy], references: [id])
     assignedTo     Int?
@@ -73,16 +78,19 @@ model Task {
     startDate      DateTime? @db.Timestamp(6)
     completeDate   DateTime? @db.Timestamp(6)
     createdAt      DateTime  @default(now()) @db.Timestamp(6)
+    isDeleted      Int       @default(0)
     comments       Comment[]
 }
 
 model Comment {
-    id      Int    @id @default(autoincrement())
-    userId  Int
-    User    User   @relation("CommentCreatedBy", fields: [userId], references: [id])
-    message String @db.VarChar(255)
-    Task    Task   @relation(fields: [taskId], references: [id])
-    taskId  Int
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    User      User     @relation("CommentCreatedBy", fields: [userId], references: [id])
+    message   String   @db.VarChar(255)
+    Task      Task     @relation(fields: [taskId], references: [id])
+    taskId    Int
+    createdAt DateTime @default(now()) @db.Timestamp(6)
+    isDeleted Int      @default(0)
 }
 
 model Session {

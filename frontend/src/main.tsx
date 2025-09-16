@@ -10,3 +10,9 @@ createRoot(document.getElementById('root')!).render(
 		<RouterProvider router={router} />
 	</StrictMode>
 );
+
+// import ScratchPage from './scratch/scratch';
+
+// createRoot(document.getElementById('root')!).render(
+// 	<ScratchPage></ScratchPage>
+// );
