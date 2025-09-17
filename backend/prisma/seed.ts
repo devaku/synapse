@@ -60,19 +60,19 @@ let userAndTeamSeeds = [
 
 let taskSeeds = [
 	{
-		createdBy: 2,
+		createdByUserId: 2,
 		priority: 'URGENT',
 		name: 'task 1',
 		description: 'This is a task',
 	},
 	{
-		createdBy: 2,
+		createdByUserId: 2,
 		priority: 'URGENT',
 		name: 'task 2',
 		description: '2nd Task',
 	},
 	{
-		createdBy: 2,
+		createdByUserId: 2,
 		priority: 'URGENT',
 		name: 'task 3',
 		description: 'This is the third task',
@@ -80,8 +80,7 @@ let taskSeeds = [
 ];
 
 async function seed() {
-	
-    // Clean tables
+	// Clean tables
 	await prisma.user.deleteMany({});
 	await prisma.team.deleteMany({});
 	await prisma.task.deleteMany({});
