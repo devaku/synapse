@@ -14,6 +14,7 @@ export default function StatusPill({ text }: statusPillProps) {
 				</div>
 			);
 			break;
+		case 'URGENT':
 		case 'OVERDUE':
 			finalhtml = (
 				<div className={style + ' bg-red-200 text-red-700'}>

@@ -5,15 +5,20 @@ import { useEffect, useState } from 'react';
  * COMPONENTS
  */
 import Button from '../components/ui/button';
-import SearchBar from '../components/ui/searchbar';
+
+import StatusPill from '../components/ui/status_pill';
 import SvgComponent from '../components/ui/svg_component';
-import Table from '../components/container/table';
+
 import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import DynamicModal, {
 	type FieldMetadata,
 } from '../components/modals/generic/dynamic_modal';
 import { useModal } from '../lib/hooks/ui/useModal';
+
+import DataTable, { type TableColumn } from 'react-data-table-component';
+
+import { type Task } from '../lib/types';
 
 /**
  * DATA
@@ -24,45 +29,17 @@ import schema from '../assets/schemas/schema.json';
  * SERVICES
  */
 
-import { readAllTasks } from '../lib/services/api/task';
+import { readAllTasks, deleteTask } from '../lib/services/api/task';
 
 // This needs to be put the types.tsx
 type tableData = {
-	columnName: string[];
+	columnName: any[];
 	rowData: any[];
-	status?: string;
 };
 
 export default function TasksPage() {
-	let mockTasksResponse = [
-		{
-			id: 1,
-			Name: 'First Task',
-			Due_date: 'DESCRIPTION',
-			Asigned_by: 'DESCRIPTION',
-			Images: 'DESCRIPTION',
-			Status: 'PENDING',
-		},
-		{
-			id: 2,
-			Name: 'First Task',
-			Due_date: 'DESCRIPTION',
-			Asigned_by: 'DESCRIPTION',
-			Images: 'DESCRIPTION',
-			Status: 'PENDING',
-		},
-		{
-			id: 3,
-			Name: 'First Task',
-			Due_date: 'DESCRIPTION',
-			Asigned_by: 'DESCRIPTION',
-			Images: 'DESCRIPTION',
-			Status: 'PENDING',
-		},
-	];
-
 	/**
-	 * MODAL STATES
+	 * MODAL RELATED STATES
 	 * old way: const [showModalCreateTask, setShowModalCreateTask] = useState(false)
 	 * new way: using our useModal hook so we don’t repeat code
 	 */
@@ -70,15 +47,20 @@ export default function TasksPage() {
 	const readTaskModal = useModal();
 	const updateTaskModal = useModal();
 	const [formState, setFormState] = useState<Record<string, any>>({});
-
 	// Handle form state updates from the dynamic modal
 	const handleFormStateChange = (newState: Record<string, any>) => {
 		setFormState(newState);
 	};
+
+	/**
+	 * TABLE RELATED STATES
+	 */
+	const [toggleClearRows, setTogglClearRows] = useState<boolean>(false);
 	const [tableData, setTableData] = useState<tableData>({
 		columnName: [],
 		rowData: [],
 	});
+	const [selectedRows, setSelectedRows] = useState<any[]>([]);
 
 	/**
 	 * INTERNAL FUNCTIONS
@@ -94,7 +76,7 @@ export default function TasksPage() {
 	useEffect(() => {
 		async function start() {
 			// refresh table after closing or creating if you want
-			// await refreshTable();
+			await refreshTable();
 		}
 		start();
 	}, [createTaskModal.isOpen]);
@@ -115,6 +97,37 @@ export default function TasksPage() {
 		);
 	}
 
+	/**
+	 * Convert Date to be readable
+	 * Provided by Chatgpt
+	 * @param date
+	 * @returns
+	 */
+	function formatCustomDate(isoString: string | undefined): string {
+		// If undefined, do nothing
+		if (!isoString) {
+			return '';
+		}
+
+		const date = new Date(isoString);
+
+		// if (isNaN(date.getTime())) {
+		// 	throw new Error('Invalid date string');
+		// }
+
+		const pad = (n: number): string => n.toString().padStart(2, '0');
+
+		const year = date.getUTCFullYear();
+		const month = pad(date.getUTCMonth() + 1); // Months are zero-based
+		const day = pad(date.getUTCDate());
+
+		const hours = pad(date.getUTCHours());
+		const minutes = pad(date.getUTCMinutes());
+		const seconds = pad(date.getUTCSeconds());
+
+		return `${year}-${month}-${day} ${hours}:${minutes}`;
+	}
+
 	function findTableEntryById(id: number, arrayOfObjects: any) {
 		// Get the index that the id matches
 		// Return that object
@@ -131,7 +144,7 @@ export default function TasksPage() {
 
 	async function refreshTable() {
 		let data = await readAllTasks();
-		console.log(data);
+		// console.log(data);
 		if (data.length > 0) {
 			loadTasks(data);
 		} else {
@@ -143,12 +156,93 @@ export default function TasksPage() {
 		}
 	}
 
+	function loadTasks(data: Task[]) {
+		// Hard coded column names
+		const columns = [
+			{
+				name: 'ID',
+				selector: (el: any) => el.id,
+				sortable: true,
+				width: '75px',
+			},
+			{
+				name: 'Priority',
+				selector: (el: any) => el.priority,
+				sortable: true,
+				cell: (el: any) => <StatusPill text={el.priority}></StatusPill>,
+			},
+			{
+				name: 'Name',
+				selector: (el: any) => el.name,
+				sortable: true,
+			},
+			{
+				name: 'Description',
+				selector: (el: any) => el.description,
+				sortable: true,
+			},
+			{
+				name: 'Created By',
+				selector: (el: any) => el.createdByUser.username,
+				sortable: true,
+			},
+			{
+				name: 'Assigned To',
+				selector: (el: any) => el.assignedByUser?.username,
+				sortable: true,
+			},
+			{
+				name: 'Created At',
+				selector: (el: any) => el.createdAt,
+				sortable: true,
+				style: {
+					width: 'fit-content',
+				},
+			},
+			{
+				name: 'Start Date',
+				selector: (el: any) => el.startDate,
+				sortable: true,
+			},
+			{
+				name: 'Complete Date',
+				selector: (el: any) => el.completeDate,
+				sortable: true,
+			},
+			{
+				name: 'createdByUserId',
+				selector: (el: any) => el.createdByUser.id,
+				sortable: true,
+				omit: true,
+			},
+			{
+				name: 'assignedByUserId',
+				selector: (el: any) => el.assignedByUser.id,
+				sortable: true,
+				omit: true,
+			},
+		];
+
+		const rows = data.map((rowData) => {
+			rowData.startDate = formatCustomDate(rowData.startDate);
+			rowData.completeDate = formatCustomDate(rowData.completeDate);
+			rowData.createdAt = formatCustomDate(rowData.createdAt);
+
+			return rowData;
+		});
+
+		setTableData({
+			columnName: columns,
+			rowData: rows,
+		});
+	}
+
 	/**
 	 * Primary function that loads the data
 	 * received from the API to the table
 	 * @param {*} data
 	 */
-	function loadTasks(data: any) {
+	function loadTasks2(data: any) {
 		// data
 		// [{"id":3,"name":"Last Task","description":"Last Task for now"}]
 
@@ -214,16 +308,6 @@ export default function TasksPage() {
 
 		let { id } = dataObject;
 
-		async function handleClickDelete() {
-			// TODO: Add modal handling for error here
-			try {
-				// await DeleteTask(id);
-				// await refreshTable();
-			} catch (error) {
-				console.log(error);
-			}
-		}
-
 		return (
 			<>
 				<button
@@ -238,26 +322,51 @@ export default function TasksPage() {
 				>
 					<SvgComponent iconName="WRENCH" className="" />
 				</button>
-				<button
-					className="cursor-pointer w-6 h-6"
-					onClick={handleClickDelete}
-				>
-					<SvgComponent iconName="TRASHCAN" className="" />
-				</button>
 			</>
+		);
+	}
+
+	function tableDataActions() {
+		async function handleClickDelete() {
+			// TODO: Add modal handling for error here
+			try {
+				// Get the ids
+				let taskIdArray = selectedRows.map((el) => el.id);
+
+				await deleteTask(taskIdArray);
+				await refreshTable();
+
+				// Clear the selected rows on the table
+				setTogglClearRows(!toggleClearRows);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		return (
+			<button
+				className="cursor-pointer w-6 h-6"
+				onClick={handleClickDelete}
+			>
+				<SvgComponent iconName="TRASHCAN" className="" />
+			</button>
 		);
 	}
 
 	/**
 	 * Handler functions
-	 * old ones (setShowModalX) not needed anymore since useModal gives us .open, .close, .toggle
 	 */
+
+	// Handler function for the DataTable
+	function handleSelectedRowsChange({ selectedRows }: { selectedRows: any }) {
+		setSelectedRows((oldRows) => {
+			return [...selectedRows];
+		});
+	}
 
 	return (
 		<>
 			<HeaderContainer pageTitle={'Tasks'}>
 				<div className="flex flex-row justify-between items-center p-2.5">
-					<SearchBar />
 					<div className="flex flex-row gap-15">
 						<Button
 							buttonType="add"
@@ -268,11 +377,18 @@ export default function TasksPage() {
 				</div>
 				<div className="min-h-0 flex flex-col">
 					{tableData.columnName.length > 0 ? (
-						<Table
-							columnName={tableData.columnName}
-							rowData={tableData.rowData}
-							withActions={true}
-						></Table>
+						<DataTable
+							title="Available Tasks"
+							columns={tableData.columnName}
+							data={tableData.rowData}
+							selectableRows
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={toggleClearRows}
+							contextActions={tableDataActions()}
+							defaultSortFieldId={1}
+							dense
+							pagination
+						></DataTable>
 					) : (
 						<div>Table is empty!</div>
 					)}
