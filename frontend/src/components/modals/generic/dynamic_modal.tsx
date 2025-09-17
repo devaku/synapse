@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 
 export interface FieldMetadata {
 	name: string;
-	type: 'string' | 'text' | 'number' | 'boolean' | 'array';
+	type: 'string' | 'text' | 'number' | 'boolean';
 }
 
 interface DynamicModalProps {

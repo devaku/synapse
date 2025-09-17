@@ -21,6 +21,17 @@ export type taskType = {
 	createdAt: Date;
 };
 
+export type teamType = {
+	createdBy: number;
+	assignedTo: number;
+	name: string;
+	description: string;
+	image?: string;
+	startDate?: Date;
+	completeDate?: Date;
+	createdAt: Date;
+};
+
 export type jsonResponse = {
 	statusCode: number;
 	statusText: string;

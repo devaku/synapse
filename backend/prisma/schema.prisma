@@ -29,18 +29,21 @@ model User {
     Logs         Logs[]
 
     createdTasks  Task[]    @relation("TaskCreatedBy")
+    createdTeams  Teams[]   @relation("TeamCreatedBy")
     assignedTasks Task[]    @relation("TaskAssignedTo")
     Comment       Comment[] @relation("CommentCreatedBy")
 }
 
 model Team {
-    id           Int            @id @default(autoincrement())
-    name         String         @db.VarChar(255)
-    description  String?        @db.VarChar(255)
-    User         User[]
-    createdAt    DateTime       @default(now()) @db.Timestamp(6)
-    isDeleted    Int            @default(0)
-    Notification Notification[]
+    id            Int            @id @default(autoincrement())
+    name          String         @db.VarChar(255)
+    description   String?        @db.VarChar(255)
+    User          User[]
+    createdAt     DateTime       @default(now()) @db.Timestamp(6)
+    createdBy     Int            
+    createdByUser User           @relation("TeamCreatedBy", fields: [createdBy], references: [id])
+    isDeleted     Int            @default(0)
+    Notification  Notification[]
 }
 
 model Notification {
