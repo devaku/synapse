@@ -26,7 +26,6 @@ export type teamType = {
 	name: string;
 	description: string;
 	createdAt: Date;
-	isDeleted: boolean;
 };
 
 export type jsonResponse = {
