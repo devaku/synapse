@@ -1,0 +1,111 @@
+import { PrismaClient } from '../database/generated/prisma';
+const prisma = new PrismaClient();
+
+let userAndTeamSeeds = [
+	{
+		username: 'admin1',
+		email: 'admin1@email.com',
+
+		// Make sure this is the same as it was in keycloak
+		keycloakId: '76b4b8d2-7d5d-4c87-948c-fbba7f7237af',
+		firstName: 'first_name',
+		lastName: 'last_name',
+		phone: 123,
+	},
+	{
+		username: 'manager1',
+		email: 'manager1@email.com',
+
+		// Make sure this is the same as it was in keycloak
+		keycloakId: 'cfe3053a-babe-4bfe-bac2-841bdaecc3c8',
+		team: {
+			create: {
+				name: 'team1',
+				description: 'this is team 1',
+			},
+		},
+		firstName: 'ManagerFname',
+		lastName: 'ManagerLname',
+		phone: 123,
+	},
+
+	{
+		username: 'user1',
+		email: 'user1@email.com',
+
+		// Make sure this is the same as it was in keycloak
+		keycloakId: 'be42ed78-fa69-4091-8243-da05ad65eafe',
+		team: {
+			connect: [{ id: 1 }],
+		},
+		firstName: 'user1Fname',
+		lastName: 'user1Lname',
+		phone: 123,
+	},
+
+	{
+		username: 'user2',
+		email: 'user2@email.com',
+
+		// Make sure this is the same as it was in keycloak
+		keycloakId: '7511b747-b572-4420-9ba3-0bacdbcfc303',
+		team: {
+			connect: [{ id: 1 }],
+		},
+		firstName: 'user2Fname',
+		lastName: 'user2Lname',
+		phone: 123,
+	},
+];
+
+let taskSeeds = [
+	{
+		createdBy: 2,
+		priority: 'URGENT',
+		name: 'task 1',
+		description: 'This is a task',
+	},
+	{
+		createdBy: 2,
+		priority: 'URGENT',
+		name: 'task 2',
+		description: '2nd Task',
+	},
+	{
+		createdBy: 2,
+		priority: 'URGENT',
+		name: 'task 3',
+		description: 'This is the third task',
+	},
+];
+
+async function seed() {
+	
+    // Clean tables
+	await prisma.user.deleteMany({});
+	await prisma.team.deleteMany({});
+	await prisma.task.deleteMany({});
+
+	// Insert user and teams
+	for (let index = 0; index < userAndTeamSeeds.length; index++) {
+		const element = userAndTeamSeeds[index];
+		await prisma.user.create({
+			data: {
+				...element,
+			},
+		});
+	}
+
+	for (let index = 0; index < taskSeeds.length; index++) {
+		const element = taskSeeds[index];
+		await prisma.task.create({
+			data: {
+				...element,
+			},
+		});
+	}
+
+	console.log('Successfully seeded table');
+}
+
+seed();

@@ -1,10 +1,14 @@
 import PopupModalContainer from '../components/container/modal_containers/popup_modal_container';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import useAuth from '../lib/hooks/auth/useAuth';
 import HeaderContainer from '../components/container/header_container';
 
 export default function DebugPage() {
 	const [showModal, setShowModal] = useState<boolean>(false);
+
+	const { keycloak, isAuthenticated, token } = useAuth();
+
 	function handleModalDisplay() {
 		setShowModal(!showModal);
 	}
@@ -40,7 +44,9 @@ export default function DebugPage() {
 				<button
 					className="bg-gray-100 border-1 border-black p-2 text-black hover:bg-amber-300 active:bg-amber-800"
 					onClick={() => {
-						window.location.href = '/';
+						keycloak.logout({
+							redirectUri: 'http://localhost:3000',
+						});
 					}}
 				>
 					Return Back

@@ -1,0 +1,65 @@
+@localurl = http://localhost:8080/api/v1
+
+###
+
+// Create a task
+POST {{localurl}}/tasks HTTP/1.1
+Content-Type: application/json
+
+{
+    // manager
+    "createdBy": 2,
+    "priority": "URGENT",
+    "name": "task 1",
+    "description": "This is a task"
+}
+
+###
+
+// Read ALL tasks
+GET {{localurl}}/tasks HTTP/1.1
+
+# {
+#   "statusCode": 200,
+#   "statusText": "OK",
+#   "message": "Data was retrieved successfully.",
+#   "data": [
+#     {
+#       "id": 1,
+#       "createdBy": 2,
+#       "assignedTo": null,
+#       "priority": "URGENT",
+#       "name": "task 1",
+#       "description": "This is a task",
+#       "image": null,
+#       "startDate": null,
+#       "completeDate": null,
+#       "createdAt": "2025-09-16T20:46:43.355Z"
+#     },
+#       ....
+#   ]
+# }
+###
+
+DELETE {{localurl}}/tasks/3 HTTP/1.1
+
+# {
+#   "statusCode": 200,
+#   "statusText": "OK",
+#   "message": "Row was deleted successfully.",
+#   "data": [
+#     {
+#       "id": 3,
+#       "createdBy": 2,
+#       "assignedTo": null,
+#       "priority": "URGENT",
+#       "name": "task 3",
+#       "description": "This is the third task",
+#       "image": null,
+#       "startDate": null,
+#       "completeDate": null,
+#       "createdAt": "2025-09-16T22:19:40.242Z",
+#       "isDeleted": 1
+#     }
+#   ]
+# }

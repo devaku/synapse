@@ -1,0 +1,20 @@
+https://simonscholz.dev/tutorials/keycloak-realm-export-import
+https://www.keycloak.org/server/importExport
+
+To export a REALM including USERS
+
+Go to Docker Desktop > Exec
+
+In the CLI, type in:
+/opt/keycloak/bin/kc.sh export --dir /opt/keycloak/data/import --users realm_file --realm {your-realms-id}
+
+/opt/keycloak/bin/kc.sh export --dir /opt/keycloak/data/import --users realm_file --realm synapse_realm
+
+You should get a JSON file saved into the /import folder mentioned.
+
+THEN. Using an external terminal (CMD) type this command:
+
+docker cp {your-containers-id}:/opt/keycloak/data/import/{your-realm-id}-realm.json /{your-desired-location-on-host}
+docker cp synapse_auth:/opt/keycloak/data/import/synapse_realm-realm.json C:\Users\Valeen\Desktop\CODES
+
+You should now have your json file ready for importing.
