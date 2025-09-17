@@ -23,13 +23,10 @@ export type taskType = {
 
 export type teamType = {
 	createdBy: number;
-	assignedTo: number;
 	name: string;
 	description: string;
-	image?: string;
-	startDate?: Date;
-	completeDate?: Date;
 	createdAt: Date;
+	isDeleted: boolean;
 };
 
 export type jsonResponse = {
