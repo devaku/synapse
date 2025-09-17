@@ -1,4 +1,4 @@
-import { type jsonResponse, type taskType } from '../../types';
+import { type jsonResponse } from '../../types';
 const url = import.meta.env.VITE_API_URL;
 
 export async function readAllTasks() {
@@ -11,20 +11,28 @@ export async function readAllTasks() {
 			console.error('Fetch error:', error);
 		});
 
-	let { data } = response;
-	if (data) {
-		return data;
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
 	} else {
 		return [];
 	}
 }
 
-export async function deleteTask(id: number) {
-	let response: jsonResponse = await fetch(`${url}/tasks/${id}`, {
+export async function deleteTask(taskIdArray: number[]) {
+	let body = {
+		taskIdArray,
+	};
+	let response: jsonResponse = await fetch(`${url}/tasks`, {
 		method: 'DELETE',
 		headers: {
-			Authorization: 'Bearer TOKEN',
+			'Authorization': 'Bearer TOKEN',
+			'Content-Type': 'application/json',
 		},
+		body: JSON.stringify(body),
 	})
 		.then((res) => res.json())
 		.catch((error) => {

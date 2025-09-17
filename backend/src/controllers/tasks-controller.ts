@@ -47,11 +47,19 @@ export async function readTask(req: Request, res: Response) {
 
 export async function deleteTask(req: Request, res: Response) {
 	try {
-		const taskId = Number(req.params.id);
-		const task = await taskService.deleteTask(taskId);
-		let message = 'Row was deleted successfully.';
+		console.log(req.body);
+		const taskIdArray = req.body.taskIdArray;
 
-		let finalResponse = buildResponse(200, message, task);
+		let deletedTasks = [];
+		for (let x = 0; x < taskIdArray.length; x++) {
+			const taskId = taskIdArray[x];
+			const task = await taskService.deleteTask(taskId);
+			deletedTasks.push(task);
+		}
+
+		let message = `${deletedTasks.length} row/s deleted successfully.`;
+
+		let finalResponse = buildResponse(200, message, deletedTasks);
 
 		res.status(200).json(finalResponse);
 	} catch (error) {
