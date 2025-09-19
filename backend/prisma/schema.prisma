@@ -16,13 +16,13 @@ datasource db {
 
 model User {
     id                  Int                   @id @default(autoincrement())
-    keycloakId          String                @db.VarChar(255)
+    keycloakId          String                @unique @db.VarChar(255)
     username            String                @db.VarChar(255)
     email               String                @db.VarChar(255)
     firstName           String?               @db.VarChar(255)
     lastName            String?               @db.VarChar(255)
     phone               Int?
-    createdAt           DateTime              @default(now()) @db.Timestamp(6)
+    lastActivity        DateTime              @default(now()) @db.Timestamp(6)
     isDeleted           Int                   @default(0)
     team                Team[]
     notification        Notification[]
@@ -101,7 +101,6 @@ model Session {
     expire DateTime @db.Timestamp(6)
 
     @@index([expire], name: "IDX_session_expire")
-    @@map("session")
 }
 
 /**

@@ -1,6 +1,10 @@
 import { PrismaClient } from '../database/generated/prisma';
 const prisma = new PrismaClient();
 
+let adminSeeds = [];
+let managerSeeds = [];
+let employeeSeeds = [];
+
 let userAndTeamSeeds = [
 	{
 		username: 'admin1',
@@ -33,7 +37,7 @@ let userAndTeamSeeds = [
 		email: 'manager2@email.com',
 
 		// Make sure this is the same as it was in keycloak
-		keycloakId: 'cfe3053a-babe-4bfe-bac2-841bdaecc3c8',
+		keycloakId: 'caf69623-bb5f-4601-8cc0-c9a518aa7910',
 		team: {
 			create: {
 				name: 'team2',
