@@ -3,16 +3,8 @@ import dotenv from 'dotenv';
 import router from './src/routes/main';
 import favicon from 'serve-favicon';
 import path from 'path';
-import { sessionMiddleware } from './src/middlewares/session-middleware';
-import cors from 'cors';
 
-// Concept of declaration merging
-// provided by Chatgpt
-declare module 'express-session' {
-	interface SessionData {
-		userData: any;
-	}
-}
+import { setupServerMiddleware } from './src/middlewares/initial-middleware';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -20,25 +12,11 @@ const PORT = process.env.PORT;
 // Load the ENV settings
 dotenv.config();
 
-// Server static files
-app.use('/public', express.static('public'));
+// Setup favicon. Have to be at the very start. lol
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-// Attach session
-app.use(sessionMiddleware);
-
-// Load CORS
-app.use(
-	cors({
-		origin: ['http://localhost:3000', 'http://localhost:8080'],
-		credentials: true,
-	})
-);
-
-app.use((req: Request, res: Response, next: NextFunction) => {
-	console.log('Session ID:', req.sessionID);
-	next();
-});
+// Setup middlewares
+setupServerMiddleware(app);
 
 // Load the routes
 app.use(router);

@@ -1,12 +1,27 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 
 import { verifyJwt } from '../middlewares/auth-middleware';
 import debugRouter from './debug';
 import taskRouter from './tasks';
 
-const apiRouter = express.Router();
+const mainRouter = express.Router();
 
-apiRouter.use('/api/v1', taskRouter);
-apiRouter.use('/api/v1', debugRouter);
+mainRouter.use(
+	'/api/v1',
 
-export default apiRouter;
+	// All routes are now protected
+	// verifyJwt,
+	setupApiRoutes()
+);
+
+function setupApiRoutes(): express.Router {
+	const apiRouter = express.Router();
+
+	// API ROUTES
+	apiRouter.use(taskRouter);
+	apiRouter.use(debugRouter);
+
+	return apiRouter;
+}
+
+export default mainRouter;
