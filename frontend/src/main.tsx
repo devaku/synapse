@@ -14,5 +14,9 @@ createRoot(document.getElementById('root')!).render(
 // import ScratchPage from './scratch/scratch';
 
 // createRoot(document.getElementById('root')!).render(
-// 	<ScratchPage></ScratchPage>
+// 	<>
+// 		<StrictMode>
+// 			<ScratchPage></ScratchPage>
+// 		</StrictMode>
+// 	</>
 // );

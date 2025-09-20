@@ -12,7 +12,7 @@ export default function LoginPage() {
 
 	async function handleLoginClick() {
 		try {
-			navigate('/auth/callback/login');
+			navigate('/home');
 		} catch (error) {
 			alert(error);
 		}
