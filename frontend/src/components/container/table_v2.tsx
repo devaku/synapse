@@ -42,11 +42,7 @@ export default function TableV2({
 				<tbody className="text-left">
 					{rowData.map((row: [], rowIndex: number) => (
 						<tr
-							className=""
-							style={{
-								backgroundColor:
-									rowIndex % 2 === 0 ? '#F7F6FE' : 'white',
-							}}
+							className={`${rowIndex % 2 === 0 ? 'bg-ttg-black/3' : 'bg-ttg-white'}`}
 							key={rowIndex}
 						>
 							{row.map((cell, cellIndex) => {
