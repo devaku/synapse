@@ -30,6 +30,7 @@ import schema from '../assets/schemas/schema.json';
  */
 
 import { readAllTasks, deleteTask } from '../lib/services/api/task';
+import { color } from 'chart.js/helpers';
 
 // This needs to be put the types.tsx
 type tableData = {
