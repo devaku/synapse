@@ -12,15 +12,15 @@ export default function HeaderContainer({
 	return (
 		<div className="w-full flex flex-col bg-ttg-white text-ttg-black">
 			{/* Header */}
-			<div className="flex flex-row h-15 bg-gray-100 items-center justify-between">
+			<div className="flex flex-row h-15 bg-ttg-black/5 items-center justify-between">
 				{/* Left Side */}
-				<div className="text-3xl font-bold text-center text-black px-7.5 cursor-default">
+				<div className="text-3xl font-bold text-center text-ttg-black px-7.5 cursor-default">
 					{pageTitle}
 				</div>
 				{/* Right Side */}
 				<div className="flex flex-row h-10 gap-9.5 px-5 overflow-y-auto">
 					<button
-						className="text-black cursor-pointer"
+						className="text-ttg-black cursor-pointer"
 						onClick={() => {
 							navigate('/settings');
 						}}

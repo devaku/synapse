@@ -67,7 +67,7 @@ export default function SlideModalContainer({
 						(playAnimation ? '-right-0' : '-right-200')
 					}
 				>
-					<div className="h-screen bg-white w-xl">{children}</div>
+					<div className="h-screen bg-ttg-white w-xl text-ttg-black">{children}</div>
 				</div>
 			</div>,
 			document.body

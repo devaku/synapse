@@ -4,7 +4,7 @@
 	"main": "index.ts",
 	"scripts": {
 		"dev": "nodemon index.ts",
-		"scratch": "nodemon index.ts",
+		"scratch": "nodemon scratch.ts",
 		"dist": "nodemon dist/index.js",
 		"compose:up": "docker compose -p synapse_backend up --build",
 		"compose:down": "docker compose -p synapse_backend down",

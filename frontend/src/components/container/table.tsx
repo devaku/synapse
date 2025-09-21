@@ -39,7 +39,7 @@ export default function Table({
 	return (
 		<div className="w-full h-full flex flex-col">
 			{/* Header */}
-			<div className="flex flex-row font-bold gap-3 p-3 bg-white">
+			<div className="flex flex-row font-bold gap-3 p-3 bg-ttg-white">
 				{columnName.map((item, index) => (
 					<div className="w-full flex flex-row" key={index}>
 						{item}
@@ -62,11 +62,8 @@ export default function Table({
 			<div className="overflow-y-auto flex-1 min-h-0">
 				{rowData.map((row: [], rowIndex: number) => (
 					<div
-						className="flex flex-row items-center gap-3 p-1"
-						style={{
-							backgroundColor:
-								rowIndex % 2 === 0 ? '#F7F6FE' : 'white',
-						}}
+						className={`flex flex-row items-center gap-3 p-1
+							${rowIndex % 2 === 0 ? 'bg-ttg-black/3' : 'bg-ttg-white'}`}
 						key={rowIndex}
 					>
 						{row.map((cell, cellIndex) => {

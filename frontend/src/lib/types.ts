@@ -6,15 +6,19 @@ export type jsonResponse = {
 	error?: any;
 };
 
-export type taskType = {
+export type User = {};
+
+export type Task = {
 	id: number;
-	createdBy: number;
+	createdByUserId: number;
+	createdByUser?: any;
 	assignedTo?: number;
+	assignedToUser?: any;
 	priority: string;
 	name: string;
 	description: string;
 	image?: string;
-	startDate?: Date;
-	completeDate?: Date;
-	createdAt?: Date;
+	startDate?: string;
+	completeDate?: string;
+	createdAt: string;
 };

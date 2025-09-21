@@ -7,8 +7,9 @@ notes.txt
 */**/dist
 
 # Backend
-backend/database/generated/prisma
 backend/.env
+backend/scratch.ts
+backend/database/generated/prisma
 
 # Frontend
 frontend/src/scratch

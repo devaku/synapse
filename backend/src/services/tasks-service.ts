@@ -1,7 +1,7 @@
 import { prisma } from '../lib/database';
-import { taskType } from '../types';
+import { Task } from '../../database/generated/prisma';
 
-export async function createTask(task: taskType) {
+export async function createTask(task: Task) {
 	const taskRow = await prisma.task.create({
 		data: {
 			...task,
@@ -12,7 +12,29 @@ export async function createTask(task: taskType) {
 }
 
 export async function readAllTask() {
-	const taskRow = await prisma.task.findMany();
+	const taskRow = await prisma.task.findMany({
+		where: {
+			isDeleted: 0,
+		},
+		include: {
+			createdByUser: {
+				select: {
+					id: true,
+					username: true,
+					firstName: true,
+					lastName: true,
+				},
+			},
+			assignedToUser: {
+				select: {
+					id: true,
+					username: true,
+					firstName: true,
+					lastName: true,
+				},
+			},
+		},
+	});
 	return taskRow;
 }
 

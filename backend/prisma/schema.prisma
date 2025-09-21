@@ -69,20 +69,20 @@ model Logs {
 }
 
 model Task {
-    id             Int       @id @default(autoincrement())
-    createdBy      Int
-    createdByUser  User      @relation("TaskCreatedBy", fields: [createdBy], references: [id])
-    assignedTo     Int?
-    assignedToUser User?     @relation("TaskAssignedTo", fields: [assignedTo], references: [id])
-    priority       String
-    name           String    @db.VarChar(255)
-    description    String    @db.VarChar(255)
-    image          String?   @db.VarChar(255)
-    startDate      DateTime? @db.Timestamp(6)
-    completeDate   DateTime? @db.Timestamp(6)
-    createdAt      DateTime  @default(now()) @db.Timestamp(6)
-    isDeleted      Int       @default(0)
-    comments       Comment[]
+    id               Int       @id @default(autoincrement())
+    createdByUserId  Int
+    createdByUser    User      @relation("TaskCreatedBy", fields: [createdByUserId], references: [id])
+    assignedToUserId Int?
+    assignedToUser   User?     @relation("TaskAssignedTo", fields: [assignedToUserId], references: [id])
+    priority         String
+    name             String    @db.VarChar(255)
+    description      String    @db.VarChar(255)
+    image            String?   @db.VarChar(255)
+    startDate        DateTime? @db.Timestamp(6)
+    completeDate     DateTime? @db.Timestamp(6)
+    createdAt        DateTime  @default(now()) @db.Timestamp(6)
+    isDeleted        Int       @default(0)
+    comments         Comment[]
 }
 
 model Comment {
