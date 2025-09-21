@@ -9,23 +9,21 @@ import TableData from '../../testing_jsons/logs_table_testing_extended_complex.j
 import React, { useState, useEffect } from 'react';
 
 export default function LogsPage() {
-
 	const [selectedRows, setSelectedRows] = useState([]);
 	const [data, setData] = useState(TableData.data || []);
-	const [display, setDisplay] = useState("hidden");
+	const [display, setDisplay] = useState('hidden');
 
 	const [filterText, setFilterText] = useState('');
 	const [filteredItems, setFilteredItems] = useState(data);
 
-
 	const handleRowSelected = ({ selectedRows }) => {
 		setSelectedRows(selectedRows);
 		if (selectedRows.length > 0) {
-			setDisplay("visible");
+			setDisplay('visible');
 		} else {
-			setDisplay("hidden");
+			setDisplay('hidden');
 		}
-	}
+	};
 
 	// Directly from Documentation
 	// https://react-data-table-component.netlify.app/?path=/docs/examples--exporting-csv
@@ -40,9 +38,9 @@ export default function LogsPage() {
 		result += keys.join(columnDelimiter);
 		result += lineDelimiter;
 
-		array.forEach(item => {
+		array.forEach((item) => {
 			let ctr = 0;
-			keys.forEach(key => {
+			keys.forEach((key) => {
 				if (ctr > 0) result += columnDelimiter;
 
 				result += item[key];
@@ -52,7 +50,7 @@ export default function LogsPage() {
 		});
 
 		return result;
-	}
+	};
 
 	// Directly from Documentation
 	// https://react-data-table-component.netlify.app/?path=/docs/examples--exporting-csv
@@ -70,7 +68,7 @@ export default function LogsPage() {
 		link.setAttribute('href', encodeURI(csv));
 		link.setAttribute('download', filename);
 		link.click();
-	}
+	};
 
 	const ExpandedComponent = ({ data }) => (
 		<pre className="w-full whitespace-pre-wrap break-all overflow-hidden text-xs leading-relaxed bg-gray-50 border border-gray-200 p-3">
@@ -79,32 +77,39 @@ export default function LogsPage() {
 	);
 
 	useEffect(() => {
-		const result = data.filter(item => {
-			return item.logID && item.logID.toString().toLowerCase().includes(filterText.toLowerCase())
-				|| item.user && item.user.toLowerCase().includes(filterText.toLowerCase())
+		const result = data.filter((item) => {
+			return (
+				(item.logID &&
+					item.logID
+						.toString()
+						.toLowerCase()
+						.includes(filterText.toLowerCase())) ||
+				(item.user &&
+					item.user.toLowerCase().includes(filterText.toLowerCase()))
+			);
 		});
 		setFilteredItems(result);
 	}, [filterText, data]);
 
 	const columns = [
 		{
-			name: "Log ID",
-			selector: row => row.logID,
+			name: 'Log ID',
+			selector: (row) => row.logID,
 			sortable: true,
 			maxwidth: '10px',
-			grow: 0
+			grow: 0,
 		},
 		{
-			name: "User",
-			selector: row => row.user,
+			name: 'User',
+			selector: (row) => row.user,
 			sortable: true,
-			grow: 1
+			grow: 1,
 		},
 		{
-			name: "Created At",
-			selector: row => row.createdAt,
+			name: 'Created At',
+			selector: (row) => row.createdAt,
 			sortable: true,
-			grow: 1
+			grow: 1,
 		},
 		// {
 		// 	name: "Description",
@@ -118,26 +123,42 @@ export default function LogsPage() {
 			<main className="relative">
 				<div className="flex justify-between items-center">
 					<div className="">
-						<input type="text" placeholder="Search logs..." className="mb-4 p-2 border rounded border-gray-300 w-50" value={filterText} onChange={e => setFilterText(e.target.value)} />
-						<button className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1" onClick={() => {setFilterText('')}}>
+						<input
+							type="text"
+							placeholder="Search logs..."
+							className="mb-4 p-2 border rounded border-gray-300 w-50"
+							value={filterText}
+							onChange={(e) => setFilterText(e.target.value)}
+						/>
+						<button
+							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							onClick={() => {
+								setFilterText('');
+							}}
+						>
 							X
 						</button>
 					</div>
-					<div className={`flex mb-4 w-fit bg-gray-100 p-2 rounded ${display} flex items-center justify-between`}>
-						<span className=''>{selectedRows.length} Selected</span>
-						<button className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded ml-1" onClick={() => downloadCSV(selectedRows)}>
+					<div
+						className={`flex mb-4 w-fit bg-gray-100 p-2 rounded ${display} flex items-center justify-between`}
+					>
+						<span className="">{selectedRows.length} Selected</span>
+						<button
+							className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							onClick={() => downloadCSV(selectedRows)}
+						>
 							Download CSV
 						</button>
 					</div>
 				</div>
 				<div className="">
-					<DataTable 
-						columns={columns} 
-						data={filteredItems} 
+					<DataTable
+						columns={columns}
+						data={filteredItems}
 						selectableRows
 						onSelectedRowsChange={handleRowSelected}
 						fixedHeader
-						fixedHeaderScrollHeight='70vh'
+						fixedHeaderScrollHeight="70vh"
 						expandableRows
 						expandableRowsComponent={ExpandedComponent}
 						expandableRowsHideExpander

@@ -30,7 +30,7 @@ export default function SvgComponent(props: svgProps) {
 	iconName = iconName.toUpperCase();
 
 	let html;
-	classes += " dark:invert"
+	classes += ' dark:invert';
 
 	/**
 	 * This is sorted alphabetically
