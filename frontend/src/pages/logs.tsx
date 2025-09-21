@@ -1,20 +1,22 @@
+// Many thanks to React Data Table Component for making this so easy!
+// Much of this code was adapted from their examples and documentation.
+// https://react-data-table-component.netlify.app/
+
 import HeaderContainer from '../components/container/header_container';
 import DataTable from 'react-data-table-component';
 import TableData from '../../testing_jsons/logs_table_testing_extended_complex.json';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { differenceBy } from 'lodash';
-
-// type tableData = {
-// 	columnName: string[];
-// 	rowData: any[];
-// };
+import React, { useState, useEffect } from 'react';
 
 export default function LogsPage() {
 
 	const [selectedRows, setSelectedRows] = useState([]);
 	const [data, setData] = useState(TableData.data || []);
 	const [display, setDisplay] = useState("hidden");
+
+	const [filterText, setFilterText] = useState('');
+	const [filteredItems, setFilteredItems] = useState(data);
+
 
 	const handleRowSelected = ({ selectedRows }) => {
 		setSelectedRows(selectedRows);
@@ -30,6 +32,14 @@ export default function LogsPage() {
 			{JSON.stringify(data, null, 2)}
 		</pre>
 	);
+
+	useEffect(() => {
+		const result = data.filter(item => {
+			return item.logID && item.logID.toString().toLowerCase().includes(filterText.toLowerCase())
+				|| item.user && item.user.toLowerCase().includes(filterText.toLowerCase())
+		});
+		setFilteredItems(result);
+	}, [filterText, data]);
 
 	const columns = [
 		{
@@ -61,16 +71,21 @@ export default function LogsPage() {
 	return (
 		<HeaderContainer pageTitle={'Logs'}>
 			<main className="relative">
-				<div className={`flex mb-4 w-full bg-gray-100 p-3 rounded ${display} flex items-center justify-between`}>
-					<span className='mr-4 text-3xl'>{selectedRows.length} Selected</span>
-					<button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>
-						Delete Selected
-					</button>
+				<div className="flex justify-between items-center">
+					<div className="">
+						<input type="text" placeholder="Search logs..." className="mb-4 p-2 border rounded border-gray-300 w-50" value={filterText} onChange={e => setFilterText(e.target.value)} />
+						<button className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1" onClick={() => {setFilterText('')}}>
+							X
+						</button>
+					</div>
+					<div className={`flex mb-4 w-fit bg-gray-100 p-2 rounded ${display} flex items-center justify-between`}>
+						<span className=''>{selectedRows.length} Selected</span>
+					</div>
 				</div>
 				<div className="">
 					<DataTable 
 						columns={columns} 
-						data={data} 
+						data={filteredItems} 
 						selectableRows
 						onSelectedRowsChange={handleRowSelected}
 						fixedHeader
