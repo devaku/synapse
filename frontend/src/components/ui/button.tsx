@@ -21,7 +21,7 @@ export default function Button(props: buttonProps) {
 			break;
 		case 'add':
 			style =
-				'cursor-pointer text-center bg-[#DCD7FF] h-7 w-29 border-[#333333]/16 border-1 hover:bg-purple-300';
+				'cursor-pointer text-center bg-ttg-purple h-7 w-29 border-ttg-brown/16 border-1 hover:bg-purple-300';
 			break;
 	}
 

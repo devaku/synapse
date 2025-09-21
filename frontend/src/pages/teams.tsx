@@ -206,19 +206,19 @@ export default function TeamsPage() {
 					className="cursor-pointer w-6 h-6"
 					onClick={readTeamModal.toggle} // new hook handles open/close
 				>
-					<SvgComponent iconName="INFO" className="" />
+					<SvgComponent iconName="INFO" />
 				</button>
 				<button
 					className="cursor-pointer w-6 h-6"
 					onClick={updateTeamModal.toggle} // same deal here
 				>
-					<SvgComponent iconName="WRENCH" className="" />
+					<SvgComponent iconName="WRENCH" />
 				</button>
 				<button
 					className="cursor-pointer w-6 h-6"
 					onClick={handleClickDelete}
 				>
-					<SvgComponent iconName="TRASHCAN" className="" />
+					<SvgComponent iconName="TRASHCAN" />
 				</button>
 			</>
 		);

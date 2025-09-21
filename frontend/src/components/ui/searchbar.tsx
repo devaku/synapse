@@ -2,7 +2,7 @@ import SvgComponent from './svg_component';
 export default function SearchBar() {
 	return (
 		<div className="flex flex-row gap-5">
-			<div className="text-center bg-white h-7 w-54 border-[#333333]/16 border-1 flex flex-row items-center justify-between px-1">
+			<div className="text-center bg-ttg-white h-7 w-54 border-ttg-brown/16 border-1 flex flex-row items-center justify-between px-1">
 				<input
 					type="text"
 					className="active:border-0"
@@ -21,7 +21,7 @@ export default function SearchBar() {
 				iconName="Filter"
 				width={16}
 				height={16}
-				className="fill-black mt-2"
+				className="fill-ttg-black mt-2"
 			/>
 		</div>
 	);
