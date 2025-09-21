@@ -1,7 +1,7 @@
 import { PrismaClient } from '../database/generated/prisma';
 const prisma = new PrismaClient();
 
-let userAndTeamSeeds = [
+let userSeeds = [
 	{
 		username: 'admin1',
 		email: 'admin1@email.com',
@@ -18,12 +18,6 @@ let userAndTeamSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: 'cfe3053a-babe-4bfe-bac2-841bdaecc3c8',
-		team: {
-			create: {
-				name: 'team1',
-				description: 'this is team 1',
-			},
-		},
 		firstName: 'ManagerFname',
 		lastName: 'ManagerLname',
 		phone: 123,
@@ -35,9 +29,6 @@ let userAndTeamSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: 'be42ed78-fa69-4091-8243-da05ad65eafe',
-		team: {
-			connect: [{ id: 1 }],
-		},
 		firstName: 'user1Fname',
 		lastName: 'user1Lname',
 		phone: 123,
@@ -49,12 +40,17 @@ let userAndTeamSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: '7511b747-b572-4420-9ba3-0bacdbcfc303',
-		team: {
-			connect: [{ id: 1 }],
-		},
 		firstName: 'user2Fname',
 		lastName: 'user2Lname',
 		phone: 123,
+	},
+];
+
+let teamSeeds = [
+	{
+		name: 'team1',
+		description: 'this is team 1',
+		createdBy: 2, // manager1 user id
 	},
 ];
 
@@ -85,9 +81,9 @@ async function seed() {
 	await prisma.team.deleteMany({});
 	await prisma.task.deleteMany({});
 
-	// Insert user and teams
-	for (let index = 0; index < userAndTeamSeeds.length; index++) {
-		const element = userAndTeamSeeds[index];
+	// Insert users first
+	for (let index = 0; index < userSeeds.length; index++) {
+		const element = userSeeds[index];
 		await prisma.user.create({
 			data: {
 				...element,
@@ -95,6 +91,45 @@ async function seed() {
 		});
 	}
 
+	// Insert teams
+	for (let index = 0; index < teamSeeds.length; index++) {
+		const element = teamSeeds[index];
+		await prisma.team.create({
+			data: {
+				...element,
+			},
+		});
+	}
+
+	// Now connect users to teams
+	await prisma.user.update({
+		where: { id: 2 }, // manager1
+		data: {
+			team: {
+				connect: { id: 1 }, // team1
+			},
+		},
+	});
+
+	await prisma.user.update({
+		where: { id: 3 }, // user1
+		data: {
+			team: {
+				connect: { id: 1 }, // team1
+			},
+		},
+	});
+
+	await prisma.user.update({
+		where: { id: 4 }, // user2
+		data: {
+			team: {
+				connect: { id: 1 }, // team1
+			},
+		},
+	});
+
+	// Insert tasks
 	for (let index = 0; index < taskSeeds.length; index++) {
 		const element = taskSeeds[index];
 		await prisma.task.create({

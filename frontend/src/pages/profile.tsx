@@ -18,9 +18,11 @@ export default function ProfilePage() {
 	const [editFullName, setEditFullName] = useState(fullName);
 	const [editEmail, setEditEmail] = useState(email);
 	const [editPhoneNumber, setEditPhoneNumber] = useState(phoneNumber);
-	const [editProfileImage, setEditProfileImage] = useState<string | null>(profileImage);
+	const [editProfileImage, setEditProfileImage] = useState<string | null>(
+		profileImage
+	);
 
-	// Handle image upload - Used AI : prompt = "How do I use a hidden file input with useRef and FileReader in React so that when a user clicks 
+	// Handle image upload - Used AI : prompt = "How do I use a hidden file input with useRef and FileReader in React so that when a user clicks
 	// an 'Upload Photo' button, they can pick an image and it gets displayed as their temporary profile picture?"
 	const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
@@ -70,7 +72,11 @@ export default function ProfilePage() {
 					<div className="w-[140px] h-[140px] flex items-center justify-center mb-2">
 						{(isEditing ? editProfileImage : profileImage) ? (
 							<img
-								src={isEditing ? editProfileImage! : profileImage!}
+								src={
+									isEditing
+										? editProfileImage!
+										: profileImage!
+								}
 								alt="Profile"
 								className="w-32 h-32 rounded-full object-cover"
 							/>
@@ -108,31 +114,43 @@ export default function ProfilePage() {
 					{isEditing ? (
 						<div className="w-full max-w-sm space-y-4 -ml-20">
 							<div className="flex items-center space-x-3">
-								<label className="w-16 text-right text-sm">Name:</label>
+								<label className="w-16 text-right text-sm">
+									Name:
+								</label>
 								<input
 									type="text"
 									value={editFullName}
-									onChange={(e) => setEditFullName(e.target.value)}
+									onChange={(e) =>
+										setEditFullName(e.target.value)
+									}
 									className="flex-1 px-3 py-2 text-black bg-white border border-gray-300 text-center"
 								/>
 							</div>
 
 							<div className="flex items-center space-x-3">
-								<label className="w-16 text-right text-sm">Email:</label>
+								<label className="w-16 text-right text-sm">
+									Email:
+								</label>
 								<input
 									type="email"
 									value={editEmail}
-									onChange={(e) => setEditEmail(e.target.value)}
+									onChange={(e) =>
+										setEditEmail(e.target.value)
+									}
 									className="flex-1 px-3 py-2 text-black bg-white border border-gray-300 text-center"
 								/>
 							</div>
 
 							<div className="flex items-center space-x-3">
-								<label className="w-16 text-right text-sm">Phone:</label>
+								<label className="w-16 text-right text-sm">
+									Phone:
+								</label>
 								<input
 									type="tel"
 									value={editPhoneNumber}
-									onChange={(e) => setEditPhoneNumber(e.target.value)}
+									onChange={(e) =>
+										setEditPhoneNumber(e.target.value)
+									}
 									className="flex-1 px-3 py-2 text-black bg-white border border-gray-300 text-center"
 								/>
 							</div>
