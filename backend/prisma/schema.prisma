@@ -29,7 +29,7 @@ model User {
     Logs         Logs[]
 
     createdTasks  Task[]    @relation("TaskCreatedBy")
-    createdTeams  Team[]   @relation("TeamCreatedBy")
+    createdTeams  Team[]    @relation("TeamCreatedBy")
     assignedTasks Task[]    @relation("TaskAssignedTo")
     Comment       Comment[] @relation("CommentCreatedBy")
 }

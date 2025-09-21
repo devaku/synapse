@@ -10,7 +10,7 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpZkwtWk
 {
     // manager
     "createdBy": 1,
-    "name": "team 1",
+    "name": "team 2",
     "description": "this is a test team"
 }
 
