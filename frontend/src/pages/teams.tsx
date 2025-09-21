@@ -10,7 +10,9 @@ import SlideModalContainer from '../components/container/modal_containers/slide_
 import TeamCreateModal from '../components/modals/teams/team_create';
 import TeamReadModal from '../components/modals/teams/team_read';
 import TeamUpdateModal from '../components/modals/teams/team_update';
-import DynamicModal, { type FieldMetadata } from '../components/modals/generic/dynamic_modal';
+import DynamicModal, {
+	type FieldMetadata,
+} from '../components/modals/generic/dynamic_modal';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
 import DataTable, { type TableColumn } from 'react-data-table-component';
 import schema from '../assets/schemas/schema.json';
@@ -31,7 +33,8 @@ export default function TeamsPage() {
 
 	// Dynamic modal state
 	const [formData, setFormData] = useState<any>({});
-	const teamSchema: FieldMetadata[] = schema.CreateEditTeam as FieldMetadata[];
+	const teamSchema: FieldMetadata[] =
+		schema.CreateEditTeam as FieldMetadata[];
 
 	// Define columns for DataTable
 	const columns: TableColumn<Team>[] = [
@@ -106,7 +109,6 @@ export default function TeamsPage() {
 	 */
 	const handleFormDataChange = (data: any) => {
 		setFormData(data);
-
 	};
 
 	const handleCreateTeam = async () => {
@@ -114,7 +116,7 @@ export default function TeamsPage() {
 			// Map form data to the expected format
 			const teamData = {
 				name: formData.Name || '',
-				description: formData.Description || ''
+				description: formData.Description || '',
 			};
 
 			if (!teamData.name) {
@@ -122,15 +124,13 @@ export default function TeamsPage() {
 				return;
 			}
 
-			
 			const createdTeam = await addTeam(teamData);
-			
+
 			await refreshTeams();
-			
+
 			createTeamModal.close();
-			
+
 			setFormData({});
-			
 		} catch (error) {
 			console.error('Error creating team:', error);
 			alert('Failed to create team. Please try again.');
@@ -210,7 +210,9 @@ export default function TeamsPage() {
 							pagination
 							progressPending={loading}
 							progressComponent={<div>Loading teams...</div>}
-							noDataComponent={<div className="p-8">No teams found!</div>}
+							noDataComponent={
+								<div className="p-8">No teams found!</div>
+							}
 						/>
 					)}
 				</div>
@@ -222,12 +224,12 @@ export default function TeamsPage() {
 					<div className="mt-5 p-2">
 						<p className="text-2xl">Create Team</p>
 					</div>
-					
+
 					<DynamicModal
 						metadata={teamSchema}
 						onStateChange={handleFormDataChange}
 					/>
-					
+
 					<div className="flex justify-evenly mb-5">
 						<Button
 							buttonType="add"
