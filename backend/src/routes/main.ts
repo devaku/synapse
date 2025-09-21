@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { verifyJwt } from '../middlewares/auth-middleware';
 import debugRouter from './debug';
 import taskRouter from './tasks';
+import teamRouter from './teams';
 
 const mainRouter = express.Router();
 
@@ -20,6 +21,7 @@ function setupApiRoutes(): express.Router {
 	// API ROUTES
 	apiRouter.use(taskRouter);
 	apiRouter.use(debugRouter);
+	apiRouter.use(teamRouter);
 
 	return apiRouter;
 }

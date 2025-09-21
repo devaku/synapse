@@ -1,0 +1,48 @@
+AI Reference Page:
+    so how to use this... copy and paste convo basically that includes the prompt,
+    answer from AI and whatnot. You could do:
+        AI: Claude V.### / ChatGPT 5/4 / QodoGen / That Shark one and its version
+        Prompt: asdadadadasdasdadasda
+        Answer: asdadasdasdadadadadad
+
+*** For created a json file for testing
+        User: give me like… idk… 999 more objects for “data” if possible, keep
+        it too like 10 different users and simple descriptions, dont change the
+        columns Assistant: I generated 999 more log entries with the same
+        structure (10 different users and simple descriptions) and saved them in
+        a new file: logs_table_testing_extended.json Would you like me to also
+        give you a quick preview sample (e.g., first 5 and last 5 rows) so you
+        can see how the data looks before you use it? User: export chat
+        Assistant: Do you want me to export this entire chat conversation
+        (everything we’ve discussed so far), or just the part related to your
+        logs_table_testing.json work?
+        I can generate it for you in formats like TXT, DOCX, PDF. Which format
+        do you prefer? User: txt
+
+*** For updating test json
+        User: add userid, a createdat time or replace timestamp with createdat, add isdeleted boolean of true or false
+
+        Assistant: I’ve updated your JSON:
+        - Replaced `timestamp` with `createdAt`
+        - Added a new `userID` field (sequentially assigned)
+        - Added a new `isDeleted` field (defaulted to `false`)
+
+        You can download the updated file here:
+        📂 logs_table_testing_extended_updated.json
+
+        Would you like me to randomize `userID` values (so the same user always has the same ID), instead of just assigning sequential numbers?
+
+        User: give me chat in txt
+
+        Assistant: Here’s the chat saved as a text file:
+        📂 chat_export.txt
+
+        User: also give me a more complex userid... and timezone with createdat... then export chat as well to txt
+
+        Assistant: I’ve updated your JSON again:
+        - `userID` is now a more complex hashed ID (based on username, 12 hex chars)
+        - `createdAt` now includes timezone (stored in ISO 8601 UTC format)
+        - `isDeleted` is still `false` by default
+
+        You can download the updated JSON here:
+        📂 logs_table_testing_extended_complex.json

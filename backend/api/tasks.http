@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
     // manager
-    "createdBy": 2,
+    "createdBy": 1,
     "priority": "URGENT",
     "name": "task 1",
     "description": "This is a task"
