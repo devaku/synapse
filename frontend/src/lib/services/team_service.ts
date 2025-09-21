@@ -5,7 +5,7 @@ export async function CreateTeam(name: string, description: string) {
 		name,
 		description,
 	};
-	let response = await fetch(`${url}/api/teams/`, {
+	let response = await fetch(`${url}/teams/`, {
 		method: 'POST',
 		credentials: 'same-origin',
 		headers: {
@@ -37,7 +37,7 @@ export async function ReadAllTeams() {
 ]
      */
 	try {
-		let response = await fetch(`${url}/api/teams/`, {
+		let response = await fetch(`${url}/teams/`, {
 			method: 'GET',
 			credentials: 'same-origin',
 			headers: {

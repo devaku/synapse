@@ -55,13 +55,26 @@ const renderInput = (
 ): ReactElement => {
 	switch (field.type) {
 		case 'string':
-		case 'text':
 			return (
 				<input
 					key={field.name}
 					type="text"
 					value={String(value || '')}
 					onChange={(e) => onChange(field.name, e.target.value)}
+					className="border-2 border-gray-300 p-2 rounded w-full"
+					placeholder={`Enter ${field.name}`}
+				/>
+			);
+
+		case 'text':
+			return (
+				<textarea
+					key={field.name}
+					value={String(value || '')}
+					onChange={(e) => onChange(field.name, e.target.value)}
+					className="border-2 border-gray-300 p-2 rounded w-full resize-none"
+					rows={4}
+					placeholder={`Enter ${field.name}`}
 				/>
 			);
 
@@ -74,6 +87,8 @@ const renderInput = (
 					onChange={(e) =>
 						onChange(field.name, Number(e.target.value))
 					}
+					className="border-2 border-gray-300 p-2 rounded w-full"
+					placeholder={`Enter ${field.name}`}
 				/>
 			);
 
@@ -84,6 +99,7 @@ const renderInput = (
 					type="checkbox"
 					checked={Boolean(value)}
 					onChange={(e) => onChange(field.name, e.target.checked)}
+					className="w-4 h-4"
 				/>
 			);
 
@@ -94,6 +110,8 @@ const renderInput = (
 					type="text"
 					value={String(value || '')}
 					onChange={(e) => onChange(field.name, e.target.value)}
+					className="border-2 border-gray-300 p-2 rounded w-full"
+					placeholder={`Enter ${field.name}`}
 				/>
 			);
 	}
@@ -147,10 +165,12 @@ const DynamicModal = ({ metadata, onStateChange }: DynamicModalProps) => {
 	};
 
 	return (
-		<div>
+		<div className="space-y-4">
 			{metadata?.map((field) => (
-				<div key={field.name}>
-					<label>{field.name}</label>
+				<div key={field.name} className="flex flex-col">
+					<label className="mb-2 font-medium text-gray-700 capitalize">
+						{field.name.replace(/_/g, ' ')}:
+					</label>
 					{renderInput(
 						field,
 						formData[field.name],
