@@ -1,20 +1,6 @@
 import { PrismaClient } from '../database/generated/prisma';
 const prisma = new PrismaClient();
 
-let teamSeeds = [
-	{
-		name: 'Everyone',
-		description: 'THIS TEAM CANNOT BE DELETED',
-	},
-	{
-		name: 'Team 1',
-		description: 'This is Team 1',
-	},
-	{
-		name: 'Team 2',
-		description: 'This is Team 2',
-	},
-];
 let adminSeeds = [
 	{
 		username: 'admin1',
@@ -23,13 +9,17 @@ let adminSeeds = [
 		// Make sure this is the same as it was in keycloak
 		keycloakId: '76b4b8d2-7d5d-4c87-948c-fbba7f7237af',
 		team: {
-			connect: [{ id: 1 }, { id: 2 }],
+			create: {
+				name: 'Everyone',
+				description: 'THIS TEAM CANNOT BE DELETED',
+			},
 		},
 		firstName: 'first_name',
 		lastName: 'last_name',
 		phone: 123,
 	},
 ];
+
 let managerSeeds = [
 	{
 		username: 'manager1',
@@ -38,7 +28,10 @@ let managerSeeds = [
 		// Make sure this is the same as it was in keycloak
 		keycloakId: 'cfe3053a-babe-4bfe-bac2-841bdaecc3c8',
 		team: {
-			connect: [{ id: 1 }, { id: 2 }],
+			create: {
+				name: 'Team 1',
+				description: 'This is Team 1',
+			},
 		},
 		firstName: 'ManagerFname',
 		lastName: 'ManagerLname',
@@ -51,8 +44,12 @@ let managerSeeds = [
 		// Make sure this is the same as it was in keycloak
 		keycloakId: 'caf69623-bb5f-4601-8cc0-c9a518aa7910',
 		team: {
-			connect: [{ id: 1 }, { id: 3 }],
+			create: {
+				name: 'Team 2',
+				description: 'This is Team 2',
+			},
 		},
+
 		firstName: 'manager2',
 		lastName: 'manager2',
 		phone: 123,
@@ -63,9 +60,7 @@ let managerSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: '47b82f0a-b462-4df2-90f2-ac67c530898d',
-		team: {
-			connect: [{ id: 1 }],
-		},
+
 		firstName: 'Manager3',
 		lastName: 'Manager3',
 		phone: 123,
@@ -79,9 +74,7 @@ let employeeSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: 'be42ed78-fa69-4091-8243-da05ad65eafe',
-		team: {
-			connect: [{ id: 1 }, { id: 2 }],
-		},
+
 		firstName: 'user1Fname',
 		lastName: 'user1Lname',
 		phone: 123,
@@ -93,9 +86,7 @@ let employeeSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: '7511b747-b572-4420-9ba3-0bacdbcfc303',
-		team: {
-			connect: [{ id: 1 }, { id: 2 }],
-		},
+
 		firstName: 'user2Fname',
 		lastName: 'user2Lname',
 		phone: 123,
@@ -106,13 +97,36 @@ let employeeSeeds = [
 
 		// Make sure this is the same as it was in keycloak
 		keycloakId: '6e69c670-4e0e-4884-8c61-7d71c848f379',
-		team: {
-			connect: [{ id: 1 }],
-		},
+
 		firstName: 'user3',
 		lastName: 'user3',
 		phone: 123,
 	},
+];
+
+let teamsUserBelongTo = [
+	// Manager1
+	{ teamId: 1, userId: 2 },
+	{ teamId: 2, userId: 2 },
+
+	// Manager2
+	{ teamId: 1, userId: 3 },
+	{ teamId: 3, userId: 3 },
+
+	// Manager3
+	{ teamId: 1, userId: 4 },
+	{ teamId: 2, userId: 4 },
+
+	// User1
+	{ teamId: 1, userId: 5 },
+	{ teamId: 2, userId: 5 },
+
+	// User2
+	{ teamId: 1, userId: 6 },
+	{ teamId: 3, userId: 6 },
+
+	// User3
+	{ teamId: 1, userId: 7 },
 ];
 
 let taskSeeds = [
@@ -197,11 +211,13 @@ let taskSeeds = [
 ];
 
 async function seed() {
-	await iterateSeedList(teamSeeds, prisma.team);
 	await iterateSeedList(adminSeeds, prisma.user);
 	await iterateSeedList(managerSeeds, prisma.user);
 	await iterateSeedList(employeeSeeds, prisma.user);
 	await iterateSeedList(taskSeeds, prisma.task);
+
+	// Relationships
+	await iterateSeedList(teamsUserBelongTo, prisma.teamsUsersBelongTo);
 
 	console.log('Successfully seeded table');
 }
