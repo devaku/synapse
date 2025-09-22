@@ -30,6 +30,7 @@ export async function readUser(userId: number) {
 		},
 		include: {
 			team: true,
+			teamsUsersBelongTo: true,
 			createdTasks: true,
 			notification: true,
 		},

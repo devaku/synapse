@@ -54,9 +54,10 @@ export async function readTasksFilteredForUser(userId: number) {
 		return [];
 	}
 
-	const teamList = userRow.team.map((el) => el.id);
-	console.log('USERID: ', userId);
-	console.log('TEAMS THEY ARE IN: ', teamList);
+	// console.log(JSON.stringify(userRow));
+	const teamList = userRow.teamsUsersBelongTo.map((el) => el.teamId);
+	// console.log('USERID: ', userId);
+	// console.log('TEAMS THEY ARE IN: ', teamList);
 
 	// Prisma query provided by chatgpt
 	const taskRow = await prisma.task.findMany({
@@ -71,14 +72,14 @@ export async function readTasksFilteredForUser(userId: number) {
 						},
 					},
 				},
-				// 2. Task is visible to a team the user is in
+				// // 2. Task is visible to a team the user is in
 				{
 					taskVisibleToTeams: {
 						some: {
 							team: {
-								User: {
+								teamsUsersBelongTo: {
 									some: {
-										id: userId,
+										userId: userId,
 									},
 								},
 							},
