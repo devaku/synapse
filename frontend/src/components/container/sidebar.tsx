@@ -3,11 +3,12 @@ import TTGIcon from '@/assets/images/ttglogo/TTG_Icon.ico';
 import SidebarButton from '../ui/sidebar_button';
 import { useNavigate } from 'react-router';
 import useAuth from '../../lib/hooks/auth/useAuth';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
 
 export default function Sidebar() {
 	const navigate = useNavigate();
 
-	const { keycloak, isAuthenticated, token } = useAuth();
+	const { keycloak, isAuthenticated, token } = useAuthContext();
 
 	// TODO: Change this to actual check
 	const adminPrivileges = true;

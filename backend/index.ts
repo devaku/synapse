@@ -1,9 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import router from './src/routes/main';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import cors from 'cors';
+import favicon from 'serve-favicon';
+import path from 'path';
+
+import { setupServerMiddleware } from './src/middlewares/initial-middleware';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -11,25 +12,11 @@ const PORT = process.env.PORT;
 // Load the ENV settings
 dotenv.config();
 
-// Load CORS
-app.use(
-	cors({
-		origin: 'http://localhost:3000',
-		credentials: true,
-	})
-);
+// Setup favicon. Have to be at the very start. lol
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-// Parse the cookies attached to the request
-app.use(cookieParser());
-
-// app.use((req: Request, res: Response, next: NextFunction) => {
-// 	console.log('HEADERS');
-// 	console.log(req.headers);
-// 	console.log('COOKIES');
-// 	console.log(req.cookies);
-
-// 	next();
-// });
+// Setup middlewares
+setupServerMiddleware(app);
 
 // Load the routes
 app.use(router);
