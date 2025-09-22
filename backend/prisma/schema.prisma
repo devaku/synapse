@@ -27,11 +27,11 @@ model User {
     notification        Notification[]
     logs                Logs[]
     createdTasks        Task[]
-    Comment             Comment[]
+    comment             Comment[]
     taskVisibleToUsers  TaskVisibleToUsers[]
     taskHiddenFromUsers TaskHiddenFromUsers[]
-    TeamsUsersBelongTo  TeamsUsersBelongTo[]
-    Team                Team[]
+    teamsUsersBelongTo  TeamsUsersBelongTo[]
+    team                Team[]                @relation("TeamMadeByUser")
 }
 
 model Task {
@@ -48,8 +48,8 @@ model Task {
     isDeleted           Int                   @default(0)
     comments            Comment[]
     taskVisibleToUsers  TaskVisibleToUsers[]
-    taskVisibleToTeams  TaskVisibleToTeams[]
     taskHiddenFromUsers TaskHiddenFromUsers[]
+    taskVisibleToTeams  TaskVisibleToTeams[]
 }
 
 model Team {
@@ -57,12 +57,12 @@ model Team {
     name               String               @db.VarChar(255)
     description        String?              @db.VarChar(255)
     createdBy          Int
-    createdByUser      User                 @relation(fields: [createdBy], references: [id])
+    createdByUser      User                 @relation("TeamMadeByUser", fields: [createdBy], references: [id])
     createdAt          DateTime             @default(now()) @db.Timestamp(6)
     isDeleted          Int                  @default(0)
     notifications      Notification[]
     taskVisibleToTeams TaskVisibleToTeams[]
-    TeamsUsersBelongTo TeamsUsersBelongTo[]
+    teamsUsersBelongTo TeamsUsersBelongTo[]
 }
 
 model Notification {
@@ -90,9 +90,9 @@ model Logs {
 model Comment {
     id        Int      @id @default(autoincrement())
     userId    Int
-    User      User     @relation(fields: [userId], references: [id])
+    user      User     @relation(fields: [userId], references: [id])
     message   String   @db.VarChar(255)
-    Task      Task     @relation(fields: [taskId], references: [id])
+    task      Task     @relation(fields: [taskId], references: [id])
     taskId    Int
     createdAt DateTime @default(now()) @db.Timestamp(6)
     isDeleted Int      @default(0)

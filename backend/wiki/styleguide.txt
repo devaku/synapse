@@ -1,0 +1,1 @@
+ALL database columns are camelCase
