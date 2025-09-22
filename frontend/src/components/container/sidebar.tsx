@@ -2,31 +2,15 @@ import TTGLogo from '@/assets/images/ttglogo/TTG_Spiral_Logo_White.png';
 import TTGIcon from '@/assets/images/ttglogo/TTG_Icon.ico';
 import SidebarButton from '../ui/sidebar_button';
 import { useNavigate } from 'react-router';
+import useAuth from '../../lib/hooks/auth/useAuth';
 
 export default function Sidebar() {
-	// const {
-	// 	readAuthService,
-	// 	ENUM_INTERNAL_COOKIE,
-	// 	deleteCookie,
-	// 	logoutRemoveCookies,
-	// } = useMainAuthContext();
 	const navigate = useNavigate();
-	// async function handleLogoutClick() {
-	// 	// TODO: Could be expanded on the future
-	// 	// depending on how someone is logged in.
-	// 	let currentAuthService = readAuthService();
 
-	// 	// Clear cookies
-	// 	deleteCookie(ENUM_INTERNAL_COOKIE.DJANGO_ACCESS_TOKEN);
-	// 	deleteCookie(ENUM_INTERNAL_COOKIE.DJANGO_REFRESH_TOKEN);
-	// 	deleteCookie(ENUM_INTERNAL_COOKIE.USER_ID);
-	// 	deleteCookie(ENUM_INTERNAL_COOKIE.AUTH_SERVICE);
+	const { keycloak, isAuthenticated, token } = useAuth();
 
-	// 	// Redirect to Dashboard
-	// 	navigate('/');
-	// }
-
-	const adminPrivileges = true; // TODO: Change this to actual check
+	// TODO: Change this to actual check
+	const adminPrivileges = true;
 
 	return (
 		<div className="h-screen flex flex-col items-center md:w-50 max-md:w-20 bg-ttg-dark-blue px-3 pt-3">
@@ -90,7 +74,9 @@ export default function Sidebar() {
 				<button
 					className="text-white my-10 cursor-pointer"
 					onClick={() => {
-						navigate('/');
+						keycloak.logout({
+							redirectUri: 'http://localhost:3000',
+						});
 					}}
 				>
 					Logout

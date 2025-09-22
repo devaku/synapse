@@ -1,0 +1,6 @@
+To run the API samples in the api folder, make sure to download this vscode extension.
+
+https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+If the API endpoint you are accessing is protected, make sure to grab the access token
+provided by the request in the auth.http. It uses the admin account.

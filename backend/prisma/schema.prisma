@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../database/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id           Int            @id @default(autoincrement())
+    keycloakId   String         @db.VarChar(255)
+    username     String         @db.VarChar(255)
+    email        String         @db.VarChar(255)
+    team         Team[]
+    firstName    String?        @db.VarChar(255)
+    lastName     String?        @db.VarChar(255)
+    phone        Int?
+    createdAt    DateTime       @default(now()) @db.Timestamp(6)
+    Notification Notification[]
+    isDeleted    Int            @default(0)
+    Logs         Logs[]
+
+    createdTasks  Task[]    @relation("TaskCreatedBy")
+    createdTeams  Team[]    @relation("TeamCreatedBy")
+    assignedTasks Task[]    @relation("TaskAssignedTo")
+    Comment       Comment[] @relation("CommentCreatedBy")
+}
+
+model Team {
+    id            Int            @id @default(autoincrement())
+    name          String         @db.VarChar(255)
+    description   String?        @db.VarChar(255)
+    User          User[]
+    createdAt     DateTime       @default(now()) @db.Timestamp(6)
+    createdBy     Int            
+    createdByUser User           @relation("TeamCreatedBy", fields: [createdBy], references: [id])
+    isDeleted     Int            @default(0)
+    Notification  Notification[]
+}
+
+model Notification {
+    id          Int      @id @default(autoincrement())
+    name        String   @db.VarChar(255)
+    description String   @db.VarChar(255)
+    userId      Int
+    user        User     @relation(fields: [userId], references: [id])
+    teamId      Int?
+    team        Team?    @relation(fields: [teamId], references: [id])
+    createdAt   DateTime @default(now()) @db.Timestamp(6)
+    isDeleted   Int      @default(0)
+}
+
+model Logs {
+    id          Int      @id @default(autoincrement())
+    name        String   @db.VarChar(255)
+    description String   @db.VarChar(255)
+    userId      Int
+    user        User     @relation(fields: [userId], references: [id])
+    createdAt   DateTime @default(now()) @db.Timestamp(6)
+    isDeleted   Int      @default(0)
+}
+
+model Task {
+    id               Int       @id @default(autoincrement())
+    createdByUserId  Int
+    createdByUser    User      @relation("TaskCreatedBy", fields: [createdByUserId], references: [id])
+    assignedToUserId Int?
+    assignedToUser   User?     @relation("TaskAssignedTo", fields: [assignedToUserId], references: [id])
+    priority         String
+    name             String    @db.VarChar(255)
+    description      String    @db.VarChar(255)
+    image            String?   @db.VarChar(255)
+    startDate        DateTime? @db.Timestamp(6)
+    completeDate     DateTime? @db.Timestamp(6)
+    createdAt        DateTime  @default(now()) @db.Timestamp(6)
+    isDeleted        Int       @default(0)
+    comments         Comment[]
+}
+
+model Comment {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    User      User     @relation("CommentCreatedBy", fields: [userId], references: [id])
+    message   String   @db.VarChar(255)
+    Task      Task     @relation(fields: [taskId], references: [id])
+    taskId    Int
+    createdAt DateTime @default(now()) @db.Timestamp(6)
+    isDeleted Int      @default(0)
+}
+
+model Session {
+    sid    String   @id
+    sess   Json
+    expire DateTime @db.Timestamp(6)
+
+    @@index([expire], name: "IDX_session_expire")
+    @@map("session")
+}

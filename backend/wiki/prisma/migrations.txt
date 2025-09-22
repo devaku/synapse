@@ -1,0 +1,13 @@
+https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations#how-to-edit-a-migration-file
+
+
+Reset the database
+npx prisma migrate reset
+
+Create a migration
+npx prisma migrate dev --name <MIGRATION NAME>
+
+https://www.prisma.io/docs/orm/prisma-client/queries/crud#create-records-and-connect-or-create-related-records
+
+Squashing migrations
+https://www.prisma.io/docs/orm/prisma-migrate/workflows/squashing-migrations#how-to-migrate-cleanly-from-a-development-environment

@@ -1,12 +1,12 @@
 import { Outlet } from 'react-router';
-import Sidebar from '../components/container/sidebar';
+import Sidebar from '../container/sidebar';
 export default function DashboardLayout() {
 	return (
 		<main className="flex flex-row w-screen h-screen">
 			<div className="">
 				<Sidebar />
 			</div>
-			<div className="w-full">
+			<div className="w-full bg-ttg-white">
 				<Outlet></Outlet>
 			</div>
 		</main>
