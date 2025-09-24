@@ -1,5 +1,16 @@
 // These mirror the same column names in the database
 
+import { Server as SocketIOServer } from 'socket.io';
+
+// Type declaration provided by chatgpt
+declare global {
+	namespace Express {
+		interface Application {
+			io?: SocketIOServer;
+		}
+	}
+}
+
 import { type User } from '../database/generated/prisma';
 export type userType = {
 	keycloakId: string;
