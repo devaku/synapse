@@ -85,7 +85,6 @@ export async function readTeam (req : Request, res : Response) {
 export async function softDeleteTeam (req : Request, res : Response) {
 
     try {
-        console.log(req.body);
         const teamIdArray = req.body.teamIdArray;
 
         let deletedTeams = [];
@@ -119,7 +118,6 @@ export async function softDeleteTeam (req : Request, res : Response) {
 export async function deleteTeam (req : Request, res : Response) {
 
     try {
-        console.log(req.body);
         const teamIdArray = req.body.teamIdArray;
 
         let deletedTeams = [];
@@ -138,4 +136,27 @@ export async function deleteTeam (req : Request, res : Response) {
         let finalResponse = buildError(500, 'There was an error', error);
         res.status(500).json(finalResponse);
     }
+}
+
+export async function updateTeam (req : Request, res: Response){
+
+    try{
+
+        const team = req.body;
+        const updatedTeam = teamsService.updateTeam(team.id,team);
+
+        let finalResponse = buildResponse(
+			200,
+			'Team was updated successfully!',
+			team
+		);
+        res.status(200).json(finalResponse);
+
+
+    } catch (error){
+        let finalResponse = buildError(500, 'There was an error', error);
+        res.status(500).json(finalResponse);
+    }
+
+
 }

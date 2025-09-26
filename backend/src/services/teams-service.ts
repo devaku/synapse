@@ -70,7 +70,29 @@ export async function deleteTeam(id: number) {
         },
     })
 
-    return teamRow
+    return teamRow;
 
+
+}
+
+/**
+ * Service to fully update an individual team in the teams table 
+ * @param id
+ * @param team an object of type teamType
+ * @returns
+ */
+export async function updateTeam(id: number, team: teamType) {
+
+	const teamRow = await prisma.team.update({
+
+		where: {
+			id: id,
+		},
+		data:{
+			...team,
+		},
+	})
+
+	return teamRow;
 
 }

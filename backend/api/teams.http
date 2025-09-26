@@ -26,3 +26,14 @@ Content-Type: application/json
 {
     "teamIdArray" : [3]
 }
+
+###
+//Update a Team
+PUT {{localurl}}/teams HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 4,
+    "name": "team 10",
+    "description": "this is a test team"
+}
