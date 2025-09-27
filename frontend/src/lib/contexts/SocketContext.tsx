@@ -1,21 +1,23 @@
-import { useContext, createContext, useEffect } from 'react';
+import { useContext, createContext, useEffect, useState } from 'react';
 import { initializeSocket } from '../services/socket';
 import { useAuthContext } from './AuthContext';
 import type { Socket } from 'socket.io-client';
 
 type socketContextType = {
-	socket?: Socket;
+	socket: Socket | null;
 };
 
-const SocketContext = createContext<socketContextType>({});
+const SocketContext = createContext<socketContextType>({
+	socket: null,
+});
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
 	const { token } = useAuthContext();
-	let socket;
+	const [socket, setSocket] = useState<Socket | null>(null);
 	useEffect(() => {
 		if (token) {
-			console.log('GIVEN JWT TOKEN: ', token);
-			socket = initializeSocket(token);
+			// console.log('GIVEN JWT TOKEN: ', token);
+			setSocket(initializeSocket(token));
 		}
 	}, [token]);
 

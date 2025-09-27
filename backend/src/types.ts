@@ -5,8 +5,8 @@ import { Server as SocketIOServer } from 'socket.io';
 // Type declaration provided by chatgpt
 declare global {
 	namespace Express {
-		interface Application {
-			io?: SocketIOServer;
+		interface Request {
+			io: SocketIOServer;
 		}
 	}
 }

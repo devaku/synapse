@@ -20,21 +20,18 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 // Setup middlewares
 setupServerMiddleware(app);
 
-// Load the routes
-app.use(router);
-
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	res.json({
-		status: 'success',
-	});
-});
-
 // Setup socket
 const httpServer = app.listen(PORT, () => {
 	console.log(`Server is listening at PORT: ${PORT}`);
 });
 const io = socketMiddleware(httpServer);
-app.io = io;
+app.use((req: Request, res: Response, next: NextFunction) => {
+	req.io = io;
+	next();
+});
+
+// Load the routes
+app.use(router);
 
 // var http = require('http') ,
 // express = require('express') ,

@@ -8,10 +8,11 @@ export function socketMiddleware(httpServer: HttpServer) {
 		},
 	});
 	io.on('connection', (socket: Socket) => {
-		console.log(
-			'Socket connected! AUTH: ',
-			JSON.stringify(socket.handshake.auth)
-		);
+		console.log('SOCKET CONNECTED!');
+		// console.log(
+		// 	'Socket connected! AUTH: ',
+		// 	JSON.stringify(socket.handshake.auth)
+		// );
 
 		// socket.emit('DEBUG:PING', {
 		// 	message: 'This is from the synapse server',
