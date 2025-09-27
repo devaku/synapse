@@ -10,7 +10,7 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpZkwtWk
 {
     // manager
     "createdBy": 1,
-    "name": "team 2",
+    "name": "team 3",
     "description": "this is a test team"
 }
 
@@ -18,3 +18,22 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpZkwtWk
 // Read ALL teams
 GET {{localurl}}/teams HTTP/1.1
 
+###
+//Delete a team
+DELETE {{localurl}}/teams HTTP/1.1
+Content-Type: application/json
+
+{
+    "teamIdArray" : [3]
+}
+
+###
+//Update a Team
+PUT {{localurl}}/teams HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 4,
+    "name": "team 10",
+    "description": "this is a test team"
+}

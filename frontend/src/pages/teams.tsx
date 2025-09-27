@@ -202,7 +202,7 @@ export default function TeamsPage() {
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
 							selectableRows
-							onSelectedRowsChange={handleSelectedRowsChange}
+							//onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
 							contextActions={tableDataActions()}
 							defaultSortFieldId={1}
