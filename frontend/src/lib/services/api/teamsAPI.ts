@@ -64,18 +64,51 @@ export async function createTeam(data: { name: string; description?: string }) {
 /**
  * Delete a team by ID
  */
-// export async function deleteTeam(id: string | number) {
-//   try {
-//     const res = await fetch(`${BASE_URL}/api/teams/${id}/`, {
-//       method: "DELETE",
-//       headers: { "Accept": "application/json", "Content-Type": "application/json" },
-//       credentials: "same-origin",
-//     });
-//     return await res.json();
-//   } catch (error) {
-//     console.error("Fetch error:", error);
-//   }
-// }
+export async function softDeleteTeam(teamIdArray: number[]) {
+	let body = {
+	teamIdArray,
+	};
+  try {
+    const res = await fetch(`${BASE_URL}/teams/soft-delete/`, {
+      method: "DELETE",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      credentials: "same-origin",
+	  body: JSON.stringify(body),
+
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+}
+
+export async function editTeam(data: { id: number; name: string; description?: string }) {
+
+	try {
+
+		const res = await fetch(`${BASE_URL}/teams/`, {
+			method: 'PUT',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			credentials: 'same-origin',
+			body: JSON.stringify(data),
+		});
+
+		if (!res.ok) {
+			throw new Error(`HTTP error! status: ${res.status}`);
+		}
+
+		const result = await res.json();
+		console.log('createTeam API response:', result);
+		return result;
+	} catch (error) {
+		console.error('Fetch error:', error);
+		throw error; // Re-throw to let the hook handle it
+	}
+
+}
 
 // Mock
 // let mockTeams = [
