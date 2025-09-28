@@ -7,16 +7,16 @@ import { SESSION_SECRET } from './env-variables';
 const memoryStore = new session.MemoryStore();
 
 // authentication
-export const sessionMiddleware = session({
-	secret: SESSION_SECRET,
-	resave: false,
-	saveUninitialized: true,
-	store: memoryStore,
-});
+// export const sessionMiddleware = session({
+// 	secret: SESSION_SECRET,
+// 	resave: false,
+// 	saveUninitialized: true,
+// 	store: memoryStore,
+// });
 
-export const keycloak = new Keycloak(
-	{
-		store: memoryStore,
-	},
-	keycloakConfig
-);
+// export const keycloak = new Keycloak(
+// 	{
+// 		store: memoryStore,
+// 	},
+// 	keycloakConfig
+// );

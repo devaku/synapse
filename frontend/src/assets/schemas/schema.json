@@ -38,5 +38,15 @@
 			"name": "Status",
 			"type": "text"
 		}
+	],
+	"CreateEditTeam": [
+		{
+			"name": "Name",
+			"type": "text"
+		},
+		{
+			"name": "Description",
+			"type": "text"
+		}
 	]
 }

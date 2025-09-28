@@ -6,6 +6,7 @@ import Table from '../../container/table';
 
 type teamCreateModalProps = {
 	handleModalDisplay: () => void;
+	onTeamCreate?: (newTeam: { name: string }) => Promise<void>;
 };
 
 type tableData = {
@@ -15,6 +16,7 @@ type tableData = {
 
 export default function TeamCreateModal({
 	handleModalDisplay,
+	onTeamCreate,
 }: teamCreateModalProps) {
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
@@ -55,7 +57,7 @@ export default function TeamCreateModal({
 	function groupValuesByKey(array: any): Record<string, any[]> {
 		return _.transform(
 			array[0],
-			(result: any, value, key: any) => {
+			(result: any, _value, key: any) => {
 				result[key] = _.map(array, key);
 			},
 			{}
@@ -169,7 +171,13 @@ export default function TeamCreateModal({
 	async function handleCreateTeamClick() {
 		// TODO: Add proper displaying in case there's an error
 		try {
-			// await CreateTeam(name, description);
+			if (onTeamCreate) {
+				await onTeamCreate({ name });
+			} else {
+				// Fallback to old service if hook function not provided
+				// await CreateTeam(name, description);
+				console.log('Creating team:', { name, description });
+			}
 			handleModalClose();
 		} catch (error) {
 			console.log(error);
