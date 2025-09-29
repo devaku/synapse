@@ -2,7 +2,8 @@ import * as _ from 'lodash';
 import HeaderContainer from '../components/container/header_container';
 
 // Imports for Data Table Component
-import TableData from '../../testing_jsons/my_task_table_testing.json';
+import MyTaskTableData from '../../testing_jsons/my_task_table_testing.json';
+import NotificationTableData from '../../testing_jsons/notification_table_testing.json';
 import DataTable from 'react-data-table-component';
 
 import SearchBar from '../components/ui/searchbar';
@@ -29,10 +30,12 @@ type tableData = {
 export default function MyTasksPage() {
 
 	// Data Table React Component - https://react-data-table-component.netlify.app/
-	const [filteredItems, setFilteredItems] = useState(TableData.data || []);
-	const [filterText, setFilterText] = useState('');
+	const [filteredTasks, setFilteredTasks] = useState(MyTaskTableData.data || []);
+	const [taskFilterText, setTaskFilterText] = useState('');
+	const [filteredNotifications, setFilteredNotifications] = useState(NotificationTableData || []);
+	const [notificationFilterText, setNotificationFilterText] = useState('');
 
-	const columns = [
+	const taskColumns = [
 		{
 			name: 'ID',
 			selector: (row) => row.id,
@@ -57,10 +60,10 @@ export default function MyTasksPage() {
 		{
 			name: 'Actions',
 			cell: (row) => (
-				<>
+				<div className='flex gap-2'>
 					<button
 						className="cursor-pointer w-6 h-6"
-						onClick={() => handleClickInfo(row)}
+						onClick={() => handleMyTaskClickInfo(row)}
 					>
 						<SvgComponent iconName="INFO" className="" />
 					</button>
@@ -70,21 +73,56 @@ export default function MyTasksPage() {
 					>
 						<SvgComponent iconName="TRASHCAN" className="" />
 					</button>
-				</>
+				</div>
 			),
 		}
 	]
 
-	function handleClickInfo(row) {
-		// If a task
-		if (row.name) {
-			setModalTaskId(row.id);
-			setShowModalTaskInfo(true);
-		} else {
-			// it's a notification
-			setModalNotificationId(row.id);
-			setShowModalNotification(true);
+	const notificationColumns = [
+		{
+			name: 'ID',
+			selector: (row) => row.id,
+			sortable: true,
+		},
+		{
+			name: 'Notification',
+			selector: (row) => row.name,
+			sortable: true,
+		},
+		{
+			name: 'Sent',
+			selector: (row) => row.createdAt,
+			sortable: true,
+		},
+		{
+			name: 'Status',
+			selector: (row) => row.status,
+			sortable: true,
+			cell: (row) => <StatusPill text={row.status}></StatusPill>,
+		},
+		{
+			name: 'Actions',
+			cell: (row) => (
+				<>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleNotificationClickInfo(row)}
+					>
+						<SvgComponent iconName="INFO" className="" />
+					</button>
+				</>
+			),
 		}
+	];
+
+	function handleMyTaskClickInfo(row) {
+		setModalTaskId(row.id);
+		setShowModalTaskInfo(true);
+	}
+
+	function handleNotificationClickInfo(row) {
+		setModalNotificationId(row.id);
+		setShowModalNotification(true);
 	}
 
 	function handleClickDelete(row) {
@@ -96,22 +134,41 @@ export default function MyTasksPage() {
 	}
 
 	useEffect(() => {
-			const result = filteredItems.filter((item) => {
+			const taskResult = filteredTasks.filter((item) => {
 				return (
 					(item.id &&
 						item.id
 							.toString()
 							.toLowerCase()
-							.includes(filterText.toLowerCase())) ||
+							.includes(taskFilterText.toLowerCase())) ||
 					(item.name &&
-						item.name.toLowerCase().includes(filterText.toLowerCase())) ||
+						item.name.toLowerCase().includes(taskFilterText.toLowerCase())) ||
 					(item.priority &&
 						item.priority
-							.toLowerCase().includes(filterText.toLowerCase()))
+							.toLowerCase().includes(taskFilterText.toLowerCase()))
 				);
 			});
-			setFilteredItems(result);
-		}, [filterText, filteredItems]);
+			setFilteredTasks(taskResult);
+
+			const notificationResults = filteredNotifications.filter((item) => {
+				return (
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(notificationFilterText.toLowerCase())) ||
+					(item.name &&
+						item.name
+							.toLowerCase()
+							.includes(notificationFilterText.toLowerCase())) ||
+					(item.status &&
+						item.status
+							.toLowerCase()
+							.includes(notificationFilterText.toLowerCase()))
+				);
+			});
+			setFilteredNotifications(notificationResults);
+		}, [taskFilterText, filteredTasks, notificationFilterText, filteredNotifications]);
 
 
 
@@ -439,11 +496,21 @@ export default function MyTasksPage() {
 						</div>
 					</div>
 				</div>
-				<div>
+				<div className='gap-10 flex flex-col'>
 					{/* My Tasks Table */}
 					<DataTable
-						columns={columns}
-						data={filteredItems}
+						columns={taskColumns}
+						data={filteredTasks}
+						fixedHeader={true}
+						highlightOnHover={true}
+						dense={true}
+						fixedHeaderScrollHeight='400px'
+						className='border border-gray-200'
+					/>
+					{/* My Notifications Table */}
+					<DataTable
+						columns={notificationColumns}
+						data={filteredNotifications}
 						fixedHeader={true}
 						highlightOnHover={true}
 						dense={true}
