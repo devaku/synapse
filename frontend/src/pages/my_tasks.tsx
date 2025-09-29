@@ -1,7 +1,10 @@
 import * as _ from 'lodash';
 import HeaderContainer from '../components/container/header_container';
 
-import Table from '../components/container/table';
+// Imports for Data Table Component
+import TableData from '../../testing_jsons/my_task_table_testing.json';
+import DataTable from 'react-data-table-component';
+
 import SearchBar from '../components/ui/searchbar';
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
@@ -24,6 +27,94 @@ type tableData = {
 };
 
 export default function MyTasksPage() {
+
+	// Data Table React Component - https://react-data-table-component.netlify.app/
+	const [filteredItems, setFilteredItems] = useState(TableData.data || []);
+	const [filterText, setFilterText] = useState('');
+
+	const columns = [
+		{
+			name: 'ID',
+			selector: (row) => row.id,
+			sortable: true,
+		},
+		{
+			name: 'Task',
+			selector: (row) => row.name,
+			sortable: true,
+		},
+		{
+			name: 'Due Date',
+			selector: (row) => row.startDate,
+			sortable: true,
+		},
+		{
+			name: 'Status',
+			selector: (row) => row.priority,
+			sortable: true,
+			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
+		},
+		{
+			name: 'Actions',
+			cell: (row) => (
+				<>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleClickInfo(row)}
+					>
+						<SvgComponent iconName="INFO" className="" />
+					</button>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleClickDelete(row)}
+					>
+						<SvgComponent iconName="TRASHCAN" className="" />
+					</button>
+				</>
+			),
+		}
+	]
+
+	function handleClickInfo(row) {
+		// If a task
+		if (row.name) {
+			setModalTaskId(row.id);
+			setShowModalTaskInfo(true);
+		} else {
+			// it's a notification
+			setModalNotificationId(row.id);
+			setShowModalNotification(true);
+		}
+	}
+
+	function handleClickDelete(row) {
+		// If a task
+		if (row.name) {
+			setModalTaskId(row.id);
+			setShowModalTaskDelete(true);
+		}
+	}
+
+	useEffect(() => {
+			const result = filteredItems.filter((item) => {
+				return (
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterText.toLowerCase())) ||
+					(item.name &&
+						item.name.toLowerCase().includes(filterText.toLowerCase())) ||
+					(item.priority &&
+						item.priority
+							.toLowerCase().includes(filterText.toLowerCase()))
+				);
+			});
+			setFilteredItems(result);
+		}, [filterText, filteredItems]);
+
+
+
 	let mockTaskAPIResponse = [
 		{
 			id: 1,
@@ -347,6 +438,18 @@ export default function MyTasksPage() {
 							)}
 						</div>
 					</div>
+				</div>
+				<div>
+					{/* My Tasks Table */}
+					<DataTable
+						columns={columns}
+						data={filteredItems}
+						fixedHeader={true}
+						highlightOnHover={true}
+						dense={true}
+						fixedHeaderScrollHeight='400px'
+						className='border border-gray-200'
+					/>
 				</div>
 			</HeaderContainer>
 			{/* TASK MODALS */}
