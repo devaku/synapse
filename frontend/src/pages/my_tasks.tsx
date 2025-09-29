@@ -28,13 +28,15 @@ type tableData = {
 };
 
 export default function MyTasksPage() {
-
 	// Data Table React Component - https://react-data-table-component.netlify.app/
 	const [myTaskData, setMyTaskData] = useState(MyTaskTableData.data || []);
-	const [notificationData, setNotificationData] = useState(NotificationTableData || []);
+	const [notificationData, setNotificationData] = useState(
+		NotificationTableData || []
+	);
 
 	const [filteredTasks, setFilteredTasks] = useState(myTaskData);
-	const [filteredNotifications, setFilteredNotifications] = useState(notificationData);
+	const [filteredNotifications, setFilteredNotifications] =
+		useState(notificationData);
 
 	const [filterTextMyTasks, setFilterTextMyTasks] = useState('');
 	const [filterTextNotifications, setFilterTextNotifications] = useState('');
@@ -64,7 +66,7 @@ export default function MyTasksPage() {
 		{
 			name: 'Actions',
 			cell: (row) => (
-				<div className='flex gap-2'>
+				<div className="flex gap-2">
 					<button
 						className="cursor-pointer w-6 h-6"
 						onClick={() => handleMyTaskClickInfo(row)}
@@ -79,8 +81,8 @@ export default function MyTasksPage() {
 					</button>
 				</div>
 			),
-		}
-	]
+		},
+	];
 
 	const notificationColumns = [
 		{
@@ -116,7 +118,7 @@ export default function MyTasksPage() {
 					</button>
 				</>
 			),
-		}
+		},
 	];
 
 	function handleMyTaskClickInfo(row) {
@@ -138,43 +140,44 @@ export default function MyTasksPage() {
 	}
 
 	useEffect(() => {
-			const taskResult = myTaskData.filter((item) => {
-				return (
-					(item.id &&
-						item.id
-							.toString()
-							.toLowerCase()
-							.includes(filterTextMyTasks.toLowerCase())) ||
-					(item.name &&
-						item.name.toLowerCase().includes(filterTextMyTasks.toLowerCase())) ||
-					(item.priority &&
-						item.priority
-							.toLowerCase().includes(filterTextMyTasks.toLowerCase()))
-				);
-			});
-			setFilteredTasks(taskResult);
+		const taskResult = myTaskData.filter((item) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextMyTasks.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextMyTasks.toLowerCase())) ||
+				(item.priority &&
+					item.priority
+						.toLowerCase()
+						.includes(filterTextMyTasks.toLowerCase()))
+			);
+		});
+		setFilteredTasks(taskResult);
 
-			const notificationResults = notificationData.filter((item) => {
-				return (
-					(item.id &&
-						item.id
-							.toString()
-							.toLowerCase()
-							.includes(filterTextNotifications.toLowerCase())) ||
-					(item.name &&
-						item.name
-							.toLowerCase()
-							.includes(filterTextNotifications.toLowerCase())) ||
-					(item.status &&
-						item.status
-							.toLowerCase()
-							.includes(filterTextNotifications.toLowerCase()))
-				);
-			});
-			setFilteredNotifications(notificationResults);
-		}, [filterTextNotifications, filterTextMyTasks]);
-
-
+		const notificationResults = notificationData.filter((item) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextNotifications.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextNotifications.toLowerCase())) ||
+				(item.status &&
+					item.status
+						.toLowerCase()
+						.includes(filterTextNotifications.toLowerCase()))
+			);
+		});
+		setFilteredNotifications(notificationResults);
+	}, [filterTextNotifications, filterTextMyTasks]);
 
 	let mockTaskAPIResponse = [
 		{
@@ -500,7 +503,7 @@ export default function MyTasksPage() {
 						</div>
 					</div> */}
 				</div>
-				<div className='flex flex-col'>
+				<div className="flex flex-col">
 					{/* My Tasks Table */}
 					<div className="">
 						<input
@@ -508,7 +511,9 @@ export default function MyTasksPage() {
 							placeholder="Search My Tasks..."
 							className="mb-4 p-2 border rounded border-gray-300 w-50"
 							value={filterTextMyTasks}
-							onChange={(e) => setFilterTextMyTasks(e.target.value)}
+							onChange={(e) =>
+								setFilterTextMyTasks(e.target.value)
+							}
 						/>
 						<button
 							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
@@ -525,17 +530,19 @@ export default function MyTasksPage() {
 						fixedHeader={true}
 						highlightOnHover={true}
 						dense={true}
-						fixedHeaderScrollHeight='400px'
-						className='border border-gray-200 mb-10'
+						fixedHeaderScrollHeight="400px"
+						className="border border-gray-200 mb-10"
 					/>
 					{/* My Notifications Table */}
 					<div className="">
 						<input
 							type="text"
-							placeholder="Search logs..."
+							placeholder="Search notifications..."
 							className="mb-4 p-2 border rounded border-gray-300 w-50"
 							value={filterTextNotifications}
-							onChange={(e) => setFilterTextNotifications(e.target.value)}
+							onChange={(e) =>
+								setFilterTextNotifications(e.target.value)
+							}
 						/>
 						<button
 							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
@@ -552,8 +559,8 @@ export default function MyTasksPage() {
 						fixedHeader={true}
 						highlightOnHover={true}
 						dense={true}
-						fixedHeaderScrollHeight='400px'
-						className='border border-gray-200'
+						fixedHeaderScrollHeight="400px"
+						className="border border-gray-200"
 					/>
 				</div>
 			</HeaderContainer>
