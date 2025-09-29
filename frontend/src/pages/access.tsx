@@ -45,7 +45,8 @@ export default function MyAccesssPage() {
 	// ];
 
 	// Table react components and stuff
-	const [filteredItems, setFilteredItems] = useState(TableData.data || []);
+	const [data, setData] = useState(TableData.data || []);
+	const [filteredItems, setFilteredItems] = useState(data);
 	const [filterText, setFilterText] = useState('');
 
 	const columns = [
@@ -88,7 +89,7 @@ export default function MyAccesssPage() {
 				);
 			});
 			setFilteredItems(result);
-		}, [filterText, filteredItems]);
+		}, [filterText, data]);
 
 	// const [myAccessTableData, setMyAccessTableData] = useState<tableData>({
 	// 	columnName: [],
