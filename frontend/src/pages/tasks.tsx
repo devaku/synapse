@@ -382,6 +382,7 @@ export default function TasksPage() {
 							title="Available Tasks"
 							columns={tableData.columnName}
 							data={tableData.rowData}
+							theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
 							selectableRows
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}

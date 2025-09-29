@@ -155,6 +155,7 @@ export default function LogsPage() {
 					<DataTable
 						columns={columns}
 						data={filteredItems}
+						theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
 						selectableRows
 						onSelectedRowsChange={handleRowSelected}
 						fixedHeader
@@ -163,6 +164,9 @@ export default function LogsPage() {
 						expandableRowsComponent={ExpandedComponent}
 						expandableRowsHideExpander
 						expandOnRowClicked
+						className="border border-gray-200"
+						pointerOnHover
+						highlightOnHover
 						dense
 					/>
 				</div>

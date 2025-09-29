@@ -1,7 +1,11 @@
 import * as _ from 'lodash';
 import HeaderContainer from '../components/container/header_container';
 
-import Table from '../components/container/table';
+// Imports for Data Table Component
+import MyTaskTableData from '../../testing_jsons/my_task_table_testing.json';
+import NotificationTableData from '../../testing_jsons/notification_table_testing.json';
+import DataTable from 'react-data-table-component';
+
 import SearchBar from '../components/ui/searchbar';
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
@@ -24,6 +28,154 @@ type tableData = {
 };
 
 export default function MyTasksPage() {
+
+	// Data Table React Component - https://react-data-table-component.netlify.app/
+	const [myTaskData, setMyTaskData] = useState(MyTaskTableData.data || []);
+	const [notificationData, setNotificationData] = useState(NotificationTableData || []);
+
+	const [filteredTasks, setFilteredTasks] = useState(myTaskData);
+	const [filteredNotifications, setFilteredNotifications] = useState(notificationData);
+
+	const [filterTextMyTasks, setFilterTextMyTasks] = useState('');
+	const [filterTextNotifications, setFilterTextNotifications] = useState('');
+
+	const taskColumns = [
+		{
+			name: 'ID',
+			selector: (row) => row.id,
+			sortable: true,
+		},
+		{
+			name: 'Task',
+			selector: (row) => row.name,
+			sortable: true,
+		},
+		{
+			name: 'Due Date',
+			selector: (row) => row.startDate,
+			sortable: true,
+		},
+		{
+			name: 'Status',
+			selector: (row) => row.priority,
+			sortable: true,
+			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
+		},
+		{
+			name: 'Actions',
+			cell: (row) => (
+				<div className='flex gap-2'>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleMyTaskClickInfo(row)}
+					>
+						<SvgComponent iconName="INFO" className="" />
+					</button>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleClickDelete(row)}
+					>
+						<SvgComponent iconName="TRASHCAN" className="" />
+					</button>
+				</div>
+			),
+		}
+	]
+
+	const notificationColumns = [
+		{
+			name: 'ID',
+			selector: (row) => row.id,
+			sortable: true,
+		},
+		{
+			name: 'Notification',
+			selector: (row) => row.name,
+			sortable: true,
+		},
+		{
+			name: 'Sent',
+			selector: (row) => row.createdAt,
+			sortable: true,
+		},
+		{
+			name: 'Status',
+			selector: (row) => row.status,
+			sortable: true,
+			cell: (row) => <StatusPill text={row.status}></StatusPill>,
+		},
+		{
+			name: 'Actions',
+			cell: (row) => (
+				<>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleNotificationClickInfo(row)}
+					>
+						<SvgComponent iconName="INFO" className="" />
+					</button>
+				</>
+			),
+		}
+	];
+
+	function handleMyTaskClickInfo(row) {
+		setModalTaskId(row.id);
+		setShowModalTaskInfo(true);
+	}
+
+	function handleNotificationClickInfo(row) {
+		setModalNotificationId(row.id);
+		setShowModalNotification(true);
+	}
+
+	function handleClickDelete(row) {
+		// If a task
+		if (row.name) {
+			setModalTaskId(row.id);
+			setShowModalTaskDelete(true);
+		}
+	}
+
+	useEffect(() => {
+			const taskResult = myTaskData.filter((item) => {
+				return (
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterTextMyTasks.toLowerCase())) ||
+					(item.name &&
+						item.name.toLowerCase().includes(filterTextMyTasks.toLowerCase())) ||
+					(item.priority &&
+						item.priority
+							.toLowerCase().includes(filterTextMyTasks.toLowerCase()))
+				);
+			});
+			setFilteredTasks(taskResult);
+
+			const notificationResults = notificationData.filter((item) => {
+				return (
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterTextNotifications.toLowerCase())) ||
+					(item.name &&
+						item.name
+							.toLowerCase()
+							.includes(filterTextNotifications.toLowerCase())) ||
+					(item.status &&
+						item.status
+							.toLowerCase()
+							.includes(filterTextNotifications.toLowerCase()))
+				);
+			});
+			setFilteredNotifications(notificationResults);
+		}, [filterTextNotifications, filterTextMyTasks]);
+
+
+
 	let mockTaskAPIResponse = [
 		{
 			id: 1,
@@ -315,7 +467,7 @@ export default function MyTasksPage() {
 				{/* TABLES */}
 				<div className="flex gap-5 max-lg:flex-col">
 					{/* TASKS TABLE */}
-					<div className="">
+					{/* <div className="">
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
@@ -328,10 +480,10 @@ export default function MyTasksPage() {
 								<div>Table is empty!</div>
 							)}
 						</div>
-					</div>
+					</div> */}
 
 					{/* NOTIFICATION TABLE */}
-					<div className="">
+					{/* <div className="">
 						<SearchBar />
 						<div className="min-h-0 flex flex-col">
 							{myTaskTableData.columnName.length > 0 ? (
@@ -346,7 +498,63 @@ export default function MyTasksPage() {
 								<div>Table is empty!</div>
 							)}
 						</div>
+					</div> */}
+				</div>
+				<div className='flex flex-col'>
+					{/* My Tasks Table */}
+					<div className="">
+						<input
+							type="text"
+							placeholder="Search My Tasks..."
+							className="mb-4 p-2 border rounded border-gray-300 w-50"
+							value={filterTextMyTasks}
+							onChange={(e) => setFilterTextMyTasks(e.target.value)}
+						/>
+						<button
+							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							onClick={() => {
+								setFilterTextMyTasks('');
+							}}
+						>
+							X
+						</button>
 					</div>
+					<DataTable
+						columns={taskColumns}
+						data={filteredTasks}
+						fixedHeader={true}
+						highlightOnHover={true}
+						dense={true}
+						fixedHeaderScrollHeight='400px'
+						className='border border-gray-200 mb-10'
+					/>
+					{/* My Notifications Table */}
+					<div className="">
+						<input
+							type="text"
+							placeholder="Search logs..."
+							className="mb-4 p-2 border rounded border-gray-300 w-50"
+							value={filterTextNotifications}
+							onChange={(e) => setFilterTextNotifications(e.target.value)}
+						/>
+						<button
+							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							onClick={() => {
+								setFilterTextNotifications('');
+							}}
+						>
+							X
+						</button>
+					</div>
+					<DataTable
+						columns={notificationColumns}
+						data={filteredNotifications}
+						fixedHeader={true}
+						highlightOnHover={true}
+						dense={true}
+						fixedHeaderScrollHeight='400px'
+						className='border border-gray-200'
+					/>
 				</div>
 			</HeaderContainer>
 			{/* TASK MODALS */}
