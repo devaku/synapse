@@ -155,6 +155,7 @@ export default function LogsPage() {
 					<DataTable
 						columns={columns}
 						data={filteredItems}
+						theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
 						selectableRows
 						onSelectedRowsChange={handleRowSelected}
 						fixedHeader

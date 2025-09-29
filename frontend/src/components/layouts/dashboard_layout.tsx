@@ -11,7 +11,7 @@ export default function DashboardLayout() {
 					<div className="">
 						<Sidebar />
 					</div>
-					<div className="w-full">
+					<div className="w-full bg-ttg-white">
 						<Outlet></Outlet>
 					</div>
 				</main>
