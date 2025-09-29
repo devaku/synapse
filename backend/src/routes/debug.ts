@@ -16,4 +16,12 @@ debugRouter.get('/debug', (req: Request, res: Response) => {
 	});
 });
 
+debugRouter.get('/socket/:id', (req: Request, res: Response) => {
+	const id = req.params.id;
+	req.io.emit('DEBUG:PING', Number(id));
+	res.json({
+		message: 'This is the debug route',
+	});
+});
+
 export default debugRouter;
