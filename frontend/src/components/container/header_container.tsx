@@ -10,7 +10,7 @@ export default function HeaderContainer({
 	const navigate = useNavigate();
 
 	return (
-		<div className="w-full flex flex-col bg-ttg-white text-ttg-black">
+		<div className="w-full flex flex-col bg-ttg-white text-ttg-black max-h-screen">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-ttg-black/5 items-center justify-between">
 				{/* Left Side */}
@@ -38,7 +38,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="overflow-y-auto p-10 mb-10 min-h-0 ma">
+			<div className="overflow-y-auto max-h-screen p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>
