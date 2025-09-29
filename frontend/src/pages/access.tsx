@@ -74,7 +74,7 @@ export default function MyAccesssPage() {
 	];
 
 	useEffect(() => {
-			const result = filteredItems.filter((item) => {
+			const result = data.filter((item) => {
 				return (
 					(item.id &&
 						item.id
