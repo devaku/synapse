@@ -40,7 +40,7 @@ export default function PopupModalContainer({
 		return createPortal(
 			<div
 				className={
-					'absolute top-0 h-screen flex items-center justify-center ' +
+					'absolute z-10 top-0 h-screen flex items-center justify-center ' +
 					(playAnimation ? 'bg-black/50' : 'bg-black/0')
 				}
 				onClick={(e) => {
