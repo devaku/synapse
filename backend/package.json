@@ -27,7 +27,8 @@
 		"express-session": "^1.18.2",
 		"jsonwebtoken": "^9.0.2",
 		"keycloak-connect": "^26.1.1",
-		"serve-favicon": "^2.5.1"
+		"serve-favicon": "^2.5.1",
+		"socket.io": "^4.8.1"
 	},
 	"devDependencies": {
 		"@types/connect-pg-simple": "^7.0.3",

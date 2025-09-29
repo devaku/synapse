@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import keycloak from '../../services/auth/keycloak';
 
-const useAuth = () => {
+const UNUSED_useAuth = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false); // tracking auth status
 	const [token, setToken] = useState<string | null>(null);
 	useEffect(() => {
@@ -30,4 +30,4 @@ const useAuth = () => {
 	return { keycloak, isAuthenticated, token };
 };
 
-export default useAuth;
+export default UNUSED_useAuth;

@@ -5,6 +5,8 @@ import favicon from 'serve-favicon';
 import path from 'path';
 
 import { setupServerMiddleware } from './src/middlewares/initial-middleware';
+import { Server } from 'socket.io';
+import { socketMiddleware } from './src/middlewares/socket-middleware';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -18,15 +20,22 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 // Setup middlewares
 setupServerMiddleware(app);
 
+// Setup socket
+const httpServer = app.listen(PORT, () => {
+	console.log(`Server is listening at PORT: ${PORT}`);
+});
+const io = socketMiddleware(httpServer);
+app.use((req: Request, res: Response, next: NextFunction) => {
+	req.io = io;
+	next();
+});
+
 // Load the routes
 app.use(router);
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	res.json({
-		status: 'success',
-	});
-});
+// var http = require('http') ,
+// express = require('express') ,
+//  app = express();
 
-app.listen(PORT, () => {
-	console.log(`Express is listening at ${PORT}`);
-});
+// http.createServer(app).listen(80);
+// https.createServer({ ... }, app).listen(443);

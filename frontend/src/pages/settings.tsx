@@ -1,47 +1,10 @@
-import { useState, type JSX } from 'react';
+import { useState, useRef } from 'react';
 import HeaderContainer from '../components/container/header_container';
+import TabGroup from '../components/ui/tab_group';
 
 export default function SettingsPage() {
-	type Tab = {
-		name: string;
-		selected?: boolean;
-		onClick?: () => void;
-		content?: JSX.Element;
-	};
 
-	function Tab({ name, selected = false, onClick }: Tab) {
-		return (
-			<button
-				className={`w-40 h-10 flex items-center justify-center hover:cursor-pointer ${
-					selected == true
-						? 'border-b-1 bg-ttg-black/5'
-						: 'bg-ttg-black/15'
-				}`}
-				onClick={onClick}
-			>
-				{name}
-			</button>
-		);
-	}
-
-	function TabGroup({ tabs }: { tabs: Array<Tab> }) {
-		const [activeTab, setActiveTab] = useState(tabs[0].name);
-
-		return (
-			<div>
-				<div className="flex">
-					{tabs.map((tab) => (
-						<Tab
-							name={tab.name}
-							selected={tab.name === activeTab}
-							onClick={() => setActiveTab(tab.name)}
-						/>
-					))}
-				</div>
-				{tabs.find((tab) => tab.name === activeTab)?.content}
-			</div>
-		);
-	}
+    const theme = useRef(localStorage.getItem('theme') || 'light')
 
 	type Radio = {
 		name: string;
@@ -66,7 +29,16 @@ export default function SettingsPage() {
 	}
 
 	function RadioGroup({ radios }: { radios: Array<Radio> }) {
-		const [activeRadio, setActiveRadio] = useState(radios[0].name);
+		let defaultRadio: Radio
+		if (theme.current === 'dark') {
+			defaultRadio = radios[1]
+		} else {
+			defaultRadio = radios[0]
+		}
+
+		console.log(theme)
+
+		const [activeRadio, setActiveRadio] = useState(defaultRadio.name);
 
 		return (
 			<div className="flex my-5 ml-5">
@@ -109,19 +81,23 @@ export default function SettingsPage() {
 									radios={[
 										{
 											name: 'Light',
-											onClick: () =>
+											onClick: () => {
 												document.documentElement.setAttribute(
 													'class',
 													''
-												),
+												)
+												localStorage.setItem('theme', 'light')
+											}
 										},
 										{
 											name: 'Dark',
-											onClick: () =>
+											onClick: () => {
 												document.documentElement.setAttribute(
 													'class',
 													'dark'
-												),
+												)
+												localStorage.setItem('theme', 'dark')
+											}
 										},
 									]}
 								/>
