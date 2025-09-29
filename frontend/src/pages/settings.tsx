@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import HeaderContainer from '../components/container/header_container';
 import TabGroup from '../components/ui/tab_group';
 
 export default function SettingsPage() {
+
+    const theme = useRef(localStorage.getItem('theme') || 'light')
 
 	type Radio = {
 		name: string;
@@ -27,7 +29,16 @@ export default function SettingsPage() {
 	}
 
 	function RadioGroup({ radios }: { radios: Array<Radio> }) {
-		const [activeRadio, setActiveRadio] = useState(radios[0].name);
+		let defaultRadio: Radio
+		if (theme.current === 'dark') {
+			defaultRadio = radios[1]
+		} else {
+			defaultRadio = radios[0]
+		}
+
+		console.log(theme)
+
+		const [activeRadio, setActiveRadio] = useState(defaultRadio.name);
 
 		return (
 			<div className="flex my-5 ml-5">
@@ -70,19 +81,23 @@ export default function SettingsPage() {
 									radios={[
 										{
 											name: 'Light',
-											onClick: () =>
+											onClick: () => {
 												document.documentElement.setAttribute(
 													'class',
 													''
-												),
+												)
+												localStorage.setItem('theme', 'light')
+											}
 										},
 										{
 											name: 'Dark',
-											onClick: () =>
+											onClick: () => {
 												document.documentElement.setAttribute(
 													'class',
 													'dark'
-												),
+												)
+												localStorage.setItem('theme', 'dark')
+											}
 										},
 									]}
 								/>
