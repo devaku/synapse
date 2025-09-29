@@ -151,7 +151,7 @@ export default function LogsPage() {
 						</button>
 					</div>
 				</div>
-				<div className="">
+				<div className="z-0">
 					<DataTable
 						columns={columns}
 						data={filteredItems}

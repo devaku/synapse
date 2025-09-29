@@ -502,7 +502,7 @@ export default function MyTasksPage() {
 				</div>
 				<div className='flex flex-col'>
 					{/* My Tasks Table */}
-					<div className="">
+					<div className="z-0">
 						<input
 							type="text"
 							placeholder="Search My Tasks..."
@@ -529,7 +529,7 @@ export default function MyTasksPage() {
 						className='border border-gray-200 mb-10'
 					/>
 					{/* My Notifications Table */}
-					<div className="">
+					<div className="z-0">
 						<input
 							type="text"
 							placeholder="Search logs..."

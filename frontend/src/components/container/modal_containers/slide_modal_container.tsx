@@ -54,7 +54,7 @@ export default function SlideModalContainer({
 		return createPortal(
 			<div
 				className={
-					'absolute top-0 w-full overflow-hidden flex grow items-end justify-end dim-background ' +
+					'absolute top-0 w-full overflow-hidden flex grow items-end justify-end dim-background z-50 ' +
 					handleFade()
 				}
 				onClick={(e) => {
