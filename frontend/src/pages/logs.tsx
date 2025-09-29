@@ -164,6 +164,9 @@ export default function LogsPage() {
 						expandableRowsComponent={ExpandedComponent}
 						expandableRowsHideExpander
 						expandOnRowClicked
+						className="border border-gray-200"
+						pointerOnHover
+						highlightOnHover
 						dense
 					/>
 				</div>
