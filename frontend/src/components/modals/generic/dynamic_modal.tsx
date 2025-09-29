@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { ReactElement } from 'react';
 
 export interface FieldMetadata {
@@ -8,6 +8,7 @@ export interface FieldMetadata {
 
 interface DynamicModalProps {
 	metadata: FieldMetadata[];
+	initialData?: FormData;
 	onStateChange?: (formData: FormData) => void;
 }
 
@@ -117,51 +118,65 @@ const renderInput = (
 	}
 };
 
-const DynamicModal = ({ metadata, onStateChange }: DynamicModalProps) => {
+const DynamicModal = ({ metadata, initialData, onStateChange }: DynamicModalProps) => {
 	// Create a single state object with all dynamic fields
 	const [formData, setFormData] = useState<FormData>({});
+	const initializedRef = useRef(false);
 
-	// Initialize state when metadata changes
-	// OBS: We could even add a tab selection inside the modal and then change the state that way instead of closing the modal
-	// and reopening it
+	// Initialize state only once when component mounts
 	useEffect(() => {
-		if (metadata) {
+		if (metadata && !initializedRef.current) {
 			const initialState: FormData = {};
 			metadata.forEach((field) => {
-				// Set default values based on type
-				switch (field.type) {
-					case 'string':
-					case 'text':
-						initialState[field.name] = '';
-						break;
-					case 'number':
-						initialState[field.name] = 0;
-						break;
-					case 'boolean':
-						initialState[field.name] = false;
-						break;
-					default:
-						initialState[field.name] = null;
+				// Use initialData if provided, otherwise set default values based on type
+				if (initialData && initialData[field.name] !== undefined) {
+					initialState[field.name] = initialData[field.name];
+				} else {
+					switch (field.type) {
+						case 'string':
+						case 'text':
+							initialState[field.name] = '';
+							break;
+						case 'number':
+							initialState[field.name] = 0;
+							break;
+						case 'boolean':
+							initialState[field.name] = false;
+							break;
+						default:
+							initialState[field.name] = null;
+					}
 				}
 			});
 			setFormData(initialState);
+			initializedRef.current = true;
+			
+			// Call onStateChange once after initialization
+			if (onStateChange) {
+				onStateChange(initialState);
+			}
 		}
-	}, [metadata]);
+	}, [metadata, initialData, onStateChange]);
 
-	// Notify parent component when form data changes
-	// This way we can make the API call in the parent component
+	// Reset initialization flag when component unmounts
 	useEffect(() => {
-		if (onStateChange) {
-			onStateChange(formData);
-		}
-	}, [formData, onStateChange]);
+		return () => {
+			initializedRef.current = false;
+		};
+	}, []);
 
 	// Generic handler for updating any field
 	const handleFieldChange = (fieldName: string, value: FormDataValue) => {
-		setFormData((prev) => ({
-			...prev,
+		const newFormData = {
+			...formData,
 			[fieldName]: value,
-		}));
+		};
+		setFormData(newFormData);
+		
+		// Notify parent immediately when user makes changes
+		if (onStateChange && initializedRef.current) {
+			onStateChange(newFormData);
+		}
 	};
 
 	return (
