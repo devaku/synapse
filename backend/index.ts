@@ -1,9 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import router from './src/routes/main';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import cors from 'cors';
+import favicon from 'serve-favicon';
+import path from 'path';
+
+import { setupServerMiddleware } from './src/middlewares/initial-middleware';
+import { Server } from 'socket.io';
+import { socketMiddleware } from './src/middlewares/socket-middleware';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -11,35 +14,28 @@ const PORT = process.env.PORT;
 // Load the ENV settings
 dotenv.config();
 
-// Load CORS
-app.use(
-	cors({
-		origin: 'http://localhost:3000',
-		credentials: true,
-	})
-);
+// Setup favicon. Have to be at the very start. lol
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-// Parse the cookies attached to the request
-app.use(cookieParser());
+// Setup middlewares
+setupServerMiddleware(app);
 
-// app.use((req: Request, res: Response, next: NextFunction) => {
-// 	console.log('HEADERS');
-// 	console.log(req.headers);
-// 	console.log('COOKIES');
-// 	console.log(req.cookies);
-
-// 	next();
-// });
+// Setup socket
+const httpServer = app.listen(PORT, () => {
+	console.log(`Server is listening at PORT: ${PORT}`);
+});
+const io = socketMiddleware(httpServer);
+app.use((req: Request, res: Response, next: NextFunction) => {
+	req.io = io;
+	next();
+});
 
 // Load the routes
 app.use(router);
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	res.json({
-		status: 'success',
-	});
-});
+// var http = require('http') ,
+// express = require('express') ,
+//  app = express();
 
-app.listen(PORT, () => {
-	console.log(`Express is listening at ${PORT}`);
-});
+// http.createServer(app).listen(80);
+// https.createServer({ ... }, app).listen(443);

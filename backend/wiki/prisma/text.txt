@@ -1,3 +1,6 @@
+QUERIES:
+https://www.prisma.io/docs/orm/reference/prisma-client-reference#some
+
 https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations#how-to-edit-a-migration-file
 
 

@@ -36,9 +36,12 @@ export function buildError(
 		message,
 		error: {
 			errorMessage: error.message,
-			stackTrace: error.stack,
 		},
 	};
+
+	if (process.env.NODE_ENV === 'DEVELOPMENT') {
+		responseJson.error.stackTrace = error.stack;
+	}
 
 	return responseJson;
 }

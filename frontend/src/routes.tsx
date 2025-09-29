@@ -91,16 +91,15 @@ export const router = createBrowserRouter([
 			{ path: 'register', Component: RegisterPage },
 			{ path: 'forgot_password', Component: ForgotPasswordPage },
 			{ path: 'logged_out', Component: LoggedOutPage },
+
 			/**
 			 * PROTECTED ROUTES
 			 */
-			...protectedRoutes,
+			{
+				Component: ProtectLayout,
+				children: protectedRoutes,
+			},
 		],
-	},
-
-	{
-		Component: ProtectLayout,
-		children: protectedRoutes,
 	},
 
 	// WILD CARD
