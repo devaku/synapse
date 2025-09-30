@@ -14,7 +14,7 @@ taskRouter.post('/tasks', express.json(), createTask);
 // READ all or one
 //  - GET /tasks        → all tasks
 //  - GET /tasks/:id    → single task
-//  - GET /tasks?userId=123 → tasks for user
+//  - GET /tasks?useronly=1 (boolean) → tasks for user
 taskRouter.get('/tasks', readTask);
 taskRouter.get('/tasks/:id', readTask);
 

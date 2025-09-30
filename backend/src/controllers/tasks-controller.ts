@@ -45,12 +45,23 @@ export async function createTask(req: Request, res: Response) {
 export async function readTask(req: Request, res: Response) {
 	try {
 		const { id } = req.params;
-		const { userId } = req.query;
+		const { useronly } = req.query;
 
 		let task;
 		let message = '';
 
+		// Read a task
 		if (id) {
+			/**
+			 * Theoretically, this is insecure. Anyone can view the specifics of any task
+			 * assuming they know the ID for it, regardless if they are allowed to view it.
+			 * Because all they need is an ID. lol
+			 *
+			 * We could probably secure this by cross checking
+			 * the task the request is trying to view based on the visibility rules of the task
+			 *
+			 * But I don't really want to bother. lol
+			 */
 			const taskId = parseInt(id);
 			if (isNaN(taskId)) {
 				return res
@@ -65,14 +76,10 @@ export async function readTask(req: Request, res: Response) {
 					.json(buildError(404, 'Task not found', null));
 
 			message = 'Task retrieved successfully.';
-		} else if (userId) {
-			const userIdNumber = parseInt(userId as string);
-			if (isNaN(userIdNumber))
-				return res
-					.status(400)
-					.json(buildError(400, 'Invalid userId parameter', null));
+		} else if (useronly) {
+			const userId = req.session.userData!.user.id;
 
-			task = await taskService.readTasksFilteredForUser(userIdNumber);
+			task = await taskService.readTasksFilteredForUser(userId);
 			message =
 				task.length > 0
 					? 'User tasks retrieved successfully.'

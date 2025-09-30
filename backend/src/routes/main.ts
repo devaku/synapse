@@ -11,7 +11,7 @@ mainRouter.use(
 	'/api/v1',
 
 	// All routes are now protected
-	// verifyJwt,
+	verifyJwt,
 	setupApiRoutes()
 );
 
