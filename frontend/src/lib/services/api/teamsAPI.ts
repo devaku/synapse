@@ -66,26 +66,30 @@ export async function createTeam(data: { name: string; description?: string }) {
  */
 export async function softDeleteTeam(teamIdArray: number[]) {
 	let body = {
-	teamIdArray,
+		teamIdArray,
 	};
-  try {
-    const res = await fetch(`${BASE_URL}/teams/soft-delete/`, {
-      method: "DELETE",
-      headers: { "Accept": "application/json", "Content-Type": "application/json" },
-      credentials: "same-origin",
-	  body: JSON.stringify(body),
-
-    });
-    return await res.json();
-  } catch (error) {
-    console.error("Fetch error:", error);
-  }
+	try {
+		const res = await fetch(`${BASE_URL}/teams/soft-delete/`, {
+			method: 'DELETE',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			credentials: 'same-origin',
+			body: JSON.stringify(body),
+		});
+		return await res.json();
+	} catch (error) {
+		console.error('Fetch error:', error);
+	}
 }
 
-export async function editTeam(data: { id: number; name: string; description?: string }) {
-
+export async function editTeam(data: {
+	id: number;
+	name: string;
+	description?: string;
+}) {
 	try {
-
 		const res = await fetch(`${BASE_URL}/teams/`, {
 			method: 'PUT',
 			headers: {
@@ -107,7 +111,6 @@ export async function editTeam(data: { id: number; name: string; description?: s
 		console.error('Fetch error:', error);
 		throw error; // Re-throw to let the hook handle it
 	}
-
 }
 
 // Mock

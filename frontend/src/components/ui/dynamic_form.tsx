@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 
 export interface FieldMetadata {
 	name: string;
+	label: 'string';
 	type: 'string' | 'text' | 'number' | 'boolean';
 }
 
@@ -188,7 +189,10 @@ const DynamicForm = ({
 			{metadata?.map((field) => (
 				<div key={field.name} className="flex flex-col">
 					<label className="mb-2 font-medium text-gray-700 capitalize">
-						{field.name.replace(/_/g, ' ')}:
+						{field.label
+							? field.label.replace(/_/g, ' ')
+							: field.name.replace(/_/g, ' ')}
+						:
 					</label>
 					{renderInput(
 						field,

@@ -48,5 +48,13 @@
 			"name": "Description",
 			"type": "text"
 		}
+	],
+
+	"MyTaskDeleteRequest": [
+		{
+			"name": "reason",
+			"label": "Reason",
+			"type": "text"
+		}
 	]
 }

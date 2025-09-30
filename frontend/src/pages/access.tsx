@@ -12,9 +12,7 @@ import SlideModalContainer from '../components/container/modal_containers/slide_
 import Button from '../components/ui/button';
 import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
-import DynamicModal, {
-	type FieldMetadata,
-} from '../components/modals/generic/dynamic_modal';
+import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import schema from '../assets/schemas/schema.json';
 
 // type tableData = {
@@ -370,7 +368,7 @@ export default function MyAccesssPage() {
 				</div>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalCreateAccess} noFade={false}>
-				<DynamicModal
+				<DynamicForm
 					metadata={schema['AccessRequest'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>
