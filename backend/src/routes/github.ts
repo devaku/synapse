@@ -1,10 +1,10 @@
 import express from 'express';
 import {
-    getGithubJwt,
+    getGithubRepos,
 } from '../controllers/github-controllers';
 
 const githubRouter = express.Router();
 
-githubRouter.get('/github-jwt',getGithubJwt);
+githubRouter.get('/github-repos', getGithubRepos);
 
 export default githubRouter; 

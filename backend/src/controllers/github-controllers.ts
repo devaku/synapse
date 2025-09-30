@@ -1,18 +1,25 @@
 import express from "express";
-import { createGithubAppJwt } from "../lib/github-app-auth";
+import { Request, Response } from 'express';
+import { createGithubAppJwt, getInstallationAccessToken } from "../lib/github-app-auth";
+import axios from "axios";
 
 const app = express();
 
-export function getGithubJwt(req: express.Request, res: express.Response) {
-
+export async function getGithubRepos(req: Request, res: Response) {
     try {
-        const jwt = createGithubAppJwt();
-        res.json({ token: jwt });
+        const token = await getInstallationAccessToken();
+        
+        const response = await axios.get("https://api.github.com/installation/repositories", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/vnd.github+json",
+            },
+        });
+
+        res.json(response.data);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Failed to generate JWT");
+        res.status(500).send("Failed to fetch GitHub repositories");
     }
 }
-
-
 
