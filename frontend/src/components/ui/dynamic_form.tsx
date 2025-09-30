@@ -118,7 +118,11 @@ const renderInput = (
 	}
 };
 
-const DynamicModal = ({ metadata, initialData, onStateChange }: DynamicModalProps) => {
+const DynamicForm = ({
+	metadata,
+	initialData,
+	onStateChange,
+}: DynamicModalProps) => {
 	// Create a single state object with all dynamic fields
 	const [formData, setFormData] = useState<FormData>({});
 	const initializedRef = useRef(false);
@@ -150,7 +154,7 @@ const DynamicModal = ({ metadata, initialData, onStateChange }: DynamicModalProp
 			});
 			setFormData(initialState);
 			initializedRef.current = true;
-			
+
 			// Call onStateChange once after initialization
 			if (onStateChange) {
 				onStateChange(initialState);
@@ -172,7 +176,7 @@ const DynamicModal = ({ metadata, initialData, onStateChange }: DynamicModalProp
 			[fieldName]: value,
 		};
 		setFormData(newFormData);
-		
+
 		// Notify parent immediately when user makes changes
 		if (onStateChange && initializedRef.current) {
 			onStateChange(newFormData);
@@ -197,4 +201,4 @@ const DynamicModal = ({ metadata, initialData, onStateChange }: DynamicModalProp
 	);
 };
 
-export default DynamicModal;
+export default DynamicForm;
