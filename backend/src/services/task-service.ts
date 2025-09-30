@@ -73,6 +73,7 @@ export async function readTaskById(id: number) {
 					lastName: true,
 				},
 			},
+			deletionRequest: { include: { user: true } },
 			taskHiddenFromUsers: true,
 			taskVisibleToTeams: true,
 			taskVisibleToUsers: true,
@@ -101,6 +102,29 @@ export async function readTasksFilteredForUser(userId: number) {
 				},
 			],
 			taskHiddenFromUsers: { none: { userId } },
+		},
+		include: {
+			createdByUser: true,
+			comments: true,
+			taskVisibleToUsers: true,
+			taskVisibleToTeams: true,
+		},
+	});
+}
+
+export async function readTasksUserIsSubscribedTo(userId: number) {
+	const userRow = await readUser(userId);
+	if (!userRow) {
+		return [];
+	}
+
+	return await prisma.task.findMany({
+		where: {
+			taskUserSubscribeTo: {
+				some: {
+					userId,
+				},
+			},
 		},
 		include: {
 			createdByUser: true,

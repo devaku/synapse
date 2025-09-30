@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
-import { getTeams, createTeam, softDeleteTeam, editTeam as editTeamAPI } from '../../services/api/teamsAPI';
+import {
+	getTeams,
+	createTeam,
+	softDeleteTeam,
+	editTeam as editTeamAPI,
+} from '../../services/api/teamsAPI';
 
 export interface Team {
 	id: number;
@@ -64,28 +69,37 @@ export function useTeams() {
 	}
 
 	async function softRemoveTeam(teamIdArray: number[]) {
-	  setLoading(true);
-	  try {
-	    const success = await softDeleteTeam(teamIdArray);
-	    if (success !== undefined) { // softDeleteTeam returns JSON or undefined
-	      setTeams((prev) => prev.filter((t) => !teamIdArray.includes(t.id)));
-	    }
-	  } catch (err: any) {
-	    setError(err.message || 'Error deleting team');
-	  } finally {
-	    setLoading(false);
-	  }
+		setLoading(true);
+		try {
+			const success = await softDeleteTeam(teamIdArray);
+			if (success !== undefined) {
+				// softDeleteTeam returns JSON or undefined
+				setTeams((prev) =>
+					prev.filter((t) => !teamIdArray.includes(t.id))
+				);
+			}
+		} catch (err: any) {
+			setError(err.message || 'Error deleting team');
+		} finally {
+			setLoading(false);
+		}
 	}
 
-		async function editTeam(updatedTeam: { id: number; name: string; description?: string }) {
+	async function editTeam(updatedTeam: {
+		id: number;
+		name: string;
+		description?: string;
+	}) {
 		try {
 			const edited = await editTeamAPI(updatedTeam);
 
 			if (edited) {
 				// Update the team in the existing list
-				setTeams((prev) => 
-					prev.map((team) => 
-						team.id === updatedTeam.id ? { ...team, ...updatedTeam } : team
+				setTeams((prev) =>
+					prev.map((team) =>
+						team.id === updatedTeam.id
+							? { ...team, ...updatedTeam }
+							: team
 					)
 				);
 			}
@@ -97,5 +111,13 @@ export function useTeams() {
 		}
 	}
 
-	return { teams, loading, error, refreshTeams, addTeam, softRemoveTeam, editTeam };
+	return {
+		teams,
+		loading,
+		error,
+		refreshTeams,
+		addTeam,
+		softRemoveTeam,
+		editTeam,
+	};
 }

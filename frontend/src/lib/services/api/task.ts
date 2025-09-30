@@ -1,4 +1,4 @@
-import { type jsonResponse } from '../../types';
+import type { jsonResponse } from '../../types/custom';
 const url = import.meta.env.VITE_API_URL;
 
 export async function readAllTasks() {
@@ -10,6 +10,74 @@ export async function readAllTasks() {
 		.catch((error) => {
 			console.error('Fetch error:', error);
 		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
+/**
+ * Get a specific task
+ */
+export async function readTask(token: string, taskId: number) {
+	let response: jsonResponse = await fetch(`${url}/tasks/${taskId}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		credentials: 'include',
+	})
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
+/**
+ * Get all tasks the given user
+ * is subscribed to
+ * @returns
+ */
+export async function readAllMyTasks(token: string) {
+	let response: jsonResponse = await fetch(`${url}/tasks/subscribed`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		credentials: 'include',
+	})
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
 
 	if (response) {
 		if (response.data) {

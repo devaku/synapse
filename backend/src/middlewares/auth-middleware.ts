@@ -46,6 +46,11 @@ export async function verifyJwt(
 		});
 
 		const sessionJson = await loadIntoSession(decoded);
+		console.log(
+			'THIS REQUEST IS BEING MADE BY USERID: ',
+			sessionJson.user.id,
+			sessionJson.user.email
+		);
 		req.session.userData = sessionJson;
 		next();
 	} catch (error) {
