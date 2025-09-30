@@ -101,6 +101,28 @@ export async function readTask(req: Request, res: Response) {
 	}
 }
 
+export async function readSubscribedTasks(req: Request, res: Response) {
+	try {
+		const userId = req.session.userData!.user.id;
+
+		// TODO: Validation. Ugh
+
+		// Read a task
+		let taskRows = await taskService.readTasksUserIsSubscribedTo(userId);
+		let message =
+			taskRows.length > 0
+				? 'Tasks retrieved successfully.'
+				: 'No tasks found.';
+
+		return res.status(200).json(buildResponse(200, message, taskRows));
+	} catch (error: any) {
+		console.error('READ TASK ERROR:', error);
+		return res
+			.status(500)
+			.json(buildError(500, 'Error retrieving tasks', error));
+	}
+}
+
 // UPDATE - Update an existing task
 export async function updateTask(req: Request, res: Response) {
 	try {

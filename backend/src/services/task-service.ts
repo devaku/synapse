@@ -111,6 +111,29 @@ export async function readTasksFilteredForUser(userId: number) {
 	});
 }
 
+export async function readTasksUserIsSubscribedTo(userId: number) {
+	const userRow = await readUser(userId);
+	if (!userRow) {
+		return [];
+	}
+
+	return await prisma.task.findMany({
+		where: {
+			taskUserSubscribeTo: {
+				some: {
+					userId,
+				},
+			},
+		},
+		include: {
+			createdByUser: true,
+			comments: true,
+			taskVisibleToUsers: true,
+			taskVisibleToTeams: true,
+		},
+	});
+}
+
 /**
  * UPDATE TASK
  */

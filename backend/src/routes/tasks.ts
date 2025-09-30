@@ -2,6 +2,7 @@ import express from 'express';
 import {
 	createTask,
 	readTask,
+	readSubscribedTasks,
 	updateTask,
 	deleteTask,
 } from '../controllers/tasks-controller';
@@ -13,9 +14,14 @@ taskRouter.post('/tasks', express.json(), createTask);
 
 // READ all or one
 //  - GET /tasks        → all tasks
-//  - GET /tasks/:id    → single task
-//  - GET /tasks?useronly=1 (boolean) → tasks for user
+//  - GET /tasks?useronly=1 (boolean) → tasks only visible to that user
 taskRouter.get('/tasks', readTask);
+
+// Get all tasks the user is SUBSCRIBED too
+taskRouter.get('/tasks/subscribed', readSubscribedTasks);
+
+// Routes that have route parameters need to be further down
+//  - GET /tasks/:id    → single task
 taskRouter.get('/tasks/:id', readTask);
 
 // UPDATE
