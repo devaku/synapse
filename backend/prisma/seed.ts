@@ -1,6 +1,9 @@
 import { PrismaClient } from '../database/generated/prisma';
 const prisma = new PrismaClient();
 
+// SEED REFERENCE:
+// https://mysait-my.sharepoint.com/:x:/r/personal/alejokim_uy_edu_sait_ca/_layouts/15/Doc.aspx?sourcedoc=%7B69DB9A50-0214-453B-9E47-D2F89788BAFC%7D&file=Tickets.xlsx&action=default&mobileredirect=true
+
 let adminSeeds = [
 	{
 		username: 'admin1',
@@ -210,6 +213,17 @@ let taskSeeds = [
 	},
 ];
 
+const subscriptionSeeds = [
+	// User 1 is subscribed to task 1 and 2
+	{ userId: 5, taskId: 1 },
+	{ userId: 5, taskId: 2 },
+
+	// Manager3 is subscribed to Task 1, 2, and 3
+	{ userId: 4, taskId: 1 },
+	{ userId: 4, taskId: 2 },
+	{ userId: 4, taskId: 3 },
+];
+
 async function seed() {
 	await iterateSeedList(adminSeeds, prisma.user);
 	await iterateSeedList(managerSeeds, prisma.user);
@@ -218,6 +232,7 @@ async function seed() {
 
 	// Relationships
 	await iterateSeedList(teamsUserBelongTo, prisma.teamsUsersBelongTo);
+	await iterateSeedList(subscriptionSeeds, prisma.taskUserSubscribeTo);
 
 	console.log('Successfully seeded table');
 }
