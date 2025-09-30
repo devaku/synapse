@@ -112,14 +112,14 @@ model Session {
 }
 
 model DeletionRequest {
-    id        Int      @id @default(autoincrement())
-    taskId    Int
-    task      Task     @relation(fields: [taskId], references: [id])
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    reason    String   @db.VarChar(255)
-    createdAt DateTime @default(now()) @db.Timestamp(6)
-    isDeleted Int      @default(0)
+    id                Int      @id @default(autoincrement())
+    taskId            Int
+    task              Task     @relation(fields: [taskId], references: [id])
+    requestedByUserId Int
+    requestedByUser   User     @relation(fields: [requestedByUserId], references: [id])
+    reason            String   @db.VarChar(255)
+    createdAt         DateTime @default(now()) @db.Timestamp(6)
+    isDeleted         Int      @default(0)
 }
 
 /**
