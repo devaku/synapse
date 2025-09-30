@@ -73,7 +73,7 @@ export async function readTaskById(id: number) {
 					lastName: true,
 				},
 			},
-			deletionRequest: { include: { user: true } },
+			deletionRequest: { include: { requestedByUser: true } },
 			taskHiddenFromUsers: true,
 			taskVisibleToTeams: true,
 			taskVisibleToUsers: true,

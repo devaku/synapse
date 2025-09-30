@@ -9,7 +9,7 @@
 		"compose:up": "docker compose -p synapse_backend up --build",
 		"compose:down": "docker compose -p synapse_backend down",
 		"compose:stop": "docker compose -p synapse_backend stop",
-		"db:seed": "npx prisma migrate reset && ts-node prisma/seed.ts",
+		"db:seed": "npx prisma migrate reset && ts-node prisma/index_seed.ts",
 		"db:reset": "npx prisma migrate reset",
 		"build": "npm run clean && npm run compile && npm run copy",
 		"clean": "rimraf dist",
