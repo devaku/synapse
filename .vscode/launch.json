@@ -5,10 +5,11 @@
             "name": "Debug Express",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/index.ts", // Adjust this path
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            // Adjust this path
+            "program": "${workspaceFolder}/backend/src/index.ts",
+            "preLaunchTask": "npm run build",
             "outFiles": [
-                "${workspaceFolder}/dist/**/*.js"
+                "${workspaceFolder}/backend/dist/**/*.js"
             ], // Path to compiled JS
             "sourceMaps": true,
             "resolveSourceMapLocations": [
