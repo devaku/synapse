@@ -125,7 +125,9 @@ export default function MyTaskDeleteModal({
 				<div className="">
 					<div className="flex">
 						<div className="min-w-32">Requested By: </div>
-						<div>{task?.deletionRequest![0].user?.email}</div>
+						<div>
+							{task?.deletionRequest![0].requestedByUser?.email}
+						</div>
 					</div>
 					<div className="flex">
 						<div className="min-w-32">Requested On: </div>

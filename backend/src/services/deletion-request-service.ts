@@ -18,7 +18,7 @@ export async function readDelRequest(id: number) {
 		},
 		include: {
 			task: true,
-			user: true,
+			requestedByUser: true,
 		},
 	});
 

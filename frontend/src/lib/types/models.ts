@@ -125,8 +125,8 @@ export interface DeletionRequest {
 	id: number;
 	taskId: number;
 	task?: Task;
-	userId: number;
-	user?: User;
+	requestedByUserId: number;
+	requestedByUser?: User;
 	reason: string;
 	createdAt: Date;
 	isDeleted: number;
