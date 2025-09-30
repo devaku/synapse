@@ -6,17 +6,20 @@ type authContextType = {
 	keycloak: typeof keycloak;
 	isAuthenticated: boolean;
 	token: string | null;
+	userData: any;
 };
 
 const AuthContext = createContext<authContextType>({
 	keycloak,
 	isAuthenticated: false,
 	token: '',
+	userData: {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [isAuthenticated, setIsAuthenticated] = useState(false); // tracking auth status
 	const [token, setToken] = useState<string | null>(null);
+	const [userData, setUserData] = useState({});
 
 	useEffect(() => {
 		if (keycloak.didInitialize) {
@@ -31,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						// console.log(keycloak.token);
 						// storing access token after successful login
 						setToken(keycloak.token);
+						setUserData(parseJWT(keycloak.token));
 					}
 				})
 				.catch((error) => {
@@ -46,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		keycloak,
 		isAuthenticated,
 		token,
+		userData,
 	};
 
 	return (
@@ -55,4 +60,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuthContext() {
 	return useContext(AuthContext);
+}
+
+function parseJWT(token: string) {
+	let base64Url = token.split('.')[1];
+	let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+	let jsonPayload = decodeURIComponent(
+		window
+			.atob(base64)
+			.split('')
+			.map(function (c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+			})
+			.join('')
+	);
+
+	// console.log(jsonPayload);
+
+	return JSON.parse(jsonPayload);
 }
