@@ -1,202 +1,202 @@
 [
-  {
-    "id": 1,
-    "name": "Introduction to Database Design",
-    "description": "A comprehensive guide covering normalization, indexing, and query optimization techniques for modern databases.",
-    "userId": 101,
-    "teamId": 5,
-    "createdAt": "2024-03-15T08:30:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 2,
-    "name": "API Development Best Practices",
-    "description": "Learn RESTful API design patterns, authentication methods, and error handling strategies.",
-    "userId": 102,
-    "teamId": 5,
-    "createdAt": "2024-03-16T09:15:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 3,
-    "name": "Frontend Performance Optimization",
-    "description": "Tips and tricks for improving load times, reducing bundle sizes, and enhancing user experience.",
-    "userId": 103,
-    "teamId": 7,
-    "createdAt": "2024-03-17T10:45:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 4,
-    "name": "Security Fundamentals for Web Apps",
-    "description": "Understanding OWASP top 10 vulnerabilities and implementing secure coding practices.",
-    "userId": 104,
-    "teamId": 7,
-    "createdAt": "2024-03-18T11:20:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 5,
-    "name": "Microservices Architecture Guide",
-    "description": "Designing scalable distributed systems with service mesh, API gateways, and containerization.",
-    "userId": 105,
-    "teamId": 3,
-    "createdAt": "2024-03-19T14:00:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 6,
-    "name": "CI/CD Pipeline Setup",
-    "description": "Automating builds, tests, and deployments using modern DevOps tools and practices.",
-    "userId": 106,
-    "teamId": 3,
-    "createdAt": "2024-03-20T15:30:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 7,
-    "name": "Cloud Migration Strategies",
-    "description": "Planning and executing successful migrations to AWS, Azure, or Google Cloud Platform.",
-    "userId": 107,
-    "teamId": 8,
-    "createdAt": "2024-03-21T16:45:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 8,
-    "name": "Mobile App Development Trends",
-    "description": "Exploring React Native, Flutter, and native development approaches for iOS and Android.",
-    "userId": 108,
-    "teamId": 8,
-    "createdAt": "2024-03-22T08:00:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 9,
-    "name": "Machine Learning Basics",
-    "description": "Introduction to supervised learning, neural networks, and practical ML model training.",
-    "userId": 109,
-    "teamId": 2,
-    "createdAt": "2024-03-23T09:30:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 10,
-    "name": "Agile Project Management",
-    "description": "Implementing Scrum, Kanban, and other agile methodologies for effective team collaboration.",
-    "userId": 110,
-    "teamId": 2,
-    "createdAt": "2024-03-24T10:15:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 11,
-    "name": "Testing Strategies and Frameworks",
-    "description": "Unit testing, integration testing, and end-to-end testing with Jest, Pytest, and Selenium.",
-    "userId": 111,
-    "teamId": 6,
-    "createdAt": "2024-03-25T11:00:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 12,
-    "name": "GraphQL vs REST APIs",
-    "description": "Comparing query languages, performance characteristics, and use cases for modern applications.",
-    "userId": 112,
-    "teamId": 6,
-    "createdAt": "2024-03-26T13:45:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 13,
-    "name": "Docker and Kubernetes Tutorial",
-    "description": "Containerization and orchestration for building resilient, scalable infrastructure.",
-    "userId": 113,
-    "teamId": 4,
-    "createdAt": "2024-03-27T14:30:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 14,
-    "name": "UI/UX Design Principles",
-    "description": "Creating intuitive interfaces with accessibility, responsiveness, and user-centered design.",
-    "userId": 114,
-    "teamId": 4,
-    "createdAt": "2024-03-28T15:00:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 15,
-    "name": "Data Privacy and GDPR Compliance",
-    "description": "Understanding regulations, implementing data protection, and maintaining user privacy.",
-    "userId": 115,
-    "teamId": 9,
-    "createdAt": "2024-03-29T16:20:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 16,
-    "name": "Blockchain Technology Overview",
-    "description": "Exploring distributed ledgers, smart contracts, and cryptocurrency fundamentals.",
-    "userId": 116,
-    "teamId": 9,
-    "createdAt": "2024-03-30T08:45:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 17,
-    "name": "Code Review Best Practices",
-    "description": "Establishing effective review processes, providing constructive feedback, and maintaining code quality.",
-    "userId": 117,
-    "teamId": 1,
-    "createdAt": "2024-03-31T09:00:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 18,
-    "name": "Serverless Architecture Patterns",
-    "description": "Building event-driven applications with AWS Lambda, Azure Functions, and Cloud Functions.",
-    "userId": 118,
-    "teamId": 1,
-    "createdAt": "2024-04-01T10:30:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  },
-  {
-    "id": 19,
-    "name": "Technical Documentation Writing",
-    "description": "Creating clear, comprehensive documentation for APIs, systems, and development processes.",
-    "userId": 119,
-    "teamId": 10,
-    "createdAt": "2024-04-02T11:45:00Z",
-    "isDeleted": 0,
-    "status": "READ"
-  },
-  {
-    "id": 20,
-    "name": "Monitoring and Observability",
-    "description": "Implementing logging, metrics, and tracing for production systems with modern monitoring tools.",
-    "userId": 120,
-    "teamId": 10,
-    "createdAt": "2024-04-03T13:00:00Z",
-    "isDeleted": 0,
-    "status": "UNREAD"
-  }
+	{
+		"id": 1,
+		"name": "Introduction to Database Design",
+		"description": "A comprehensive guide covering normalization, indexing, and query optimization techniques for modern databases.",
+		"userId": 101,
+		"teamId": 5,
+		"createdAt": "2024-03-15T08:30:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 2,
+		"name": "API Development Best Practices",
+		"description": "Learn RESTful API design patterns, authentication methods, and error handling strategies.",
+		"userId": 102,
+		"teamId": 5,
+		"createdAt": "2024-03-16T09:15:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 3,
+		"name": "Frontend Performance Optimization",
+		"description": "Tips and tricks for improving load times, reducing bundle sizes, and enhancing user experience.",
+		"userId": 103,
+		"teamId": 7,
+		"createdAt": "2024-03-17T10:45:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 4,
+		"name": "Security Fundamentals for Web Apps",
+		"description": "Understanding OWASP top 10 vulnerabilities and implementing secure coding practices.",
+		"userId": 104,
+		"teamId": 7,
+		"createdAt": "2024-03-18T11:20:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 5,
+		"name": "Microservices Architecture Guide",
+		"description": "Designing scalable distributed systems with service mesh, API gateways, and containerization.",
+		"userId": 105,
+		"teamId": 3,
+		"createdAt": "2024-03-19T14:00:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 6,
+		"name": "CI/CD Pipeline Setup",
+		"description": "Automating builds, tests, and deployments using modern DevOps tools and practices.",
+		"userId": 106,
+		"teamId": 3,
+		"createdAt": "2024-03-20T15:30:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 7,
+		"name": "Cloud Migration Strategies",
+		"description": "Planning and executing successful migrations to AWS, Azure, or Google Cloud Platform.",
+		"userId": 107,
+		"teamId": 8,
+		"createdAt": "2024-03-21T16:45:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 8,
+		"name": "Mobile App Development Trends",
+		"description": "Exploring React Native, Flutter, and native development approaches for iOS and Android.",
+		"userId": 108,
+		"teamId": 8,
+		"createdAt": "2024-03-22T08:00:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 9,
+		"name": "Machine Learning Basics",
+		"description": "Introduction to supervised learning, neural networks, and practical ML model training.",
+		"userId": 109,
+		"teamId": 2,
+		"createdAt": "2024-03-23T09:30:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 10,
+		"name": "Agile Project Management",
+		"description": "Implementing Scrum, Kanban, and other agile methodologies for effective team collaboration.",
+		"userId": 110,
+		"teamId": 2,
+		"createdAt": "2024-03-24T10:15:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 11,
+		"name": "Testing Strategies and Frameworks",
+		"description": "Unit testing, integration testing, and end-to-end testing with Jest, Pytest, and Selenium.",
+		"userId": 111,
+		"teamId": 6,
+		"createdAt": "2024-03-25T11:00:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 12,
+		"name": "GraphQL vs REST APIs",
+		"description": "Comparing query languages, performance characteristics, and use cases for modern applications.",
+		"userId": 112,
+		"teamId": 6,
+		"createdAt": "2024-03-26T13:45:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 13,
+		"name": "Docker and Kubernetes Tutorial",
+		"description": "Containerization and orchestration for building resilient, scalable infrastructure.",
+		"userId": 113,
+		"teamId": 4,
+		"createdAt": "2024-03-27T14:30:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 14,
+		"name": "UI/UX Design Principles",
+		"description": "Creating intuitive interfaces with accessibility, responsiveness, and user-centered design.",
+		"userId": 114,
+		"teamId": 4,
+		"createdAt": "2024-03-28T15:00:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 15,
+		"name": "Data Privacy and GDPR Compliance",
+		"description": "Understanding regulations, implementing data protection, and maintaining user privacy.",
+		"userId": 115,
+		"teamId": 9,
+		"createdAt": "2024-03-29T16:20:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 16,
+		"name": "Blockchain Technology Overview",
+		"description": "Exploring distributed ledgers, smart contracts, and cryptocurrency fundamentals.",
+		"userId": 116,
+		"teamId": 9,
+		"createdAt": "2024-03-30T08:45:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 17,
+		"name": "Code Review Best Practices",
+		"description": "Establishing effective review processes, providing constructive feedback, and maintaining code quality.",
+		"userId": 117,
+		"teamId": 1,
+		"createdAt": "2024-03-31T09:00:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 18,
+		"name": "Serverless Architecture Patterns",
+		"description": "Building event-driven applications with AWS Lambda, Azure Functions, and Cloud Functions.",
+		"userId": 118,
+		"teamId": 1,
+		"createdAt": "2024-04-01T10:30:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	},
+	{
+		"id": 19,
+		"name": "Technical Documentation Writing",
+		"description": "Creating clear, comprehensive documentation for APIs, systems, and development processes.",
+		"userId": 119,
+		"teamId": 10,
+		"createdAt": "2024-04-02T11:45:00Z",
+		"isDeleted": 0,
+		"status": "READ"
+	},
+	{
+		"id": 20,
+		"name": "Monitoring and Observability",
+		"description": "Implementing logging, metrics, and tracing for production systems with modern monitoring tools.",
+		"userId": 120,
+		"teamId": 10,
+		"createdAt": "2024-04-03T13:00:00Z",
+		"isDeleted": 0,
+		"status": "UNREAD"
+	}
 ]

@@ -241,7 +241,13 @@ export default function TeamsPage() {
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
 							selectableRows
-							theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
+							theme={
+								document.documentElement.getAttribute(
+									'class'
+								) == 'dark'
+									? 'dark'
+									: 'default'
+							}
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
 							//contextActions={tableDataActions()}
