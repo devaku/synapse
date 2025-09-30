@@ -32,6 +32,7 @@ model User {
     taskHiddenFromUsers TaskHiddenFromUsers[]
     teamsUsersBelongTo  TeamsUsersBelongTo[]
     team                Team[]                @relation("TeamMadeByUser")
+    deletionRequest     DeletionRequest[]
 }
 
 model Task {
@@ -46,10 +47,12 @@ model Task {
     completeDate        DateTime?             @db.Timestamp(6)
     createdAt           DateTime              @default(now()) @db.Timestamp(6)
     isDeleted           Int                   @default(0)
+    isArchived          Int                   @default(0)
     comments            Comment[]
     taskVisibleToUsers  TaskVisibleToUsers[]
     taskHiddenFromUsers TaskHiddenFromUsers[]
     taskVisibleToTeams  TaskVisibleToTeams[]
+    deletionRequest     DeletionRequest[]
 }
 
 model Team {
@@ -104,6 +107,17 @@ model Session {
     expire DateTime @db.Timestamp(6)
 
     @@index([expire], name: "IDX_session_expire")
+}
+
+model DeletionRequest {
+    id        Int      @id @default(autoincrement())
+    taskId    Int
+    task      Task     @relation(fields: [taskId], references: [id])
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    reason    String   @db.VarChar(255)
+    createdAt DateTime @default(now()) @db.Timestamp(6)
+    isDeleted Int      @default(0)
 }
 
 /**
