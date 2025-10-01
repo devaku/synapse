@@ -15,23 +15,26 @@ datasource db {
 }
 
 model User {
-    id                  Int                   @id @default(autoincrement())
-    keycloakId          String                @unique @db.VarChar(255)
-    username            String                @db.VarChar(255)
-    email               String                @db.VarChar(255)
-    firstName           String?               @db.VarChar(255)
-    lastName            String?               @db.VarChar(255)
-    phone               Int?
-    lastActivity        DateTime              @default(now()) @db.Timestamp(6)
-    isDeleted           Int                   @default(0)
-    notification        Notification[]
-    logs                Logs[]
-    createdTasks        Task[]
-    comment             Comment[]
-    taskVisibleToUsers  TaskVisibleToUsers[]
-    taskHiddenFromUsers TaskHiddenFromUsers[]
-    teamsUsersBelongTo  TeamsUsersBelongTo[]
-    team                Team[]                @relation("TeamMadeByUser")
+    id                   Int                   @id @default(autoincrement())
+    keycloakId           String                @unique @db.VarChar(255)
+    username             String                @db.VarChar(255)
+    email                String                @db.VarChar(255)
+    firstName            String?               @db.VarChar(255)
+    lastName             String?               @db.VarChar(255)
+    phone                Int?
+    lastActivity         DateTime              @default(now()) @db.Timestamp(6)
+    isDeleted            Int                   @default(0)
+    notification         Notification[]
+    logs                 Logs[]
+    createdTasks         Task[]
+    comment              Comment[]
+    taskVisibleToUsers   TaskVisibleToUsers[]
+    taskHiddenFromUsers  TaskHiddenFromUsers[]
+    teamsUsersBelongTo   TeamsUsersBelongTo[]
+    team                 Team[]                @relation("TeamMadeByUser")
+    deletionRequest      DeletionRequest[]
+    taskUsersSubscribeTo TaskUserSubscribeTo[]
+    taskArchived         Task[]                @relation("TaskArchivedBy")
 }
 
 model Task {
@@ -43,13 +46,18 @@ model Task {
     description         String                @db.VarChar(255)
     image               String?               @db.VarChar(255)
     startDate           DateTime?             @db.Timestamp(6)
-    completeDate        DateTime?             @db.Timestamp(6)
     createdAt           DateTime              @default(now()) @db.Timestamp(6)
     isDeleted           Int                   @default(0)
+    completeDate        DateTime?             @db.Timestamp(6)
+    isArchived          Int                   @default(0)
+    archivedByUserId    Int?
+    archivedByUser      User?                 @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
     comments            Comment[]
     taskVisibleToUsers  TaskVisibleToUsers[]
     taskHiddenFromUsers TaskHiddenFromUsers[]
     taskVisibleToTeams  TaskVisibleToTeams[]
+    deletionRequest     DeletionRequest[]
+    taskUserSubscribeTo TaskUserSubscribeTo[]
 }
 
 model Team {
@@ -106,9 +114,29 @@ model Session {
     @@index([expire], name: "IDX_session_expire")
 }
 
+model DeletionRequest {
+    id                Int      @id @default(autoincrement())
+    taskId            Int
+    task              Task     @relation(fields: [taskId], references: [id])
+    requestedByUserId Int
+    requestedByUser   User     @relation(fields: [requestedByUserId], references: [id])
+    reason            String   @db.VarChar(255)
+    createdAt         DateTime @default(now()) @db.Timestamp(6)
+    isDeleted         Int      @default(0)
+}
+
 /**
  * LINK TABLES
  */
+
+model TaskUserSubscribeTo {
+    taskId Int
+    task   Task @relation(fields: [taskId], references: [id])
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+
+    @@id([userId, taskId])
+}
 
 model TeamsUsersBelongTo {
     userId Int

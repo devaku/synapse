@@ -11,14 +11,12 @@ import SvgComponent from '../components/ui/svg_component';
 
 import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
-import DynamicModal, {
-	type FieldMetadata,
-} from '../components/modals/generic/dynamic_modal';
+import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useModal } from '../lib/hooks/ui/useModal';
 
 import DataTable, { type TableColumn } from 'react-data-table-component';
 
-import { type Task } from '../lib/types';
+import type { Task } from '../lib/types/models';
 
 /**
  * DATA
@@ -157,7 +155,7 @@ export default function TasksPage() {
 		}
 	}
 
-	function loadTasks(data: Task[]) {
+	function loadTasks(data: any[]) {
 		// Hard coded column names
 		const columns = [
 			{
@@ -382,7 +380,13 @@ export default function TasksPage() {
 							title="Available Tasks"
 							columns={tableData.columnName}
 							data={tableData.rowData}
-							theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
+							theme={
+								document.documentElement.getAttribute(
+									'class'
+								) == 'dark'
+									? 'dark'
+									: 'default'
+							}
 							selectableRows
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
@@ -399,7 +403,7 @@ export default function TasksPage() {
 
 			{/* Create Modal */}
 			<SlideModalContainer isOpen={createTaskModal.isOpen} noFade={false}>
-				<DynamicModal
+				<DynamicForm
 					metadata={schema['CreateEditTask'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>
@@ -411,7 +415,7 @@ export default function TasksPage() {
 
 			{/* Read Modal */}
 			<SlideModalContainer isOpen={readTaskModal.isOpen} noFade={false}>
-				<DynamicModal
+				<DynamicForm
 					metadata={schema['CreateEditTask'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>
@@ -423,7 +427,7 @@ export default function TasksPage() {
 
 			{/* Update Modal */}
 			<SlideModalContainer isOpen={updateTaskModal.isOpen} noFade={false}>
-				<DynamicModal
+				<DynamicForm
 					metadata={schema['CreateEditTask'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>

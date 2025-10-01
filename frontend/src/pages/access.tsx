@@ -12,9 +12,7 @@ import SlideModalContainer from '../components/container/modal_containers/slide_
 import Button from '../components/ui/button';
 import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
-import DynamicModal, {
-	type FieldMetadata,
-} from '../components/modals/generic/dynamic_modal';
+import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import schema from '../assets/schemas/schema.json';
 
 // type tableData = {
@@ -74,22 +72,25 @@ export default function MyAccesssPage() {
 	];
 
 	useEffect(() => {
-			const result = data.filter((item) => {
-				return (
-					(item.id &&
-						item.id
-							.toString()
-							.toLowerCase()
-							.includes(filterText.toLowerCase())) ||
-					(item.repo_name &&
-						item.repo_name.toLowerCase().includes(filterText.toLowerCase())) ||
-					(item.requesting_user &&
-						item.requesting_user
-							.toLowerCase().includes(filterText.toLowerCase()))
-				);
-			});
-			setFilteredItems(result);
-		}, [filterText, data]);
+		const result = data.filter((item) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterText.toLowerCase())) ||
+				(item.repo_name &&
+					item.repo_name
+						.toLowerCase()
+						.includes(filterText.toLowerCase())) ||
+				(item.requesting_user &&
+					item.requesting_user
+						.toLowerCase()
+						.includes(filterText.toLowerCase()))
+			);
+		});
+		setFilteredItems(result);
+	}, [filterText, data]);
 
 	// const [myAccessTableData, setMyAccessTableData] = useState<tableData>({
 	// 	columnName: [],
@@ -302,7 +303,9 @@ export default function MyAccesssPage() {
 									placeholder="Search logs..."
 									className="mb-4 p-2 border rounded border-gray-300 w-50"
 									value={filterText}
-									onChange={(e) => setFilterText(e.target.value)}
+									onChange={(e) =>
+										setFilterText(e.target.value)
+									}
 								/>
 								<button
 									className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
@@ -324,8 +327,8 @@ export default function MyAccesssPage() {
 								columns={columns}
 								data={filteredItems}
 								fixedHeader={true}
-								fixedHeaderScrollHeight='600px'
-								className='border border-gray-200'
+								fixedHeaderScrollHeight="600px"
+								className="border border-gray-200"
 								dense
 							/>
 						</div>
@@ -365,7 +368,7 @@ export default function MyAccesssPage() {
 				</div>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalCreateAccess} noFade={false}>
-				<DynamicModal
+				<DynamicForm
 					metadata={schema['AccessRequest'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>

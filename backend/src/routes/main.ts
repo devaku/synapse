@@ -1,9 +1,10 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 
 import { verifyJwt } from '../middlewares/auth-middleware';
 import debugRouter from './debug';
 import taskRouter from './tasks';
 import teamRouter from './teams';
+import deletionRequestRouter from './deletion_request';
 
 const mainRouter = express.Router();
 
@@ -11,7 +12,7 @@ mainRouter.use(
 	'/api/v1',
 
 	// All routes are now protected
-	// verifyJwt,
+	verifyJwt,
 	setupApiRoutes()
 );
 
@@ -22,6 +23,7 @@ function setupApiRoutes(): express.Router {
 	apiRouter.use(taskRouter);
 	apiRouter.use(debugRouter);
 	apiRouter.use(teamRouter);
+	apiRouter.use(deletionRequestRouter);
 
 	return apiRouter;
 }

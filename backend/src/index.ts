@@ -1,12 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
-import router from './src/routes/main';
+import router from './routes/main';
 import favicon from 'serve-favicon';
 import path from 'path';
 
-import { setupServerMiddleware } from './src/middlewares/initial-middleware';
+import { setupServerMiddleware } from './middlewares/initial-middleware';
 import { Server } from 'socket.io';
-import { socketMiddleware } from './src/middlewares/socket-middleware';
+import { socketMiddleware } from './middlewares/socket-middleware';
 
 const app = express();
 const PORT = process.env.PORT;

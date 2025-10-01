@@ -10,9 +10,7 @@ import SlideModalContainer from '../components/container/modal_containers/slide_
 import TeamCreateModal from '../components/modals/teams/team_create';
 import TeamReadModal from '../components/modals/teams/team_read';
 import TeamUpdateModal from '../components/modals/teams/team_update';
-import DynamicModal, {
-	type FieldMetadata,
-} from '../components/modals/generic/dynamic_modal';
+import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
 import DataTable, { type TableColumn } from 'react-data-table-component';
 import schema from '../assets/schemas/schema.json';
@@ -22,7 +20,15 @@ import { useModal } from '../lib/hooks/ui/useModal';
 
 export default function TeamsPage() {
 	// Use the teams API hook
-	const { teams, loading, error, refreshTeams, addTeam, softRemoveTeam, editTeam } = useTeams();
+	const {
+		teams,
+		loading,
+		error,
+		refreshTeams,
+		addTeam,
+		softRemoveTeam,
+		editTeam,
+	} = useTeams();
 
 	// DataTable state
 	const [selectedRows, setSelectedRows] = useState<Team[]>([]);
@@ -111,7 +117,6 @@ export default function TeamsPage() {
 
 	const handleCreateTeam = async () => {
 		try {
-
 			const teamData = {
 				name: formData.Name || '',
 				description: formData.Description || '',
@@ -140,7 +145,10 @@ export default function TeamsPage() {
 		readTeamModal.open();
 	};
 
-	const handleEditTeam = async (team?: Team, action: 'open' | 'update' = 'open') => {
+	const handleEditTeam = async (
+		team?: Team,
+		action: 'open' | 'update' = 'open'
+	) => {
 		if (action === 'open' && team) {
 			// Handle opening modal and setting data
 			setCurrentTeam(team);
@@ -190,7 +198,6 @@ export default function TeamsPage() {
 				createTeamModal.close();
 
 				setFormData({});
-
 			} catch (error) {
 				console.error('Error deleting team:', error);
 			}
@@ -241,7 +248,13 @@ export default function TeamsPage() {
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
 							selectableRows
-							theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
+							theme={
+								document.documentElement.getAttribute(
+									'class'
+								) == 'dark'
+									? 'dark'
+									: 'default'
+							}
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
 							//contextActions={tableDataActions()}
@@ -265,7 +278,7 @@ export default function TeamsPage() {
 						<p className="text-2xl">Create Team</p>
 					</div>
 
-					<DynamicModal
+					<DynamicForm
 						key="create-team"
 						metadata={teamSchema}
 						onStateChange={handleFormDataChange}
@@ -303,10 +316,22 @@ export default function TeamsPage() {
 						<p className="text-2xl">Update Team</p>
 					</div>
 
-					<DynamicModal
-						key={currentTeam ? `edit-team-${currentTeam.id}` : 'edit-team'}
+					<DynamicForm
+						key={
+							currentTeam
+								? `edit-team-${currentTeam.id}`
+								: 'edit-team'
+						}
 						metadata={teamSchema}
-						initialData={currentTeam ? { Name: currentTeam.name, Description: currentTeam.description || '' } : {}}
+						initialData={
+							currentTeam
+								? {
+										Name: currentTeam.name,
+										Description:
+											currentTeam.description || '',
+									}
+								: {}
+						}
 						onStateChange={handleFormDataChange}
 					/>
 
@@ -314,7 +339,9 @@ export default function TeamsPage() {
 						<Button
 							buttonType="add"
 							buttonText="Update Team"
-							buttonOnClick={() => handleEditTeam(undefined, 'update')}
+							buttonOnClick={() =>
+								handleEditTeam(undefined, 'update')
+							}
 						/>
 						<Button
 							buttonType="add"

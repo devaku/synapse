@@ -3,8 +3,7 @@ import HeaderContainer from '../components/container/header_container';
 import TabGroup from '../components/ui/tab_group';
 
 export default function SettingsPage() {
-
-    const theme = useRef(localStorage.getItem('theme') || 'light')
+	const theme = useRef(localStorage.getItem('theme') || 'light');
 
 	type Radio = {
 		name: string;
@@ -29,14 +28,14 @@ export default function SettingsPage() {
 	}
 
 	function RadioGroup({ radios }: { radios: Array<Radio> }) {
-		let defaultRadio: Radio
+		let defaultRadio: Radio;
 		if (theme.current === 'dark') {
-			defaultRadio = radios[1]
+			defaultRadio = radios[1];
 		} else {
-			defaultRadio = radios[0]
+			defaultRadio = radios[0];
 		}
 
-		console.log(theme)
+		console.log(theme);
 
 		const [activeRadio, setActiveRadio] = useState(defaultRadio.name);
 
@@ -85,9 +84,12 @@ export default function SettingsPage() {
 												document.documentElement.setAttribute(
 													'class',
 													''
-												)
-												localStorage.setItem('theme', 'light')
-											}
+												);
+												localStorage.setItem(
+													'theme',
+													'light'
+												);
+											},
 										},
 										{
 											name: 'Dark',
@@ -95,9 +97,12 @@ export default function SettingsPage() {
 												document.documentElement.setAttribute(
 													'class',
 													'dark'
-												)
-												localStorage.setItem('theme', 'dark')
-											}
+												);
+												localStorage.setItem(
+													'theme',
+													'dark'
+												);
+											},
 										},
 									]}
 								/>
