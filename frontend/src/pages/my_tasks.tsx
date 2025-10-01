@@ -165,6 +165,84 @@ export default function MyTasksPage() {
 					</button>
 				</>
 			),
+		}
+	];
+
+	function handleMyTaskClickInfo(row) {
+		setModalTaskId(row.id);
+		setShowModalTaskInfo(true);
+	}
+
+	function handleNotificationClickInfo(row) {
+		setModalNotificationId(row.id);
+		setShowModalNotification(true);
+	}
+
+	function handleClickDelete(row) {
+		// If a task
+		if (row.name) {
+			setModalTaskId(row.id);
+			setShowModalTaskDelete(true);
+		}
+	}
+
+	useEffect(() => {
+			const taskResult = myTaskData.filter((item) => {
+				return (
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterTextMyTasks.toLowerCase())) ||
+					(item.name &&
+						item.name.toLowerCase().includes(filterTextMyTasks.toLowerCase())) ||
+					(item.priority &&
+						item.priority
+							.toLowerCase().includes(filterTextMyTasks.toLowerCase()))
+				);
+			});
+			setFilteredTasks(taskResult);
+
+			const notificationResults = notificationData.filter((item) => {
+				return (
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterTextNotifications.toLowerCase())) ||
+					(item.name &&
+						item.name
+							.toLowerCase()
+							.includes(filterTextNotifications.toLowerCase())) ||
+					(item.status &&
+						item.status
+							.toLowerCase()
+							.includes(filterTextNotifications.toLowerCase()))
+				);
+			});
+			setFilteredNotifications(notificationResults);
+		}, [filterTextNotifications, filterTextMyTasks, myTaskData, notificationData]);
+
+
+
+	let mockTaskAPIResponse = [
+		{
+			id: 1,
+			task_name: 'Task 1',
+			due_date: new Date().toDateString(),
+			status: 'PENDING',
+		},
+		{
+			id: 2,
+			task_name: 'Task 2',
+			due_date: new Date().toDateString(),
+			status: 'OVERDUE',
+		},
+		{
+			id: 3,
+			task_name: 'Task 3',
+			due_date: new Date().toDateString(),
+			status: 'DELIVERED',
 		},
 	];
 
@@ -314,7 +392,27 @@ export default function MyTasksPage() {
 								fixedHeaderScrollHeight="400px"
 								className="border border-gray-200 mb-10"
 							/>
-						</div>
+
+					</div> */}
+				</div>
+				<div className='flex flex-col'>
+					{/* My Tasks Table */}
+					<div className="z-0">
+						<input
+							type="text"
+							placeholder="Search My Tasks..."
+							className="mb-4 p-2 border rounded border-gray-300 w-50"
+							value={filterTextMyTasks}
+							onChange={(e) => setFilterTextMyTasks(e.target.value)}
+						/>
+						<button
+							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							onClick={() => {
+								setFilterTextMyTasks('');
+							}}
+						>
+							X
+						</button>
 					</div>
 
 					{/* My Notifications Table */}

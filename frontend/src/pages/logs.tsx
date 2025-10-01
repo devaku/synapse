@@ -4,6 +4,7 @@
 
 import HeaderContainer from '../components/container/header_container';
 import DataTable from 'react-data-table-component';
+// import TableData from '../../testing_jsons/log_data_10000.json';
 import TableData from '../../testing_jsons/logs_table_testing_extended_complex.json';
 
 import React, { useState, useEffect } from 'react';
@@ -151,7 +152,7 @@ export default function LogsPage() {
 						</button>
 					</div>
 				</div>
-				<div className="">
+				<div className="z-0">
 					<DataTable
 						columns={columns}
 						data={filteredItems}
