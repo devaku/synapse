@@ -90,6 +90,7 @@ export async function readTasksFilteredForUser(userId: number) {
 
 	return await prisma.task.findMany({
 		where: {
+			isArchived: 0,
 			isDeleted: 0,
 			OR: [
 				{ taskVisibleToUsers: { some: { userId } } },
