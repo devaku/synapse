@@ -40,6 +40,13 @@ import TasksPage from './pages/tasks';
 import TeamsPage from './pages/teams';
 import MyTasksPage from './pages/my_tasks';
 
+// ADMIN
+import AdminTeamsPage from './pages/admin_teams_manager';
+import AdminGithubManagerPage from './pages/admin_github_manager';
+import AdminNotificationsManagerPage from './pages/admin_notifications';
+import AdminTaskManagerPage from './pages/admin_task_management';
+import AdminArchiveManagerPage from './pages/admin_archive_manager';
+
 const protectedRoutes = [
 	{
 		Component: DashboardLayout,
@@ -53,6 +60,13 @@ const protectedRoutes = [
 			{ path: 'charts', Component: ChartsPage },
 			{ path: 'access', Component: AccessPage },
 			{ path: 'logs', Component: LogsPage },
+
+			// ADMIN
+			{ path: 'admin_teams', Component: AdminTeamsPage },
+			{ path: 'admin_github', Component: AdminGithubManagerPage },
+			{ path: 'admin_notifications', Component: AdminNotificationsManagerPage },
+			{ path: 'admin_tasks', Component: AdminTaskManagerPage },
+			{ path: 'admin_archive', Component: AdminArchiveManagerPage },
 		],
 	},
 ];

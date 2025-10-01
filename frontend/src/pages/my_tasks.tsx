@@ -392,29 +392,10 @@ export default function MyTasksPage() {
 								fixedHeaderScrollHeight="400px"
 								className="border border-gray-200 mb-10"
 							/>
-
-					</div> */}
+						</div>
+					</div>
 				</div>
 				<div className='flex flex-col'>
-					{/* My Tasks Table */}
-					<div className="z-0">
-						<input
-							type="text"
-							placeholder="Search My Tasks..."
-							className="mb-4 p-2 border rounded border-gray-300 w-50"
-							value={filterTextMyTasks}
-							onChange={(e) => setFilterTextMyTasks(e.target.value)}
-						/>
-						<button
-							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-							onClick={() => {
-								setFilterTextMyTasks('');
-							}}
-						>
-							X
-						</button>
-					</div>
-
 					{/* My Notifications Table */}
 					<div>
 						{/* Search Bar */}
