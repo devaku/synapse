@@ -172,7 +172,7 @@ export default function MyTasksPage() {
 				);
 			});
 			setFilteredNotifications(notificationResults);
-		}, [filterTextNotifications, filterTextMyTasks]);
+		}, [filterTextNotifications, filterTextMyTasks, myTaskData, notificationData]);
 
 
 
