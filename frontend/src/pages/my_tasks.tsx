@@ -9,15 +9,14 @@ import NotificationTableData from '../../testing_jsons/notification_table_testin
 import DataTable, { type TableColumn } from 'react-data-table-component';
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
-import Button from '../components/ui/button';
 
 /**
  * MODALS
  */
 
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
-import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
+import MyTaskModalHeader from '../components/modals/my_tasks/my_task_header';
 import MyTaskDeleteModal from '../components/modals/my_tasks/my_task_delete';
 import NotificationModal from '../components/modals/my_tasks/notifications';
 
@@ -82,15 +81,6 @@ export default function MyTasksPage() {
 
 	const modalNotificationinfo = useModal();
 	const [modalNotificationInfoId, setmodalNotificationInfoId] = useState(0);
-
-	/**
-	 * FORM STATE for the dyanmic delete modal
-	 */
-	const [formState, setFormState] = useState<Record<string, any>>({});
-	// Handle form state updates from the dynamic modal
-	const handleFormStateChange = (newState: Record<string, any>) => {
-		setFormState(newState);
-	};
 
 	/**
 	 * HARD CODED COLUMNS FOR THE TABLES
@@ -194,6 +184,18 @@ export default function MyTasksPage() {
 		}
 		start();
 	}, []);
+
+	// Refresh tables whenever modals are closed
+	useEffect(() => {
+		async function start() {
+			await refreshTable();
+		}
+		start();
+	}, [
+		modalNotificationinfo.isOpen,
+		modalTaskDelete.isOpen,
+		modalTaskInfo.isOpen,
+	]);
 
 	/**
 	 * Request the tasks and notifications from the backend
@@ -354,16 +356,26 @@ export default function MyTasksPage() {
 			</HeaderContainer>
 			{/* TASK MODALS */}
 			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
-				<MyTaskReadModal
+				<MyTaskModalHeader
+					modalTitle="View Task"
 					taskId={modalTaskInfoId}
-					handleModalDisplay={modalTaskInfo.close}
-				></MyTaskReadModal>
+				>
+					<MyTaskReadModal
+						taskId={modalTaskInfoId}
+						handleModalDisplay={modalTaskInfo.toggle}
+					></MyTaskReadModal>
+				</MyTaskModalHeader>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={modalTaskDelete.isOpen} noFade={false}>
-				<MyTaskDeleteModal
+				<MyTaskModalHeader
+					modalTitle="Deletion Request"
 					taskId={modalTaskDeleteId}
-					handleModalDisplay={modalTaskDelete.toggle}
-				></MyTaskDeleteModal>
+				>
+					<MyTaskDeleteModal
+						taskId={modalTaskDeleteId}
+						handleModalDisplay={modalTaskDelete.toggle}
+					></MyTaskDeleteModal>
+				</MyTaskModalHeader>
 			</SlideModalContainer>
 
 			{/* NOTIFICATION MODALS */}

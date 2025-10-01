@@ -57,6 +57,41 @@ export async function readTask(token: string, taskId: number) {
 	}
 }
 
+export async function archiveTask(token: string, taskId: number) {
+	let data = {
+		isArchived: 1,
+		completeDate: new Date(),
+	};
+
+	let response: jsonResponse = await fetch(`${url}/tasks/archive/${taskId}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`,
+		},
+		credentials: 'include',
+		body: JSON.stringify(data),
+	})
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
 /**
  * Get all tasks the given user
  * is subscribed to

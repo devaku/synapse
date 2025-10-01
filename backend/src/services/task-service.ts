@@ -120,6 +120,7 @@ export async function readTasksUserIsSubscribedTo(userId: number) {
 
 	return await prisma.task.findMany({
 		where: {
+			isArchived: 0,
 			taskUserSubscribeTo: {
 				some: {
 					userId,

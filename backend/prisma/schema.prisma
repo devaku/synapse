@@ -34,6 +34,7 @@ model User {
     team                 Team[]                @relation("TeamMadeByUser")
     deletionRequest      DeletionRequest[]
     taskUsersSubscribeTo TaskUserSubscribeTo[]
+    taskArchived         Task[]                @relation("TaskArchivedBy")
 }
 
 model Task {
@@ -45,10 +46,12 @@ model Task {
     description         String                @db.VarChar(255)
     image               String?               @db.VarChar(255)
     startDate           DateTime?             @db.Timestamp(6)
-    completeDate        DateTime?             @db.Timestamp(6)
     createdAt           DateTime              @default(now()) @db.Timestamp(6)
     isDeleted           Int                   @default(0)
+    completeDate        DateTime?             @db.Timestamp(6)
     isArchived          Int                   @default(0)
+    archivedByUserId    Int?
+    archivedByUser      User?                 @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
     comments            Comment[]
     taskVisibleToUsers  TaskVisibleToUsers[]
     taskHiddenFromUsers TaskHiddenFromUsers[]
