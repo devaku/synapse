@@ -1,5 +1,5 @@
-import React, { use, useEffect, useState } from "react";
-import DataTable, { type TableColumn } from "react-data-table-component";
+import React, { use, useEffect, useState } from 'react';
+import DataTable, { type TableColumn } from 'react-data-table-component';
 
 // Minimal wrapper that forwards all props to react-data-table-component.
 // No extra UI (no filters, no CSV, etc.).
@@ -8,58 +8,59 @@ import DataTable, { type TableColumn } from "react-data-table-component";
 type Row = Record<string, any>;
 
 interface DataTableBaseProps<T extends Row = Row> {
-  columns: TableColumn<T>[];
-  data: T[];
-  // Forward any additional DataTable props
-  [key: string]: any;
+	columns: TableColumn<T>[];
+	data: T[];
+	// Forward any additional DataTable props
+	[key: string]: any;
 }
 
-export default function DataTableBase<T extends Row = Row>({ columns, data, ...rest }: DataTableBaseProps<T>) {
-  
-  const [pending, setPending] = useState(true);
-  const [rows, setRows] = useState([]);
+export default function DataTableBase<T extends Row = Row>({
+	columns,
+	data,
+	...rest
+}: DataTableBaseProps<T>) {
+	const [pending, setPending] = useState(true);
+	const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setRows(data);
-      setPending(false);
-    }, 1);
-    return () => clearTimeout(timeout);
-  }, [data]);
-  
-  const theme =
-    typeof document !== "undefined" &&
-    document.documentElement.getAttribute("class") === "dark"
-      ? "dark"
-      : "default";
-  
-  const dense = true; // Change to metadata stuff
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setRows(data);
+			setPending(false);
+		}, 1);
+		return () => clearTimeout(timeout);
+	}, [data]);
 
+	const theme =
+		typeof document !== 'undefined' &&
+		document.documentElement.getAttribute('class') === 'dark'
+			? 'dark'
+			: 'default';
 
-  return (
-    <DataTable
-      columns={columns as any}
-      data={data}
-      // provide a default theme if one isn't provided
-      dense={rest.dense ?? dense}
-      theme={rest.theme ?? theme}
-      // keep a default border class but allow additional classNames
-      className={`border border-gray-200 ${rest.className ?? ""}`}
-      {...rest}
+	const dense = true; // Change to metadata stuff
 
-      // sensible defaults for usability and repeatability
-      fixedHeader
-      pointerOnHover
-      highlightOnHover
-      progressPending={pending}
-      customStyles={{
-									headCells: {
-										style: {
-											fontWeight: 'bold',
-											paddingRight: '0px',
-										},
-									},
-								}}
-    />
-  );
+	return (
+		<DataTable
+			columns={columns as any}
+			data={data}
+			// provide a default theme if one isn't provided
+			dense={rest.dense ?? dense}
+			theme={rest.theme ?? theme}
+			// keep a default border class but allow additional classNames
+			className={`border border-gray-200 ${rest.className ?? ''}`}
+			{...rest}
+			// sensible defaults for usability and repeatability
+			fixedHeader
+			pointerOnHover
+			highlightOnHover
+			progressPending={pending}
+			customStyles={{
+				headCells: {
+					style: {
+						fontWeight: 'bold',
+						paddingRight: '0px',
+					},
+				},
+			}}
+		/>
+	);
 }

@@ -141,7 +141,7 @@ export default function MyTasksPage() {
 			width: '50px',
 			style: {
 				paddingRight: '0px',
-			}
+			},
 		},
 		{
 			name: 'Notification',
@@ -182,7 +182,7 @@ export default function MyTasksPage() {
 			),
 			width: '80px',
 			center: true,
-		}
+		},
 	];
 
 	function handleMyTaskClickInfo(row) {
@@ -204,43 +204,49 @@ export default function MyTasksPage() {
 	}
 
 	useEffect(() => {
-			const taskResult = myTaskData.filter((item) => {
-				return (
-					(item.id &&
-						item.id
-							.toString()
-							.toLowerCase()
-							.includes(filterTextMyTasks.toLowerCase())) ||
-					(item.name &&
-						item.name.toLowerCase().includes(filterTextMyTasks.toLowerCase())) ||
-					(item.priority &&
-						item.priority
-							.toLowerCase().includes(filterTextMyTasks.toLowerCase()))
-				);
-			});
-			setFilteredTasks(taskResult);
+		const taskResult = myTaskData.filter((item) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextMyTasks.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextMyTasks.toLowerCase())) ||
+				(item.priority &&
+					item.priority
+						.toLowerCase()
+						.includes(filterTextMyTasks.toLowerCase()))
+			);
+		});
+		setFilteredTasks(taskResult);
 
-			const notificationResults = notificationData.filter((item) => {
-				return (
-					(item.id &&
-						item.id
-							.toString()
-							.toLowerCase()
-							.includes(filterTextNotifications.toLowerCase())) ||
-					(item.name &&
-						item.name
-							.toLowerCase()
-							.includes(filterTextNotifications.toLowerCase())) ||
-					(item.status &&
-						item.status
-							.toLowerCase()
-							.includes(filterTextNotifications.toLowerCase()))
-				);
-			});
-			setFilteredNotifications(notificationResults);
-		}, [filterTextNotifications, filterTextMyTasks, myTaskData, notificationData]);
-
-
+		const notificationResults = notificationData.filter((item) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextNotifications.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextNotifications.toLowerCase())) ||
+				(item.status &&
+					item.status
+						.toLowerCase()
+						.includes(filterTextNotifications.toLowerCase()))
+			);
+		});
+		setFilteredNotifications(notificationResults);
+	}, [
+		filterTextNotifications,
+		filterTextMyTasks,
+		myTaskData,
+		notificationData,
+	]);
 
 	let mockTaskAPIResponse = [
 		{
@@ -407,7 +413,7 @@ export default function MyTasksPage() {
 						</div>
 					</div>
 				</div>
-				<div className='flex flex-col'>
+				<div className="flex flex-col">
 					{/* My Notifications Table */}
 					<div>
 						{/* Search Bar */}

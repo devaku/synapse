@@ -324,10 +324,7 @@ export default function MyAccesssPage() {
 							/>
 						</div>
 						<div className="">
-							<DataTable
-								columns={columns}
-								data={filteredItems}
-							/>
+							<DataTable columns={columns} data={filteredItems} />
 						</div>
 					</div>
 				</div>

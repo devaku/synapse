@@ -64,7 +64,10 @@ const protectedRoutes = [
 			// ADMIN
 			{ path: 'admin_teams', Component: AdminTeamsPage },
 			{ path: 'admin_github', Component: AdminGithubManagerPage },
-			{ path: 'admin_notifications', Component: AdminNotificationsManagerPage },
+			{
+				path: 'admin_notifications',
+				Component: AdminNotificationsManagerPage,
+			},
 			{ path: 'admin_tasks', Component: AdminTaskManagerPage },
 			{ path: 'admin_archive', Component: AdminArchiveManagerPage },
 		],

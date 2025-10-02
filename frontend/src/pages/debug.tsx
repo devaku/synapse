@@ -167,14 +167,8 @@ export default function DebugPage() {
 
 			{/* Testing DataTableBase */}
 			<div>
-				<DataTable
-					columns={columns}
-					data={data}
-					selectableRows
-				/>
+				<DataTable columns={columns} data={data} selectableRows />
 			</div>
-
-
 		</div>
 	);
 }
