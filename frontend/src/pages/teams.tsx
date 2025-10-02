@@ -12,7 +12,10 @@ import TeamReadModal from '../components/modals/teams/team_read';
 import TeamUpdateModal from '../components/modals/teams/team_update';
 import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
-import DataTable, { type TableColumn } from 'react-data-table-component';
+// import DataTable, { type TableColumn } from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+import { type TableColumn } from 'react-data-table-component';
+
 import schema from '../assets/schemas/schema.json';
 
 // new import for our reusable modal hook
@@ -248,19 +251,10 @@ export default function TeamsPage() {
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
 							selectableRows
-							theme={
-								document.documentElement.getAttribute(
-									'class'
-								) == 'dark'
-									? 'dark'
-									: 'default'
-							}
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
 							//contextActions={tableDataActions()}
 							defaultSortFieldId={1}
-							dense
-							pagination
 							progressPending={loading}
 							progressComponent={<div>Loading teams...</div>}
 							noDataComponent={

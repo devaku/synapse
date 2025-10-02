@@ -38,7 +38,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="overflow-y-auto max-h-screen p-10 mb-10 min-h-0 ma">
+			<div className="overflow-y-auto overflow-x-auto max-h-screen p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>

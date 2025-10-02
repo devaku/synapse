@@ -1,45 +1,66 @@
-import React from "react";
-import DataTable from "react-data-table-component";
-import { useState, useEffect } from "react";
+import React, { use, useEffect, useState } from 'react';
+import DataTable, { type TableColumn } from 'react-data-table-component';
 
-export default function DataTableBase( props: {columns: any[], data: any[], denseTrue: boolean, classes: string} ) {
+// Minimal wrapper that forwards all props to react-data-table-component.
+// No extra UI (no filters, no CSV, etc.).
+// Just keeps a sensible theme default and preserves any props you pass in.
 
-    const [filterText, setFilterText] = useState('');
-    const [filteredItems, setFilteredItems] = useState(props.data);
+type Row = Record<string, any>;
 
-    useEffect(() => {
-        
-    })
+interface DataTableBaseProps<T extends Row = Row> {
+	columns: TableColumn<T>[];
+	data: T[];
+	// Forward any additional DataTable props
+	[key: string]: any;
+}
 
-    return (
-        <div>
-            <div className="z-0">
-                <input
-                    type="text"
-                    placeholder="Search My Tasks..."
-                    className="mb-4 p-2 border rounded border-gray-300 w-50"
-                    value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
-                />
-                <button
-                    className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-                    onClick={() => {
-                        setFilterText('');
-                    }}
-                >
-                    X
-                </button>
-            </div>
-            <DataTable
-                columns={props.columns}
-                data={filteredItems}
-                dense={props.denseTrue}
-                className={`border border-gray-200 ${props.classes}`}
-                fixedHeader={true}
-                pointerOnHover={true}
-                highlightOnHover={true}
-                theme={document.documentElement.getAttribute('class') == 'dark' ? 'dark' : 'default'}
-            />
-        </div>
-    );
+export default function DataTableBase<T extends Row = Row>({
+	columns,
+	data,
+	...rest
+}: DataTableBaseProps<T>) {
+	const [pending, setPending] = useState(true);
+	const [rows, setRows] = useState([]);
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setRows(data);
+			setPending(false);
+		}, 1);
+		return () => clearTimeout(timeout);
+	}, [data]);
+
+	const theme =
+		typeof document !== 'undefined' &&
+		document.documentElement.getAttribute('class') === 'dark'
+			? 'dark'
+			: 'default';
+
+	const dense = true; // Change to metadata stuff
+
+	return (
+		<DataTable
+			columns={columns as any}
+			data={data}
+			// provide a default theme if one isn't provided
+			dense={rest.dense ?? dense}
+			theme={rest.theme ?? theme}
+			// keep a default border class but allow additional classNames
+			className={`border border-gray-200 ${rest.className ?? ''}`}
+			{...rest}
+			// sensible defaults for usability and repeatability
+			fixedHeader
+			pointerOnHover
+			highlightOnHover
+			progressPending={pending}
+			customStyles={{
+				headCells: {
+					style: {
+						fontWeight: 'bold',
+						paddingRight: '0px',
+					},
+				},
+			}}
+		/>
+	);
 }
