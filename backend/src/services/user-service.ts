@@ -1,6 +1,24 @@
-import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { User } from '../../database/generated/prisma';
 import { prisma } from '../lib/database';
+
+export async function readAllUsers() {
+	const rows = await prisma.user.findMany({
+		where: {
+			isDeleted: 0,
+		},
+		omit: {
+			keycloakId: true,
+		},
+		include: {
+			// team: true,
+			// teamsUsersBelongTo: true,
+			// createdTasks: true,
+			// notification: true,
+		},
+	});
+
+	return rows;
+}
 
 /**
  * Insert or update local database entry of user

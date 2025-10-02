@@ -1,38 +1,8 @@
 import type { jsonResponse } from '../../types/custom';
 const url = import.meta.env.VITE_API_URL;
 
-export async function createTask(token: string, taskObj: any) {
-	let response: jsonResponse = await fetch(`${url}/tasks`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${token}`,
-		},
-		credentials: 'include',
-		body: JSON.stringify(taskObj),
-	})
-		.then((res) => res.json())
-		.catch((error) => {
-			console.error('Fetch error:', error);
-		});
-
-	if (response.statusCode == 401) {
-		throw new Error(response.data![0].error);
-	}
-
-	if (response) {
-		if (response.data) {
-			return response.data;
-		} else {
-			return [];
-		}
-	} else {
-		return [];
-	}
-}
-
-export async function readTasksFilteredForUser(token: string) {
-	let response: jsonResponse = await fetch(`${url}/tasks?useronly=1`, {
+export async function readAllUsers(token: string) {
+	let response: jsonResponse = await fetch(`${url}/users`, {
 		method: 'GET',
 		headers: {
 			Authorization: `Bearer ${token}`,

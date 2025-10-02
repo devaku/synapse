@@ -5,7 +5,14 @@ import { buildResponse, buildError } from '../lib/response-helper';
 // CREATE - Create a new task
 export async function createTask(req: Request, res: Response) {
 	try {
-		const data = req.body;
+		// TODO: This will dramatically change when image
+		// uploading is added.
+
+		let data = req.body;
+		const userId = req.session.userData?.user.id;
+
+		// Attach creator
+		data.createdByUserId = userId;
 
 		// Validation: required fields
 		if (!data || Object.keys(data).length === 0) {
@@ -25,8 +32,21 @@ export async function createTask(req: Request, res: Response) {
 				);
 		}
 
-		// Used AI to set default priority of a task as 'Medium" | Prompt: "How do I set a task with a default priority state of Medium?"
-		if (!data.priority) data.priority = 'MEDIUM';
+		// Used AI to set default priority of a task as 'Medium" |
+		// Prompt: "How do I set a task with a default priority state of Medium?"
+		if (!data.priority) {
+			data.priority = 'MEDIUM';
+		}
+
+		// Attach the visiblity rules
+		data = buildTaskVisiblityRules(data);
+
+		// Have the user who created it be subscribed to it by default
+		data.taskUserSubscribeTo = {
+			create: {
+				userId,
+			},
+		};
 
 		const task = await taskService.createTask(data);
 
@@ -230,3 +250,52 @@ export async function deleteTask(req: Request, res: Response) {
 			.json(buildError(500, 'Error deleting task(s)', error));
 	}
 }
+
+/**
+ * INTERNAL FUNCTIONS
+ */
+
+/**
+ * TASK BUILDER HELPER
+ */
+function buildTaskVisiblityRules(data: any) {
+	let ids: number[] = [];
+	// ALWAYS include user into visible users
+	if (data.taskVisibleToUsers) {
+		ids = data.taskVisibleToUsers;
+
+		if (!ids.includes(data.createdByUserId!)) {
+			ids.push(data.createdByUserId!);
+		}
+	} else {
+		ids = [data.createdByUserId!];
+	}
+
+	data.taskVisibleToUsers = {
+		create: ids.map((el: Number) => {
+			return { userId: el };
+		}),
+	};
+
+	if (data.taskVisibleToTeams) {
+		let ids = data.taskVisibleToTeams;
+		data.taskVisibleToTeams = {
+			create: ids.map((el: Number) => {
+				return { teamId: el };
+			}),
+		};
+	}
+
+	if (data.taskHiddenFromUsers) {
+		let ids = data.taskHiddenFromUsers;
+		data.taskHiddenFromUsers = {
+			create: ids.map((el: Number) => {
+				return { userId: el };
+			}),
+		};
+	}
+
+	return data;
+}
+
+function buildTaskSubscriptions(data: any) {}

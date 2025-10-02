@@ -8,16 +8,10 @@ import { readUser } from './user-service';
 /**
  * CREATE - Create a new task
  */
-export async function createTask(task: Partial<Task>) {
+export async function createTask(taskObj: any) {
 	const taskRow = await prisma.task.create({
 		data: {
-			name: task.name!,
-			description: task.description!,
-			createdByUserId: task.createdByUserId!,
-			priority: task.priority || 'MEDIUM',
-			image: task.image || null,
-			startDate: task.startDate || null,
-			completeDate: task.completeDate || null,
+			...taskObj,
 		},
 		include: {
 			createdByUser: {
