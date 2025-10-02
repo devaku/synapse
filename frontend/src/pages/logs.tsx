@@ -3,7 +3,10 @@
 // https://react-data-table-component.netlify.app/
 
 import HeaderContainer from '../components/container/header_container';
-import DataTable from 'react-data-table-component';
+
+// import DataTable from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+
 // import TableData from '../../testing_jsons/log_data_10000.json';
 import TableData from '../../testing_jsons/logs_table_testing_extended_complex.json';
 
@@ -156,24 +159,17 @@ export default function LogsPage() {
 					<DataTable
 						columns={columns}
 						data={filteredItems}
-						theme={
-							document.documentElement.getAttribute('class') ==
-							'dark'
-								? 'dark'
-								: 'default'
-						}
 						selectableRows
 						onSelectedRowsChange={handleRowSelected}
-						fixedHeader
-						fixedHeaderScrollHeight="70vh"
+						// fixedHeader
+						// fixedHeaderScrollHeight="70vh"
 						expandableRows
 						expandableRowsComponent={ExpandedComponent}
 						expandableRowsHideExpander
 						expandOnRowClicked
-						className="border border-gray-200"
-						pointerOnHover
-						highlightOnHover
-						dense
+						// pointerOnHover
+						// highlightOnHover
+						// dense
 					/>
 				</div>
 			</main>
