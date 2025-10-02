@@ -436,14 +436,6 @@ export default function MyTasksPage() {
 								data={filteredNotifications}
 								fixedHeaderScrollHeight="400px"
 								className="border-gray-200 border"
-								customStyles={{
-									headCells: {
-										style: {
-											fontWeight: 'bold',
-											paddingRight: '0px',
-										},
-									},
-								}}
 							/>
 						</div>
 					</div>

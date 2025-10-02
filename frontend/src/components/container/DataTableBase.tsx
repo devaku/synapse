@@ -52,6 +52,14 @@ export default function DataTableBase<T extends Row = Row>({ columns, data, ...r
       pointerOnHover
       highlightOnHover
       progressPending={pending}
+      customStyles={{
+									headCells: {
+										style: {
+											fontWeight: 'bold',
+											paddingRight: '0px',
+										},
+									},
+								}}
     />
   );
 }
