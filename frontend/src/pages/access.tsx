@@ -4,7 +4,8 @@ import HeaderContainer from '../components/container/header_container';
 
 // Data Table React Component - https://react-data-table-component.netlify.app/
 import TableData from '../../testing_jsons/access_table_testing.json';
-import DataTable from 'react-data-table-component';
+// import DataTable from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
 
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
@@ -326,10 +327,6 @@ export default function MyAccesssPage() {
 							<DataTable
 								columns={columns}
 								data={filteredItems}
-								fixedHeader={true}
-								fixedHeaderScrollHeight="600px"
-								className="border border-gray-200"
-								dense
 							/>
 						</div>
 					</div>

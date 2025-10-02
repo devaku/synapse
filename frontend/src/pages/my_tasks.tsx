@@ -6,7 +6,9 @@ import HeaderContainer from '../components/container/header_container';
  */
 
 import NotificationTableData from '../../testing_jsons/notification_table_testing.json';
-import DataTable, { type TableColumn } from 'react-data-table-component';
+// import DataTable, { type TableColumn } from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+import { type TableColumn } from 'react-data-table-component';
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
 
@@ -136,6 +138,10 @@ export default function MyTasksPage() {
 			name: 'ID',
 			selector: (row) => row.id,
 			sortable: true,
+			width: '50px',
+			style: {
+				paddingRight: '0px',
+			}
 		},
 		{
 			name: 'Notification',
@@ -146,12 +152,21 @@ export default function MyTasksPage() {
 			name: 'Sent',
 			selector: (row) => row.createdAt,
 			sortable: true,
+			style: {
+				textAlign: 'left',
+				width: 'fit-content',
+			},
+			width: '170px',
 		},
 		{
 			name: 'Status',
 			selector: (row) => row.status,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.status}></StatusPill>,
+			style: {
+				textAlign: 'left',
+			},
+			width: '120px',
 		},
 		{
 			name: 'Actions',
@@ -165,6 +180,8 @@ export default function MyTasksPage() {
 					</button>
 				</>
 			),
+			width: '80px',
+			center: true,
 		}
 	];
 
@@ -381,16 +398,11 @@ export default function MyTasksPage() {
 								X
 							</button>
 						</div>
-						<div className="h-[400px]">
+						<div className="max-h-[400px]">
 							<DataTable
 								columns={taskColumns}
 								data={filteredTasks}
-								fixedHeader={true}
-								highlightOnHover={true}
-								dense={true}
-								pagination
-								fixedHeaderScrollHeight="400px"
-								className="border border-gray-200 mb-10"
+								className="mb-10"
 							/>
 						</div>
 					</div>
@@ -418,16 +430,20 @@ export default function MyTasksPage() {
 								X
 							</button>
 						</div>
-						<div className="h-[400px]">
+						<div className="max-h-[400px]">
 							<DataTable
 								columns={notificationColumns}
 								data={filteredNotifications}
-								fixedHeader={true}
-								highlightOnHover={true}
-								dense={true}
-								pagination
 								fixedHeaderScrollHeight="400px"
-								className="border border-gray-200"
+								className="border-gray-200 border"
+								customStyles={{
+									headCells: {
+										style: {
+											fontWeight: 'bold',
+											paddingRight: '0px',
+										},
+									},
+								}}
 							/>
 						</div>
 					</div>

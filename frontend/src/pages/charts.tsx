@@ -1,6 +1,8 @@
 import HeaderContainer from '../components/container/header_container';
 import TabGroup, { TabGroupStyle } from '../components/ui/tab_group';
-import DataTable, { type TableColumn } from 'react-data-table-component';
+// import DataTable, { type TableColumn } from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+import { type TableColumn } from 'react-data-table-component';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
 	Chart as ChartJS,
@@ -196,7 +198,7 @@ export default function ChartsPage() {
 					{
 						name: 'Personal',
 						content: (
-							<div className="mx-40">
+							<div className="">
 								<div className="flex my-10 justify-around gap-5">
 									<div className="bg-ttg-black/8 size-fit p-4 rounded-sm flex-1">
 										<h3 className="text-xl font-semibold">
@@ -230,15 +232,7 @@ export default function ChartsPage() {
 										title="Active Tasks"
 										columns={columnsActiveTasks}
 										data={dataActiveTasks}
-										theme={
-											document.documentElement.getAttribute(
-												'class'
-											) == 'dark'
-												? 'dark'
-												: 'default'
-										}
 										defaultSortFieldId={1}
-										dense
 									/>
 								</div>
 							</div>
@@ -248,23 +242,16 @@ export default function ChartsPage() {
 						name: 'Global',
 						content: (
 							<div>
-								<div className="mx-40 my-5">
+								<div className="my-5">
 									<DataTable
 										title="Monthly Leaderboard"
 										columns={columnsLeaderboard}
 										data={dataLeaderboard}
-										theme={
-											document.documentElement.getAttribute(
-												'class'
-											) == 'dark'
-												? 'dark'
-												: 'default'
-										}
 										defaultSortFieldId={3}
 										defaultSortAsc={false}
 									/>
 								</div>
-								<div className="flex justify-around mt-10 mx-40">
+								<div className="flex justify-around mt-10">
 									<div className="w-[28%] h-100">
 										<h3 className="text-2xl font-semibold text-center">
 											Top Ten Breakdown

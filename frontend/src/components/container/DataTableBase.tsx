@@ -23,7 +23,7 @@ export default function DataTableBase<T extends Row = Row>({ columns, data, ...r
     const timeout = setTimeout(() => {
       setRows(data);
       setPending(false);
-    }, 2000);
+    }, 1);
     return () => clearTimeout(timeout);
   }, [data]);
   
