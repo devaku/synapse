@@ -14,7 +14,9 @@ import SlideModalContainer from '../components/container/modal_containers/slide_
 import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useModal } from '../lib/hooks/ui/useModal';
 
-import DataTable, { type TableColumn } from 'react-data-table-component';
+// import DataTable, { type TableColumn } from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+// import { type TableColumn } from 'react-data-table-component';
 
 import type { Task } from '../lib/types/models';
 
@@ -375,29 +377,16 @@ export default function TasksPage() {
 					</div>
 				</div>
 				<div className="min-h-0 flex flex-col">
-					{tableData.columnName.length > 0 ? (
-						<DataTable
-							title="Available Tasks"
-							columns={tableData.columnName}
-							data={tableData.rowData}
-							theme={
-								document.documentElement.getAttribute(
-									'class'
-								) == 'dark'
-									? 'dark'
-									: 'default'
-							}
-							selectableRows
-							onSelectedRowsChange={handleSelectedRowsChange}
-							clearSelectedRows={toggleClearRows}
-							contextActions={tableDataActions()}
-							defaultSortFieldId={1}
-							dense
-							pagination
-						></DataTable>
-					) : (
-						<div>Table is empty!</div>
-					)}
+					<DataTable
+						title="Available Tasks"
+						columns={tableData.columnName}
+						data={tableData.rowData}
+						selectableRows
+						onSelectedRowsChange={handleSelectedRowsChange}
+						clearSelectedRows={toggleClearRows}
+						contextActions={tableDataActions()}
+						defaultSortFieldId={1}
+					></DataTable>
 				</div>
 			</HeaderContainer>
 

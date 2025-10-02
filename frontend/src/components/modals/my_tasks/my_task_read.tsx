@@ -1,9 +1,24 @@
 import TTGLogo from '../../../assets/images/ttglogo/TTG_Profile.png';
 
+/**
+ * COMPONENTS
+ */
+
 import Button from '../../ui/button';
-import { useState } from 'react';
-import StatusPill from '../../ui/status_pill';
 import CommentCard from '../../container/comment_card';
+
+/**
+ * HOOKS
+ */
+
+import { useState, useEffect } from 'react';
+import { useAuthContext } from '../../../lib/contexts/AuthContext';
+
+/**
+ * SERVICES / HELPERS
+ */
+
+import { archiveTask } from '../../../lib/services/api/task';
 
 type myTaskReadModalProps = {
 	handleModalDisplay: () => void;
@@ -14,103 +29,47 @@ export default function MyTaskReadModal({
 	handleModalDisplay,
 	taskId,
 }: myTaskReadModalProps) {
-	const [showModalTaskDelete, setShowModalTaskDelete] = useState(false);
+	const { token } = useAuthContext();
 
 	/**
 	 * Handlers
 	 */
 
-	async function handleAddTeamClick() {
+	async function handleButtonCompleteClick() {
 		// TODO: Add proper displaying in case there's an error
 		try {
-			handleModalClose();
+			await archiveTask(token!, taskId);
+
+			// Close modal
+			handleModalDisplay();
 		} catch (error) {
 			console.log(error);
 		}
-	}
-
-	function handleButtonDeleteClick() {
-		setShowModalTaskDelete(true);
 	}
 
 	/**
 	 * MODAL HANDLERS
 	 */
 
-	function handleModalClose() {
+	function handleModalClose() {}
+
+	function handleModalTaskDeleteDisplay() {
 		handleModalDisplay();
 	}
 
-	function handleModalTaskDeleteDisplay() {
-		setShowModalTaskDelete(false);
-	}
-
-	function handleModalCloseAll() {
-		handleModalTaskDeleteDisplay();
-		handleModalClose();
-	}
-
 	return (
-		<div className="flex flex-col gap-2 mx-5 pb-2 overflow-y-auto h-screen">
-			{/* TITLE */}
-			<div className="p-2">
-				<p className="text-2xl">Task 1</p>
-				<div className="mt-3">
-					<StatusPill text={'PENDING'}></StatusPill>
-				</div>
-			</div>
-			{/* DESCRIPTION */}
-			<div>
-				<p className="mb-2">Description:</p>
-				<p>
-					Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-					Accusamus possimus nobis nulla placeat temporibus velit,
-					ipsam ducimus cumque illo iusto nihil, repudiandae
-					aspernatur inventore a totam facere sunt vero voluptatibus.
-				</p>
-			</div>
-			{/* Information */}
-			<div className="">
-				<div className="flex">
-					<div className="min-w-32">Created: </div>
-					<div>{new Date().toDateString()}</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Taken: </div>
-					<div>{new Date().toDateString()}</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Due: </div>
-					<div>{new Date().toDateString()}</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Submitted: </div>
-					<div>N/A</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Team: </div>
-					<div>The Best Team</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Assigned By: </div>
-					<div>Manager</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Taken By: </div>
-					<div>Employee</div>
-				</div>
-			</div>
+		<div className="">
 			{/* BUTTONS */}
 			<div className="flex justify-evenly">
 				<Button
 					buttonType="add"
 					buttonText="Complete"
-					buttonOnClick={() => handleModalClose()}
+					buttonOnClick={() => handleButtonCompleteClick()}
 				/>
 				<Button
 					buttonType="add"
 					buttonText="Back"
-					buttonOnClick={() => handleModalClose()}
+					buttonOnClick={() => handleModalDisplay()}
 				/>
 			</div>
 			{/* COMMENTS SECTION*/}

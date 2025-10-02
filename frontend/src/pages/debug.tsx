@@ -4,6 +4,10 @@ import { useForm } from 'react-hook-form';
 import useAuth from '../lib/hooks/auth/useAuth';
 import HeaderContainer from '../components/container/header_container';
 
+// DataTableBase Testing Imports
+import DataTable from '../components/container/DataTableBase';
+import Data from '../../testing_jsons/logs_table_testing_extended_complex.json';
+
 export default function DebugPage() {
 	const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -29,6 +33,31 @@ export default function DebugPage() {
 		let a = e.currentTarget[0] as HTMLInputElement;
 		console.log(a.value);
 	}
+
+	// DataTableBase testing
+	const [data, setData] = useState(Data.data || []);
+
+	const columns = [
+		{
+			name: 'Log ID',
+			selector: (row) => row.logID,
+			sortable: true,
+			maxwidth: '10px',
+			grow: 0,
+		},
+		{
+			name: 'User',
+			selector: (row) => row.user,
+			sortable: true,
+			grow: 1,
+		},
+		{
+			name: 'Created At',
+			selector: (row) => row.createdAt,
+			sortable: true,
+			grow: 1,
+		},
+	];
 
 	return (
 		<div className="p-10">
@@ -135,6 +164,11 @@ export default function DebugPage() {
 			<HeaderContainer pageTitle={'Debug Page'}>
 				<div>This is inside the header container</div>
 			</HeaderContainer>
+
+			{/* Testing DataTableBase */}
+			<div>
+				<DataTable columns={columns} data={data} selectableRows />
+			</div>
 		</div>
 	);
 }

@@ -20,6 +20,7 @@ export interface User {
 	taskHiddenFromUsers?: TaskHiddenFromUsers[];
 	teamsUsersBelongTo?: TeamsUsersBelongTo[];
 	taskUserSubscribedTo?: TaskUserSubscribeTo[];
+	taskArchived?: Task[];
 
 	team?: Team[]; // Teams created by the user
 	deletionRequest?: DeletionRequest[];
@@ -37,10 +38,12 @@ export interface Task {
 	description: string;
 	image?: string | null;
 	startDate?: Date | null;
-	completeDate?: Date | null;
 	createdAt: Date;
 	isDeleted: number;
 	isArchived: number;
+	archivedByUserId: number;
+	archivedByUser?: User;
+	completeDate?: Date | null;
 
 	comments?: Comment[];
 	taskVisibleToUsers?: TaskVisibleToUsers[];

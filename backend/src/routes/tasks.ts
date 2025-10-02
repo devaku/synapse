@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import {
 	createTask,
 	readTask,
@@ -19,6 +19,18 @@ taskRouter.get('/tasks', readTask);
 
 // Get all tasks the user is SUBSCRIBED too
 taskRouter.get('/tasks/subscribed', readSubscribedTasks);
+
+// Archive a task
+taskRouter.put(
+	'/tasks/archive/:id',
+	express.json(),
+	(req: Request, res: Response, next: NextFunction) => {
+		// Just attach the user id of who is archiving it. lol
+		req.body.archivedByUserId = req.session.userData?.user.id;
+		next();
+	},
+	updateTask
+);
 
 // Routes that have route parameters need to be further down
 //  - GET /tasks/:id    → single task

@@ -108,13 +108,8 @@ export default function MyTaskDeleteModal({
 	function htmlExistingDelReq() {
 		return (
 			<>
-				{/* TITLE */}
-				<div className="p-2">
-					<p className="text-2xl">Deletion Request</p>
-				</div>
-
 				{/* Information */}
-				<div className="mb-2 p-2">
+				<div className="">
 					<p className="mb-2 text-xl">Request already exists!</p>
 					<p className="mb-2">
 						An existing deletion request has been made for this task
@@ -140,7 +135,7 @@ export default function MyTaskDeleteModal({
 				</div>
 
 				{/* BUTTONS */}
-				<div className="flex">
+				<div className="flex mt-2">
 					<Button
 						buttonType="add"
 						buttonText="Continue"
@@ -154,30 +149,6 @@ export default function MyTaskDeleteModal({
 	function htmlDefaultDisplay() {
 		return (
 			<>
-				{/* TITLE */}
-				<div className="p-2">
-					<p className="text-2xl">Deletion Request</p>
-				</div>
-
-				{/* Information */}
-				<div className="">
-					<div className="flex">
-						<div className="min-w-32">Task Name: </div>
-						<div>{task?.name}</div>
-					</div>
-					<div className="flex">
-						<div className="min-w-32">Task Descrption: </div>
-						<div>{task?.description}</div>
-					</div>
-					<div className="flex">
-						<div className="min-w-32">Created At: </div>
-						<div>{formatDate(new Date(task?.createdAt!))}</div>
-					</div>
-					<div className="flex">
-						<div className="min-w-32">Created By: </div>
-						<div>{task?.createdByUser?.username}</div>
-					</div>
-				</div>
 				{/* Reason */}
 				<div className="mb-2 p-2">
 					<textarea
@@ -219,9 +190,5 @@ export default function MyTaskDeleteModal({
 	}
 
 	// Display default page
-	return (
-		<div className="flex flex-col gap-2 mx-5 pb-2 overflow-y-auto h-screen">
-			{html}
-		</div>
-	);
+	return <div>{html}</div>;
 }
