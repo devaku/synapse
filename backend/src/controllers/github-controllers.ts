@@ -152,6 +152,7 @@ export async function getGithubRepos(req: Request, res: Response) {
 }
 
 export async function addUserToRepo(req: Request, res: Response) {
+    console.log('Request Body:', req.body);
     try {
         // Validation: check if body exists and has required fields
         if (!req.body) {
@@ -160,14 +161,14 @@ export async function addUserToRepo(req: Request, res: Response) {
                 .json(buildError(400, 'Request body is required', null));
         }
 
-        const { username, permission } = req.body;
+        const { githubUsername, permission } = req.body;
         const repoId = parseInt(req.params.repoId);
-
+        console.log('test', { repoId, githubUsername, permission });
         // Validation: required fields
-        if (!username || !permission) {
+        if (!githubUsername || !permission) {
             return res
                 .status(400)
-                .json(buildError(400, 'Missing required fields: username, permission', null));
+                .json(buildError(400, 'Missing required fields: githubUsername, permission', null));
         }
 
         // Validation: valid repoId
@@ -177,7 +178,7 @@ export async function addUserToRepo(req: Request, res: Response) {
                 .json(buildError(400, 'Invalid repository ID', null));
         }
 
-        const result = await addUserToRepoService(repoId, username, permission);
+        const result = await addUserToRepoService(repoId, githubUsername, permission);
         
         let finalResponse = buildResponse(
             200,
@@ -188,7 +189,29 @@ export async function addUserToRepo(req: Request, res: Response) {
 
     } catch (error: any) {
         console.error('ADD USER TO REPO ERROR:', error);
-        let finalResponse = buildError(500, 'Failed to add user to repository', error);
+        
+        // Create a safe error object to pass to buildError
+        let safeErrorDetails = null;
+        let errorMessage = 'Failed to add user to repository';
+        
+        if (error) {
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+                safeErrorDetails = { errorMessage: error.response.data.message };
+            } else if (error.message) {
+                errorMessage = error.message;
+                safeErrorDetails = { errorMessage: error.message };
+            } else if (typeof error === 'string') {
+                errorMessage = error;
+                safeErrorDetails = { errorMessage: error };
+            } else {
+                safeErrorDetails = { errorMessage: 'Unknown error occurred' };
+            }
+        } else {
+            safeErrorDetails = { errorMessage: 'Unknown error occurred' };
+        }
+        
+        let finalResponse = buildError(500, errorMessage, safeErrorDetails);
         res.status(500).json(finalResponse);
     }
 }
