@@ -1,4 +1,4 @@
-export const taskSeeds = [
+const activeSeeds = [
 	{
 		// This task is only visible to
 		// Team 1, to manager1
@@ -225,3 +225,122 @@ export const taskSeeds = [
 		},
 	},
 ];
+
+const archivedSeeds = [
+	{
+		// This task is visible to EVERYONE
+		createdByUserId: 2,
+		priority: 'HIGH',
+		name: 'task 11',
+		description: 'Archived by User1',
+		isArchived: 1,
+		archivedByUserId: 5,
+		taskVisibleToTeams: {
+			create: [
+				{
+					teamId: 2,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
+	},
+	{
+		// This task is visible to EVERYONE
+		createdByUserId: 2,
+		priority: 'HIGH',
+		name: 'task 12',
+		description: 'Archived by User1',
+		isArchived: 1,
+		archivedByUserId: 5,
+		taskVisibleToTeams: {
+			create: [
+				{
+					teamId: 2,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
+	},
+	{
+		// This task is visible to EVERYONE
+		createdByUserId: 2,
+		priority: 'HIGH',
+		name: 'task 13',
+		description: 'Archived by User1',
+		isArchived: 1,
+		archivedByUserId: 5,
+		taskVisibleToTeams: {
+			create: [
+				{
+					teamId: 2,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
+	},
+	{
+		// This task is visible to EVERYONE
+		createdByUserId: 2,
+		priority: 'HIGH',
+		name: 'task 14',
+		description: 'Archived by User2',
+		isArchived: 1,
+		archivedByUserId: 6,
+		taskVisibleToTeams: {
+			create: [
+				{
+					teamId: 3,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
+	},
+	{
+		// This task is visible to EVERYONE
+		createdByUserId: 2,
+		priority: 'HIGH',
+		name: 'task 15',
+		description: 'Archived by User2',
+		isArchived: 1,
+		archivedByUserId: 6,
+		taskVisibleToTeams: {
+			create: [
+				{
+					teamId: 3,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
+	},
+];
+export const taskSeeds = [...activeSeeds, ...archivedSeeds];

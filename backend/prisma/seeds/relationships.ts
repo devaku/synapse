@@ -26,6 +26,7 @@ export const teamsUserBelongTo = [
 	// Manager1
 	{ teamId: 1, userId: 2 },
 	{ teamId: 2, userId: 2 },
+	{ teamId: 3, userId: 2 },
 
 	// Manager2
 	{ teamId: 1, userId: 3 },
