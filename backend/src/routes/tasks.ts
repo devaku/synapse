@@ -2,10 +2,14 @@ import express, { Request, Response, NextFunction } from 'express';
 import {
 	createTask,
 	readTask,
-	readSubscribedTasks,
 	updateTask,
 	deleteTask,
 } from '../controllers/tasks-controller';
+import {
+	subscribe,
+	unsubscribe,
+	listSubscribedTasks,
+} from '../controllers/task-subscription-controller';
 
 const taskRouter = express.Router();
 
@@ -18,7 +22,11 @@ taskRouter.post('/tasks', express.json(), createTask);
 taskRouter.get('/tasks', readTask);
 
 // Get all tasks the user is SUBSCRIBED too
-taskRouter.get('/tasks/subscribed', readSubscribedTasks);
+taskRouter.get('/tasks/subscribed', listSubscribedTasks);
+
+// SUBSCRIPTION routes
+taskRouter.post('/tasks/:id/subscribe', express.json(), subscribe);
+taskRouter.delete('/tasks/:id/unsubscribe', express.json(), unsubscribe);
 
 // Archive a task
 taskRouter.put(
