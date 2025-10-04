@@ -185,24 +185,6 @@ export default function MyTasksPage() {
 		},
 	];
 
-	function handleMyTaskClickInfo(row) {
-		setModalTaskId(row.id);
-		setShowModalTaskInfo(true);
-	}
-
-	function handleNotificationClickInfo(row) {
-		setModalNotificationId(row.id);
-		setShowModalNotification(true);
-	}
-
-	function handleClickDelete(row) {
-		// If a task
-		if (row.name) {
-			setModalTaskId(row.id);
-			setShowModalTaskDelete(true);
-		}
-	}
-
 	useEffect(() => {
 		const taskResult = myTaskData.filter((item) => {
 			return (
@@ -408,6 +390,7 @@ export default function MyTasksPage() {
 							<DataTable
 								columns={taskColumns}
 								data={filteredTasks}
+								pagination
 								className="mb-10"
 							/>
 						</div>
@@ -440,6 +423,7 @@ export default function MyTasksPage() {
 							<DataTable
 								columns={notificationColumns}
 								data={filteredNotifications}
+								pagination
 								fixedHeaderScrollHeight="400px"
 								className="border-gray-200 border"
 							/>
