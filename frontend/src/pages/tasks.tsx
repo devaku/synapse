@@ -8,18 +8,13 @@ import SvgComponent from '../components/ui/svg_component';
 
 import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
-import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
+import MyTaskModalHeader from '../components/modals/my_tasks/my_task_header';
+import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
 
-import TaskCreateModal from '../components/modals/task/task_create';
 import { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
 
 import type { Task } from '../lib/types/models';
-
-/**
- * DATA
- */
-import schema from '../assets/schemas/schema.json';
 
 /**
  * HOOKS
@@ -260,14 +255,15 @@ export default function TasksPage() {
 
 			{/* Read Modal */}
 			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
-				<DynamicForm
-					metadata={schema['CreateEditTask'] as FieldMetadata[]}
-					onStateChange={handleFormStateChange}
-				/>
-				<button
-					className="cursor-pointer w-6 h-6 bg-red-600"
-					onClick={modalTaskInfo.toggle} // new hook handles open/close
-				></button>
+				<MyTaskModalHeader
+					modalTitle="View Task"
+					taskId={modalTaskInfoId}
+				>
+					<MyTaskReadModal
+						taskId={modalTaskInfoId}
+						handleModalDisplay={modalTaskInfo.toggle}
+					></MyTaskReadModal>
+				</MyTaskModalHeader>
 			</SlideModalContainer>
 
 			{/* Update Modal */}
