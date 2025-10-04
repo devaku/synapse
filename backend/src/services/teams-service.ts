@@ -1,19 +1,18 @@
-import { prisma } from '../lib/database';
+import { prismaDb } from '../lib/database';
 import { teamType } from '../types';
 
-export async function createTeam(team: teamType){
-    const teamRow = await prisma.team.create({
-        data: {
-            ...team
-        },
-    })
+export async function createTeam(team: teamType) {
+	const teamRow = await prismaDb.team.create({
+		data: {
+			...team,
+		},
+	});
 
-    return teamRow
+	return teamRow;
 }
 
-export async function readAllTeam (){
-    const teamrow = await prisma.team.findMany({
-
+export async function readAllTeam() {
+	const teamrow = await prismaDb.team.findMany({
 		include: {
 			createdByUser: {
 				select: {
@@ -22,10 +21,9 @@ export async function readAllTeam (){
 					firstName: true,
 					lastName: true,
 				},
-			}
-        }
+			},
+		},
+	});
 
-    })
-
-    return teamrow
+	return teamrow;
 }

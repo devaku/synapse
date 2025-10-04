@@ -41,11 +41,11 @@ import TeamsPage from './pages/teams';
 import MyTasksPage from './pages/my_tasks';
 
 // ADMIN
-import AdminTeamsPage from './pages/admin_teams_manager';
-import AdminGithubManagerPage from './pages/admin_github_manager';
-import AdminNotificationsManagerPage from './pages/admin_notifications';
-import AdminTaskManagerPage from './pages/admin_task_management';
-import AdminArchiveManagerPage from './pages/admin_archive_manager';
+import AdminTeamsPage from './pages/admin/admin_teams_manager';
+import AdminGithubManagerPage from './pages/admin/admin_github_manager';
+import AdminNotificationsManagerPage from './pages/admin/admin_notifications';
+import AdminTaskManagerPage from './pages/admin/admin_task_management';
+import AdminArchiveManagerPage from './pages/admin/admin_archive_manager';
 
 const protectedRoutes = [
 	{

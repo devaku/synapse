@@ -20,7 +20,7 @@ export default function DataTableBase<T extends Row = Row>({
 	...rest
 }: DataTableBaseProps<T>) {
 	const [pending, setPending] = useState(true);
-	const [rows, setRows] = useState([]);
+	const [rows, setRows] = useState<any[]>([]);
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {

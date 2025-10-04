@@ -3,8 +3,8 @@ import type { ReactElement } from 'react';
 
 export interface FieldMetadata {
 	name: string;
-	label: 'string';
-	type: 'string' | 'text' | 'number' | 'boolean';
+	label: string;
+	type: 'string' | 'text' | 'number' | 'boolean' | 'image';
 }
 
 interface DynamicModalProps {
