@@ -1,5 +1,4 @@
-// These mirror the same column names in the database
-
+import { User } from '../database/generated/prisma';
 import { Server as SocketIOServer } from 'socket.io';
 
 // Type declaration provided by chatgpt
@@ -10,28 +9,6 @@ declare global {
 		}
 	}
 }
-
-import { type User } from '../database/generated/prisma';
-export type userType = {
-	keycloakId: string;
-	teamId: number;
-	firstName?: string;
-	lastName?: string;
-	phone?: number;
-	createdAt: Date;
-};
-
-export type taskType = {
-	createdBy: number;
-	assignedTo: number;
-	priority: string;
-	name: string;
-	description: string;
-	image?: string;
-	startDate?: Date;
-	completeDate?: Date;
-	createdAt: Date;
-};
 
 export type teamType = {
 	createdBy: number;

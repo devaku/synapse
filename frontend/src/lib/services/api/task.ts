@@ -31,6 +31,36 @@ export async function createTask(token: string, taskObj: any) {
 	}
 }
 
+export async function updateTask(token: string, taskId: number, taskObj: any) {
+	let response: jsonResponse = await fetch(`${url}/tasks/${taskId}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`,
+		},
+		credentials: 'include',
+		body: JSON.stringify(taskObj),
+	})
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
 export async function readTasksFilteredForUser(token: string) {
 	let response: jsonResponse = await fetch(`${url}/tasks?useronly=1`, {
 		method: 'GET',

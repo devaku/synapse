@@ -90,6 +90,13 @@ export const taskSeeds = [
 				},
 			],
 		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
 	},
 	{
 		// This task is visible to EVERYONE
@@ -101,6 +108,13 @@ export const taskSeeds = [
 			create: [
 				{
 					teamId: 1,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
 				},
 			],
 		},
@@ -118,6 +132,13 @@ export const taskSeeds = [
 				},
 			],
 		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
 	},
 	{
 		// This task is visible to EVERYONE
@@ -129,6 +150,13 @@ export const taskSeeds = [
 			create: [
 				{
 					teamId: 1,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
 				},
 			],
 		},
@@ -146,6 +174,13 @@ export const taskSeeds = [
 				},
 			],
 		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
 	},
 	{
 		// This task is visible to EVERYONE
@@ -160,6 +195,13 @@ export const taskSeeds = [
 				},
 			],
 		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
+				},
+			],
+		},
 	},
 	{
 		// This task is visible to EVERYONE
@@ -171,6 +213,13 @@ export const taskSeeds = [
 			create: [
 				{
 					teamId: 1,
+				},
+			],
+		},
+		taskVisibleToUsers: {
+			create: [
+				{
+					userId: 2,
 				},
 			],
 		},

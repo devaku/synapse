@@ -30,8 +30,13 @@ import { useAuthContext } from '../lib/contexts/AuthContext';
  * SERVICES / HELPERS
  */
 
-import { readTasksFilteredForUser, deleteTask } from '../lib/services/api/task';
+import {
+	readTask,
+	readTasksFilteredForUser,
+	deleteTask,
+} from '../lib/services/api/task';
 import { formatDate } from '../lib/helpers/datehelpers';
+import TaskCreateUpdateModal from '../components/modals/task/task_create_update';
 
 export default function TasksPage() {
 	const { token } = useAuthContext();
@@ -246,9 +251,10 @@ export default function TasksPage() {
 
 			{/* Create Modal */}
 			<SlideModalContainer isOpen={modalTaskCreate.isOpen} noFade={false}>
-				<TaskCreateModal
+				<TaskCreateUpdateModal
+					modalTitle={'Create a Task'}
 					handleModalDisplay={modalTaskCreate.toggle}
-				></TaskCreateModal>
+				></TaskCreateUpdateModal>
 			</SlideModalContainer>
 
 			{/* Read Modal */}
@@ -265,14 +271,11 @@ export default function TasksPage() {
 
 			{/* Update Modal */}
 			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
-				<DynamicForm
-					metadata={schema['CreateEditTask'] as FieldMetadata[]}
-					onStateChange={handleFormStateChange}
-				/>
-				<button
-					className="cursor-pointer w-6 h-6 bg-red-600"
-					onClick={modalTaskUpdate.toggle} // new hook handles open/close
-				></button>
+				<TaskCreateUpdateModal
+					modalTitle={'Update a Task'}
+					taskId={modalTaskUpdateId}
+					handleModalDisplay={modalTaskUpdate.toggle}
+				></TaskCreateUpdateModal>
 			</SlideModalContainer>
 		</>
 	);

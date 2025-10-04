@@ -1,8 +1,8 @@
 import { User } from '../../database/generated/prisma';
-import { prisma } from '../lib/database';
+import { prismaDb } from '../lib/database';
 
 export async function readAllUsers() {
-	const rows = await prisma.user.findMany({
+	const rows = await prismaDb.user.findMany({
 		where: {
 			isDeleted: 0,
 		},
@@ -26,7 +26,7 @@ export async function readAllUsers() {
  * @param userData
  */
 export async function upsertUser(userData: User) {
-	const upsertUser = await prisma.user.upsert({
+	const upsertUser = await prismaDb.user.upsert({
 		where: {
 			keycloakId: userData.keycloakId,
 		},
@@ -42,7 +42,7 @@ export async function upsertUser(userData: User) {
 }
 
 export async function readUser(userId: number) {
-	const rows = await prisma.user.findUnique({
+	const rows = await prismaDb.user.findUnique({
 		where: {
 			id: userId,
 		},

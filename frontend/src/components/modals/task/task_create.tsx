@@ -5,7 +5,6 @@
 import { type Task, type User } from '../../../lib/types/models';
 import Select, { type MultiValue } from 'react-select';
 import { type Team } from '../../../lib/types/models';
-import ReactSelect from '../../ui/react_select';
 
 /**
  * HOOKS
