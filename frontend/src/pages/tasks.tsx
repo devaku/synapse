@@ -11,7 +11,9 @@ import SlideModalContainer from '../components/container/modal_containers/slide_
 import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 
 import TaskCreateModal from '../components/modals/task/task_create';
-import DataTable, { type TableColumn } from 'react-data-table-component';
+import { type TableColumn } from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+
 import type { Task } from '../lib/types/models';
 
 /**
@@ -233,19 +235,18 @@ export default function TasksPage() {
 								Create Task
 							</button>
 						</div>
-						<div className="">
-							<DataTable
-								columns={taskColumns}
-								data={filteredTasks}
-								fixedHeader={true}
-								highlightOnHover={true}
-								dense={true}
-								pagination
-								fixedHeaderScrollHeight="400px"
-								className="border border-gray-200 mb-10"
-							/>
-						</div>
 					</div>
+				</div>
+				<div className="min-h-0 flex flex-col">
+					<DataTable
+						title="Available Tasks"
+						fixedHeader={true}
+						dense={true}
+						highlightOnHover={true}
+						columns={taskColumns}
+						data={filteredTasks}
+						defaultSortFieldId={1}
+					></DataTable>
 				</div>
 			</HeaderContainer>
 
