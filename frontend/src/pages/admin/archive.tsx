@@ -10,6 +10,9 @@ export default function AdminArchiveManagerPage() {
 	const [filteredData, setFilteredData] = useState(data);
 	const [filterText, setFilterText] = useState('');
 
+	const [selectedRows, setSelectedRows] = useState([]);
+	const [display, setDisplay] = useState('hidden');
+
 	const columns = [
 		{ 
 			name: 'ID', 
@@ -33,6 +36,24 @@ export default function AdminArchiveManagerPage() {
 			sortable: true,
 		},
 	];
+
+	const handleRowSelected = ({ selectedRows }) => {
+		setSelectedRows(selectedRows);
+		if (selectedRows.length > 0) {
+			setDisplay('visible');
+		} else {
+			setDisplay('hidden');
+		}
+	};
+
+	const deleteSelectedRows = (selectedRows) => {
+		const selectedIds = new Set(selectedRows.map((row) => row.id));
+		const newData = data.filter((item) => !selectedIds.has(item.id));
+		
+		setData(newData);
+		setFilteredData(newData);
+		setSelectedRows([]);
+	};
 
 	const ExpandedComponent = ({ data }) => (
 		<pre className="w-full whitespace-pre-wrap break-all overflow-hidden text-xs leading-relaxed bg-gray-50 border border-gray-200 p-3">
@@ -95,22 +116,35 @@ export default function AdminArchiveManagerPage() {
 
 	return (
 		<HeaderContainer pageTitle="Archive Manager">
-			<div className="">
-				<input
-					type="text"
-					placeholder="Search logs..."
-					className="mb-4 p-2 border rounded border-gray-300 w-50"
-					value={filterText}
-					onChange={(e) => setFilterText(e.target.value)}
-				/>
-				<button
-					className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-					onClick={() => {
-						setFilterText('');
-					}}
+			<div className="flex justify-between items-center">
+				<div className="">
+					<input
+						type="text"
+						placeholder="Search logs..."
+						className="mb-4 p-2 border rounded border-gray-300 w-50"
+						value={filterText}
+						onChange={(e) => setFilterText(e.target.value)}
+					/>
+					<button
+						className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+						onClick={() => {
+							setFilterText('');
+						}}
+					>
+						X
+					</button>
+				</div>
+				<div
+					className={`flex mb-4 w-fit bg-gray-100 p-2 rounded ${display} flex items-center justify-between`}
 				>
-					X
-				</button>
+					<span className="">{selectedRows.length} Selected</span>
+					<button
+						className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+						onClick={() => deleteSelectedRows(selectedRows)}
+					>
+						Delete Permanently
+					</button>
+				</div>
 			</div>
 			<DataTable
 				columns={columns}
@@ -120,6 +154,8 @@ export default function AdminArchiveManagerPage() {
 				expandableRowsHideExpander
 				expandOnRowClicked
 				className="max-h-full border border-gray-200"
+				selectableRows
+				onSelectedRowsChange={handleRowSelected}
 			/>
 		</HeaderContainer>
 	);

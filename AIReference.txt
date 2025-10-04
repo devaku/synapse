@@ -709,3 +709,15 @@ AI Reference Page:
   </task>
 
   --- End of Chat Transcript ---
+
+***Generated generated_data.json 
+  User: make me like a 20 object json with 1/3 accepted by 3 types of
+  users and ingeneral 10 created by users, with 5 teams and hte github
+  link this: https://github.com/devaku/synapse.git, also make hte
+  descriptions less that 255 characters and half of the unaccepted ones
+  viewed and all of the accepted ones viewed
+
+  Assistant: I generated a JSON file with 20 objects matching your
+  requirements. You can download it here:
+
+  📂 generated_data.json
