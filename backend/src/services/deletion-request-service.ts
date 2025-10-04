@@ -1,8 +1,8 @@
 import { DeletionRequest } from '../../database/generated/prisma';
-import { prisma } from '../lib/database';
+import { prismaDb } from '../lib/database';
 
 export async function createDeletionRequest(deletionRequest: DeletionRequest) {
-	const teamRow = await prisma.deletionRequest.create({
+	const teamRow = await prismaDb.deletionRequest.create({
 		data: {
 			...deletionRequest,
 		},
@@ -12,7 +12,7 @@ export async function createDeletionRequest(deletionRequest: DeletionRequest) {
 }
 
 export async function readDelRequest(id: number) {
-	const teamrow = await prisma.deletionRequest.findMany({
+	const teamrow = await prismaDb.deletionRequest.findMany({
 		where: {
 			id,
 		},

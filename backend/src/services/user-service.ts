@@ -1,6 +1,24 @@
-import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { User } from '../../database/generated/prisma';
-import { prisma } from '../lib/database';
+import { prismaDb } from '../lib/database';
+
+export async function readAllUsers() {
+	const rows = await prismaDb.user.findMany({
+		where: {
+			isDeleted: 0,
+		},
+		omit: {
+			keycloakId: true,
+		},
+		include: {
+			// team: true,
+			// teamsUsersBelongTo: true,
+			// createdTasks: true,
+			// notification: true,
+		},
+	});
+
+	return rows;
+}
 
 /**
  * Insert or update local database entry of user
@@ -8,7 +26,7 @@ import { prisma } from '../lib/database';
  * @param userData
  */
 export async function upsertUser(userData: User) {
-	const upsertUser = await prisma.user.upsert({
+	const upsertUser = await prismaDb.user.upsert({
 		where: {
 			keycloakId: userData.keycloakId,
 		},
@@ -24,7 +42,7 @@ export async function upsertUser(userData: User) {
 }
 
 export async function readUser(userId: number) {
-	const rows = await prisma.user.findUnique({
+	const rows = await prismaDb.user.findUnique({
 		where: {
 			id: userId,
 		},
