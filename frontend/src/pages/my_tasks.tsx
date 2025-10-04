@@ -181,7 +181,6 @@ export default function MyTasksPage() {
 				</>
 			),
 			width: '80px',
-			center: true,
 		},
 	];
 

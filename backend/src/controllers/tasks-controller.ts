@@ -3,7 +3,7 @@ import * as taskService from '../services/task-service';
 import * as visiblityService from '../services/visibility-service';
 import { buildResponse, buildError } from '../lib/response-helper';
 import { Prisma } from '@prisma/client';
-import { prismaDb } from '../lib/database';
+import { prismaDb, txtimeoutValue } from '../lib/database';
 
 // CREATE - Create a new task
 export async function createTask(req: Request, res: Response) {
@@ -223,7 +223,7 @@ export async function updateTask(req: Request, res: Response) {
 						);
 				},
 				{
-					timeout: 999999, // default: 5000});
+					timeout: txtimeoutValue(),
 				}
 			);
 		} catch (error) {
