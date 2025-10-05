@@ -1,4 +1,5 @@
-import { prisma } from '../lib/database';
+import { Prisma } from '@prisma/client';
+import { prismaDb } from '../lib/database';
 import { Task } from '../../database/generated/prisma';
 import { readUser } from './user-service';
 
@@ -8,16 +9,10 @@ import { readUser } from './user-service';
 /**
  * CREATE - Create a new task
  */
-export async function createTask(task: Partial<Task>) {
-	const taskRow = await prisma.task.create({
+export async function createTask(taskObj: any) {
+	const taskRow = await prismaDb.task.create({
 		data: {
-			name: task.name!,
-			description: task.description!,
-			createdByUserId: task.createdByUserId!,
-			priority: task.priority || 'MEDIUM',
-			image: task.image || null,
-			startDate: task.startDate || null,
-			completeDate: task.completeDate || null,
+			...taskObj,
 		},
 		include: {
 			createdByUser: {
@@ -40,7 +35,7 @@ export async function createTask(task: Partial<Task>) {
  * READ ALL TASKS
  */
 export async function readAllTask() {
-	return await prisma.task.findMany({
+	return await prismaDb.task.findMany({
 		where: { isDeleted: 0 },
 		include: {
 			createdByUser: {
@@ -62,9 +57,21 @@ export async function readAllTask() {
  * READ TASK BY ID
  */
 export async function readTaskById(id: number) {
-	return await prisma.task.findFirst({
+	return await prismaDb.task.findFirst({
 		where: { id, isDeleted: 0 },
 		include: {
+			comments: {
+				include: {
+					user: true,
+				},
+			},
+			taskUserSubscribeTo: {
+				select: {
+					user: {
+						select: { keycloakId: true },
+					},
+				},
+			},
 			createdByUser: {
 				select: {
 					id: true,
@@ -74,9 +81,29 @@ export async function readTaskById(id: number) {
 				},
 			},
 			deletionRequest: { include: { requestedByUser: true } },
-			taskHiddenFromUsers: true,
-			taskVisibleToTeams: true,
-			taskVisibleToUsers: true,
+			taskHiddenFromUsers: {
+				select: {
+					user: {
+						omit: {
+							keycloakId: true,
+						},
+					},
+				},
+			},
+			taskVisibleToTeams: {
+				select: {
+					team: true,
+				},
+			},
+			taskVisibleToUsers: {
+				select: {
+					user: {
+						omit: {
+							keycloakId: true,
+						},
+					},
+				},
+			},
 		},
 	});
 }
@@ -88,8 +115,9 @@ export async function readTasksFilteredForUser(userId: number) {
 	const userRow = await readUser(userId);
 	if (!userRow) return [];
 
-	return await prisma.task.findMany({
+	return await prismaDb.task.findMany({
 		where: {
+			isArchived: 0,
 			isDeleted: 0,
 			OR: [
 				{ taskVisibleToUsers: { some: { userId } } },
@@ -118,7 +146,7 @@ export async function readTasksUserIsSubscribedTo(userId: number) {
 		return [];
 	}
 
-	return await prisma.task.findMany({
+	return await prismaDb.task.findMany({
 		where: {
 			isArchived: 0,
 			taskUserSubscribeTo: {
@@ -139,10 +167,45 @@ export async function readTasksUserIsSubscribedTo(userId: number) {
 /**
  * UPDATE TASK
  */
-export async function updateTask(id: number, data: Partial<Task>) {
-	return await prisma.task.update({
+export async function updateTask(
+	tx: Prisma.TransactionClient,
+	id: number,
+	data: Task
+) {
+	return await tx.task.update({
 		where: { id },
-		data: data,
+		data: {
+			...data,
+		},
+		include: {
+			createdByUser: {
+				select: {
+					id: true,
+					username: true,
+					firstName: true,
+					lastName: true,
+				},
+			},
+			taskHiddenFromUsers: true,
+			taskVisibleToTeams: true,
+			taskVisibleToUsers: true,
+		},
+	});
+}
+
+export async function DEBUG_updateTask(id: number, data: Task) {
+	return await prismaDb.task.update({
+		where: { id: 10 },
+		data: {
+			name: 'postman',
+			taskVisibleToTeams: {
+				// create: {
+				// 	team: {
+				// 		connect: { id: 2 },
+				// 	},
+				// },
+			},
+		},
 		include: {
 			createdByUser: {
 				select: {
@@ -163,7 +226,7 @@ export async function updateTask(id: number, data: Partial<Task>) {
  * DELETE TASK (Soft Delete)
  */
 export async function deleteTask(id: number) {
-	return await prisma.task.update({
+	return await prismaDb.task.update({
 		where: { id },
 		data: { isDeleted: 1 },
 	});

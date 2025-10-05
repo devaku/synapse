@@ -21,4 +21,4 @@ teamRouter.patch('/teams/soft-delete/', express.json(), softDeleteTeam);
 teamRouter.put('/teams/', express.json(), updateTeam);
 
 
-export default teamRouter; 
+export default teamRouter;

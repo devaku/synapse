@@ -1,52 +1,43 @@
 import * as _ from 'lodash';
-import { useEffect, useState } from 'react';
 
 /**
  * COMPONENTS
  */
-import Button from '../components/ui/button';
-
 import StatusPill from '../components/ui/status_pill';
 import SvgComponent from '../components/ui/svg_component';
 
 import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
-import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
-import { useModal } from '../lib/hooks/ui/useModal';
+import MyTaskModalHeader from '../components/modals/my_tasks/my_task_header';
+import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
 
-// import DataTable, { type TableColumn } from 'react-data-table-component';
+import { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
-// import { type TableColumn } from 'react-data-table-component';
 
 import type { Task } from '../lib/types/models';
 
 /**
- * DATA
+ * HOOKS
  */
-import schema from '../assets/schemas/schema.json';
+import { useModal } from '../lib/hooks/ui/useModal';
+import { useEffect, useState } from 'react';
+import { useAuthContext } from '../lib/contexts/AuthContext';
 
 /**
- * SERVICES
+ * SERVICES / HELPERS
  */
 
-import { readAllTasks, deleteTask } from '../lib/services/api/task';
-import { color } from 'chart.js/helpers';
-
-// This needs to be put the types.tsx
-type tableData = {
-	columnName: any[];
-	rowData: any[];
-};
+import {
+	readTask,
+	readTasksFilteredForUser,
+	deleteTask,
+} from '../lib/services/api/task';
+import { formatDate } from '../lib/helpers/datehelpers';
+import TaskCreateUpdateModal from '../components/modals/task/task_create_update';
 
 export default function TasksPage() {
-	/**
-	 * MODAL RELATED STATES
-	 * old way: const [showModalCreateTask, setShowModalCreateTask] = useState(false)
-	 * new way: using our useModal hook so we don’t repeat code
-	 */
-	const createTaskModal = useModal();
-	const readTaskModal = useModal();
-	const updateTaskModal = useModal();
+	const { token } = useAuthContext();
+
 	const [formState, setFormState] = useState<Record<string, any>>({});
 	// Handle form state updates from the dynamic modal
 	const handleFormStateChange = (newState: Record<string, any>) => {
@@ -54,19 +45,84 @@ export default function TasksPage() {
 	};
 
 	/**
-	 * TABLE RELATED STATES
+	 * There are two states for keeping track of table content
+	 * because when it is filtered, it returns a new set of arrays
+	 * and we need to remember what the original array was to revert it
+	 * back to its original state
 	 */
-	const [toggleClearRows, setTogglClearRows] = useState<boolean>(false);
-	const [tableData, setTableData] = useState<tableData>({
-		columnName: [],
-		rowData: [],
-	});
-	const [selectedRows, setSelectedRows] = useState<any[]>([]);
+	const [myTaskData, setTaskData] = useState<Task[]>([]);
+	const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+
+	// States used to keep track of the respective
+	// texts in the SEARCH BARS
+	const [filterTextTasks, setFilterTextTasks] = useState('');
+
+	// Hooks for opening and closing modals
+	const modalTaskInfo = useModal();
+
+	// Used to fetch the data that would populate the opened modal
+	const [modalTaskInfoId, setModalTaskInfoId] = useState(0);
+
+	const modalTaskCreate = useModal();
+	const [modalTaskCreateId, setmodalTaskCreateId] = useState(0);
+
+	const modalTaskUpdate = useModal();
+	const [modalTaskUpdateId, setModalTaskUpdateId] = useState(0);
 
 	/**
-	 * INTERNAL FUNCTIONS
+	 * HARD CODED COLUMNS FOR THE TABLES
 	 */
 
+	const taskColumns: TableColumn<Task>[] = [
+		{
+			name: 'ID',
+			selector: (row) => row.id,
+			sortable: true,
+		},
+		{
+			name: 'Task',
+			selector: (row) => row.name,
+			sortable: true,
+		},
+		{
+			name: 'Created At',
+			selector: (row: Task) => {
+				return formatDate(new Date(row.createdAt!));
+			},
+			sortable: true,
+		},
+		{
+			name: 'Status',
+			selector: (row) => row.priority,
+			sortable: true,
+			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
+		},
+		{
+			name: 'Actions',
+			cell: (row) => (
+				<div className="flex gap-2">
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleTaskClickInfo(row)}
+					>
+						<SvgComponent iconName="INFO" className="" />
+					</button>
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleTaskClickUpdate(row)}
+					>
+						<SvgComponent iconName="WRENCH" className="" />
+					</button>
+				</div>
+			),
+		},
+	];
+
+	/**
+	 * USE EFFECTS
+	 */
+
+	// Initial Load
 	useEffect(() => {
 		async function start() {
 			await refreshTable();
@@ -74,356 +130,149 @@ export default function TasksPage() {
 		start();
 	}, []);
 
+	// refresh table after closing or creating if you want
 	useEffect(() => {
 		async function start() {
-			// refresh table after closing or creating if you want
 			await refreshTable();
 		}
 		start();
-	}, [createTaskModal.isOpen]);
+	}, [modalTaskCreate.isOpen, modalTaskUpdate.isOpen]);
 
 	/**
-	 * Extracts the values given by the API response
-	 * Provided by Chatgpt.
-	 * @param {*} array
-	 * @returns
+	 * USE EFFECT to handling FILTERING
+	 * of the tables
 	 */
-	function groupValuesByKey(array: any): Record<string, any[]> {
-		return _.transform(
-			array[0],
-			(result: any, value, key: any) => {
-				result[key] = _.map(array, key);
-			},
-			{}
-		);
-	}
+	useEffect(() => {
+		/**
+		 * Filtering is matching
+		 * based on id, name, and priority
+		 */
+		const taskResult = myTaskData.filter((item: Task) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase())) ||
+				(item.priority &&
+					item.priority
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase()))
+			);
+		});
+		setFilteredTasks(taskResult);
+	}, [filterTextTasks]);
 
 	/**
-	 * Convert Date to be readable
-	 * Provided by Chatgpt
-	 * @param date
-	 * @returns
-	 */
-	function formatCustomDate(isoString: string | undefined): string {
-		// If undefined, do nothing
-		if (!isoString) {
-			return '';
-		}
-
-		const date = new Date(isoString);
-
-		// if (isNaN(date.getTime())) {
-		// 	throw new Error('Invalid date string');
-		// }
-
-		const pad = (n: number): string => n.toString().padStart(2, '0');
-
-		const year = date.getUTCFullYear();
-		const month = pad(date.getUTCMonth() + 1); // Months are zero-based
-		const day = pad(date.getUTCDate());
-
-		const hours = pad(date.getUTCHours());
-		const minutes = pad(date.getUTCMinutes());
-		const seconds = pad(date.getUTCSeconds());
-
-		return `${year}-${month}-${day} ${hours}:${minutes}`;
-	}
-
-	function findTableEntryById(id: number, arrayOfObjects: any) {
-		// Get the index that the id matches
-		// Return that object
-		return arrayOfObjects[
-			_.findIndex(arrayOfObjects, (element: any) => {
-				return element.id == id;
-			})
-		];
-	}
-
-	/**
-	 * Load the Tasks
+	 * INTERNAL FUNCTIONS
 	 */
 
 	async function refreshTable() {
-		let data = await readAllTasks();
-		// console.log(data);
-		if (data.length > 0) {
-			loadTasks(data);
-		} else {
-			// Set table to be empty
-			setTableData({
-				columnName: [],
-				rowData: [],
-			});
-		}
-	}
+		// TODO: API requests will throw an error if there was a problem
+		let subscribedTaskRows = await readTasksFilteredForUser(token!);
 
-	function loadTasks(data: any[]) {
-		// Hard coded column names
-		const columns = [
-			{
-				name: 'ID',
-				selector: (el: any) => el.id,
-				sortable: true,
-				width: '75px',
-			},
-			{
-				name: 'Priority',
-				selector: (el: any) => el.priority,
-				sortable: true,
-				cell: (el: any) => <StatusPill text={el.priority}></StatusPill>,
-			},
-			{
-				name: 'Name',
-				selector: (el: any) => el.name,
-				sortable: true,
-			},
-			{
-				name: 'Description',
-				selector: (el: any) => el.description,
-				sortable: true,
-			},
-			{
-				name: 'Created By',
-				selector: (el: any) => el.createdByUser.username,
-				sortable: true,
-			},
-			{
-				name: 'Assigned To',
-				selector: (el: any) => el.assignedByUser?.username,
-				sortable: true,
-			},
-			{
-				name: 'Created At',
-				selector: (el: any) => el.createdAt,
-				sortable: true,
-				style: {
-					width: 'fit-content',
-				},
-			},
-			{
-				name: 'Start Date',
-				selector: (el: any) => el.startDate,
-				sortable: true,
-			},
-			{
-				name: 'Complete Date',
-				selector: (el: any) => el.completeDate,
-				sortable: true,
-			},
-			{
-				name: 'createdByUserId',
-				selector: (el: any) => el.createdByUser.id,
-				sortable: true,
-				omit: true,
-			},
-			{
-				name: 'assignedByUserId',
-				selector: (el: any) => el.assignedByUser.id,
-				sortable: true,
-				omit: true,
-			},
-		];
-
-		const rows = data.map((rowData) => {
-			rowData.startDate = formatCustomDate(rowData.startDate);
-			rowData.completeDate = formatCustomDate(rowData.completeDate);
-			rowData.createdAt = formatCustomDate(rowData.createdAt);
-
-			return rowData;
-		});
-
-		setTableData({
-			columnName: columns,
-			rowData: rows,
-		});
+		setFilteredTasks(subscribedTaskRows);
+		setTaskData(subscribedTaskRows);
 	}
 
 	/**
-	 * Primary function that loads the data
-	 * received from the API to the table
-	 * @param {*} data
-	 */
-	function loadTasks2(data: any) {
-		// data
-		// [{"id":3,"name":"Last Task","description":"Last Task for now"}]
-
-		let extractedValues = groupValuesByKey(data);
-		// Extracted values
-		// Object { id: (1) […], name: (1) […], description: (1) […] }
-
-		let columns = [];
-		let finalRows = [];
-
-		// Get column names
-		for (
-			let index = 0;
-			index < Object.keys(extractedValues).length;
-			index++
-		) {
-			// Get the column name
-			columns.push(Object.keys(extractedValues)[index]);
-		}
-
-		// Get row values
-		for (
-			let index = 0;
-			index < extractedValues[columns[0]].length;
-			index++
-		) {
-			let currentId = extractedValues[columns[0]][index];
-			let rows = [];
-
-			// Iterate through each key
-			for (const [key, value] of Object.entries(extractedValues)) {
-				rows.push(value[index]);
-			}
-
-			// Add the actions at the very end
-			let currentData = findTableEntryById(currentId, data);
-			let actionData = loadTableActions(currentData);
-
-			rows.push(actionData);
-
-			finalRows.push(rows);
-		}
-
-		setTableData({
-			columnName: columns,
-			rowData: finalRows,
-		});
-	}
-
-	/**
-	 * Loads the JSX elements that will be used
-	 * as table actions
-	 * @param {*} dataObject
-	 * @returns
-	 */
-	function loadTableActions(dataObject: any) {
-		/**
-		 * {
-		 *  id: 1
-		 *  ....
-		 * }
-		 */
-
-		let { id } = dataObject;
-
-		return (
-			<>
-				<button
-					className="cursor-pointer w-6 h-6"
-					onClick={readTaskModal.toggle} // new hook handles open/close
-				>
-					<SvgComponent iconName="INFO" className="" />
-				</button>
-				<button
-					className="cursor-pointer w-6 h-6"
-					onClick={updateTaskModal.toggle} // same deal here
-				>
-					<SvgComponent iconName="WRENCH" className="" />
-				</button>
-			</>
-		);
-	}
-
-	function tableDataActions() {
-		async function handleClickDelete() {
-			// TODO: Add modal handling for error here
-			try {
-				// Get the ids
-				let taskIdArray = selectedRows.map((el) => el.id);
-
-				await deleteTask(taskIdArray);
-				await refreshTable();
-
-				// Clear the selected rows on the table
-				setTogglClearRows(!toggleClearRows);
-			} catch (error) {
-				console.log(error);
-			}
-		}
-		return (
-			<button
-				className="cursor-pointer w-6 h-6"
-				onClick={handleClickDelete}
-			>
-				<SvgComponent iconName="TRASHCAN" className="" />
-			</button>
-		);
-	}
-
-	/**
-	 * Handler functions
+	 * HANDLERS
 	 */
 
-	// Handler function for the DataTable
-	function handleSelectedRowsChange({ selectedRows }: { selectedRows: any }) {
-		setSelectedRows((oldRows) => {
-			return [...selectedRows];
-		});
+	function handleTaskClickInfo(row: Task) {
+		setModalTaskInfoId(row.id);
+		modalTaskInfo.open();
+	}
+
+	function handleTaskClickCreate(row: Task) {
+		setmodalTaskCreateId(row.id);
+		modalTaskCreate.open();
+	}
+
+	function handleTaskClickUpdate(row: Task) {
+		setModalTaskUpdateId(row.id);
+		modalTaskUpdate.open();
 	}
 
 	return (
 		<>
 			<HeaderContainer pageTitle={'Tasks'}>
-				<div className="flex flex-row justify-between items-center p-2.5">
-					<div className="flex flex-row gap-15">
-						<Button
-							buttonType="add"
-							buttonText="Create Task"
-							buttonOnClick={createTaskModal.open} // just open directly
-						/>
+				{/* Tasks Table */}
+				<div className="flex flex-col">
+					<div>
+						{/* Search Bar */}
+						<div className="">
+							<input
+								type="text"
+								placeholder="Search My Tasks..."
+								className="mb-4 p-2 border rounded border-gray-300 w-50"
+								value={filterTextTasks}
+								onChange={(e) =>
+									setFilterTextTasks(e.target.value)
+								}
+							/>
+							<button
+								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1 cursor-pointer"
+								onClick={() => {
+									setFilterTextTasks('');
+								}}
+							>
+								X
+							</button>
+							<button
+								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1 cursor-pointer"
+								onClick={() => modalTaskCreate.open()}
+							>
+								Create Task
+							</button>
+						</div>
 					</div>
 				</div>
 				<div className="min-h-0 flex flex-col">
 					<DataTable
 						title="Available Tasks"
-						columns={tableData.columnName}
-						data={tableData.rowData}
-						selectableRows
-						onSelectedRowsChange={handleSelectedRowsChange}
-						clearSelectedRows={toggleClearRows}
-						contextActions={tableDataActions()}
+						fixedHeader={true}
+						dense={true}
+						highlightOnHover={true}
+						columns={taskColumns}
+						data={filteredTasks}
 						defaultSortFieldId={1}
 					></DataTable>
 				</div>
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={createTaskModal.isOpen} noFade={false}>
-				<DynamicForm
-					metadata={schema['CreateEditTask'] as FieldMetadata[]}
-					onStateChange={handleFormStateChange}
-				/>
-				<button
-					className="cursor-pointer w-6 h-6 bg-red-600"
-					onClick={createTaskModal.toggle} // new hook handles open/close
-				></button>
+			<SlideModalContainer isOpen={modalTaskCreate.isOpen} noFade={false}>
+				<TaskCreateUpdateModal
+					modalTitle={'Create a Task'}
+					handleModalDisplay={modalTaskCreate.toggle}
+				></TaskCreateUpdateModal>
 			</SlideModalContainer>
 
 			{/* Read Modal */}
-			<SlideModalContainer isOpen={readTaskModal.isOpen} noFade={false}>
-				<DynamicForm
-					metadata={schema['CreateEditTask'] as FieldMetadata[]}
-					onStateChange={handleFormStateChange}
-				/>
-				<button
-					className="cursor-pointer w-6 h-6 bg-red-600"
-					onClick={readTaskModal.toggle} // new hook handles open/close
-				></button>
+			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
+				<MyTaskModalHeader
+					modalTitle="View Task"
+					taskId={modalTaskInfoId}
+				>
+					<MyTaskReadModal
+						taskId={modalTaskInfoId}
+						handleModalDisplay={modalTaskInfo.toggle}
+					></MyTaskReadModal>
+				</MyTaskModalHeader>
 			</SlideModalContainer>
 
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={updateTaskModal.isOpen} noFade={false}>
-				<DynamicForm
-					metadata={schema['CreateEditTask'] as FieldMetadata[]}
-					onStateChange={handleFormStateChange}
-				/>
-				<button
-					className="cursor-pointer w-6 h-6 bg-red-600"
-					onClick={updateTaskModal.toggle} // new hook handles open/close
-				></button>
+			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
+				<TaskCreateUpdateModal
+					modalTitle={'Update a Task'}
+					taskId={modalTaskUpdateId}
+					handleModalDisplay={modalTaskUpdate.toggle}
+				></TaskCreateUpdateModal>
 			</SlideModalContainer>
 		</>
 	);

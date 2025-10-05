@@ -8,7 +8,7 @@ import StatusPill from '../../ui/status_pill';
  * HOOKS
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
 
 /**

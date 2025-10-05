@@ -5,6 +5,7 @@ import debugRouter from './debug';
 import taskRouter from './tasks';
 import teamRouter from './teams';
 import githubRouter from './github';
+import userRouter from './users';
 import deletionRequestRouter from './deletion_request';
 
 const mainRouter = express.Router();
@@ -25,6 +26,7 @@ function setupApiRoutes(): express.Router {
 	apiRouter.use(debugRouter);
 	apiRouter.use(teamRouter);
 	apiRouter.use(githubRouter);
+	apiRouter.use(userRouter);
 	apiRouter.use(deletionRequestRouter);
 
 	return apiRouter;

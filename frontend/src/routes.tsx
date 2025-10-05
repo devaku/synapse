@@ -34,18 +34,18 @@ import HomePage from './pages/home';
 import SettingsPage from './pages/settings';
 import ProfilePage from './pages/profile';
 import ChartsPage from './pages/charts';
-import LogsPage from './pages/logs';
 import AccessPage from './pages/access';
 import TasksPage from './pages/tasks';
 import TeamsPage from './pages/teams';
 import MyTasksPage from './pages/my_tasks';
 
 // ADMIN
-import AdminTeamsPage from './pages/admin_teams_manager';
-import AdminGithubManagerPage from './pages/admin_github_manager';
-import AdminNotificationsManagerPage from './pages/admin_notifications';
-import AdminTaskManagerPage from './pages/admin_task_management';
-import AdminArchiveManagerPage from './pages/admin_archive_manager';
+import AdminTeamsPage from './pages/admin/teams';
+import AdminGithubManagerPage from './pages/admin/github';
+import AdminNotificationsManagerPage from './pages/admin/notifications';
+import AdminTaskManagerPage from './pages/admin/tasks';
+import AdminArchiveManagerPage from './pages/admin/archive';
+import LogsPage from './pages/admin/logs';
 
 const protectedRoutes = [
 	{
@@ -59,17 +59,17 @@ const protectedRoutes = [
 			{ path: 'my_tasks', Component: MyTasksPage },
 			{ path: 'charts', Component: ChartsPage },
 			{ path: 'access', Component: AccessPage },
-			{ path: 'logs', Component: LogsPage },
 
 			// ADMIN
-			{ path: 'admin_teams', Component: AdminTeamsPage },
-			{ path: 'admin_github', Component: AdminGithubManagerPage },
+			{ path: 'admin/teams', Component: AdminTeamsPage },
+			{ path: 'admin/github', Component: AdminGithubManagerPage },
 			{
-				path: 'admin_notifications',
+				path: 'admin/notifications',
 				Component: AdminNotificationsManagerPage,
 			},
-			{ path: 'admin_tasks', Component: AdminTaskManagerPage },
-			{ path: 'admin_archive', Component: AdminArchiveManagerPage },
+			{ path: 'admin/tasks', Component: AdminTaskManagerPage },
+			{ path: 'admin/archive', Component: AdminArchiveManagerPage },
+			{ path: 'logs', Component: LogsPage },
 		],
 	},
 ];

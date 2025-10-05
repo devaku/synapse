@@ -1,4 +1,4 @@
-import { prisma } from '../lib/database';
+import { prismaDb } from '../lib/database';
 import { teamType } from '../types';
 
 /**
@@ -13,7 +13,7 @@ export async function createTeam(team: teamType){
         },
     })
 
-    return teamRow
+	return teamRow;
 }
 
 /**
@@ -32,10 +32,9 @@ export async function readAllTeam (){
 					firstName: true,
 					lastName: true,
 				},
-			}
-        }
-
-    })
+			},
+		},
+	});
 
     return teamrow
 }

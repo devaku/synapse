@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as teamsService from '../services/teams-service';
 import { buildResponse, buildError } from '../lib/response-helper';
 
+
 /**
  * Controller to create a team in the database 
  *    
@@ -12,29 +13,26 @@ import { buildResponse, buildError } from '../lib/response-helper';
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-export async function createTeam (req : Request, res : Response){
 
-    try {
+export async function createTeam(req: Request, res: Response) {
+	try {
+		let data = req.body;
+		const team = await teamsService.createTeam(data);
 
-        let data = req.body 
-        const team = await teamsService.createTeam(data)
-        
-        let finalResponse = buildResponse(
+
+		let finalResponse = buildResponse(
 			201,
 			'Data was created successfully!',
 			team
 		);
 
-        res.status(201).json(finalResponse);
-
-
-
-    }catch (error: any) {
+		res.status(201).json(finalResponse);
+	} catch (error: any) {
 		let finalResponse = buildError(500, 'There was an error', error);
 		res.status(500).json(finalResponse);
 	}
-
 }
+
 
 /**
  * Controller to read all teams in the database
@@ -46,9 +44,19 @@ export async function createTeam (req : Request, res : Response){
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-export async function readTeam (req : Request, res : Response) {
 
-    try{
+export async function readTeam(req: Request, res: Response) {
+	try {
+		let data = req.body;
+		const team = await teamsService.readAllTeam();
+		let message = '';
+
+
+		if (team.length > 0) {
+			message = 'Data was retrieved successfully.';
+		} else {
+			message = 'Table is empty';
+		}
 
         const team = await teamsService.readAllTeam();
         let message = ''; 
