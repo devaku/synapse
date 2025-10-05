@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState, createContext } from 'react';
 
 import keycloak from '../services/auth/keycloak';
+import { type keycloakUserData } from '../types/custom';
 
 type authContextType = {
 	keycloak: typeof keycloak;
 	isAuthenticated: boolean;
 	token: string | null;
-	userData: any;
+	userData: Partial<keycloakUserData>;
 };
 
 const AuthContext = createContext<authContextType>({
@@ -19,7 +20,7 @@ const AuthContext = createContext<authContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [isAuthenticated, setIsAuthenticated] = useState(false); // tracking auth status
 	const [token, setToken] = useState<string | null>(null);
-	const [userData, setUserData] = useState({});
+	const [userData, setUserData] = useState<keycloakUserData>({});
 
 	useEffect(() => {
 		if (keycloak.didInitialize) {
