@@ -1,7 +1,7 @@
 import HeaderContainer from '../../components/container/header_container';
 
 import DataTable from '../../components/container/DataTableBase';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import NotificationTesting from '../../../testing_jsons/notification_admin_testing.json';
 export default function AdminNotificationsManagerPage() {
@@ -62,6 +62,7 @@ export default function AdminNotificationsManagerPage() {
 						?.name || 'N/A'
 				);
 			},
+			sortable: true,
 		},
 		{
 			name: '# of Subscribers',
@@ -110,12 +111,14 @@ export default function AdminNotificationsManagerPage() {
 				}
 				return 'Unknown';
 			},
+			sortable: true,
 		},
 		{
 			name: 'Name',
 			selector: (row) => {
 				return row.name || `${row.lastName}, ${row.firstName}`;
 			},
+			sortable: true,
 		},
 	];
 
@@ -128,9 +131,59 @@ export default function AdminNotificationsManagerPage() {
 		}
 	};
 
+	useEffect(() => {
+		// Filter data based on filterText
+		let result = [];
+		if (tableType === 'teams') {
+			result = data.teams.filter((item) => {
+				return (
+					item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterText.toLowerCase()) ||
+					item.name
+						.toLowerCase()
+						.includes(filterText.toLowerCase())
+				);
+			});
+			setTeamsData(result);
+		} else if (tableType === 'tasks') {
+			result = data.tasks.filter((item) => {
+				return (
+					item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterText.toLowerCase()) ||
+					item.name
+						.toLowerCase()
+						.includes(filterText.toLowerCase()) ||
+					(item.associatedTeam &&
+						data.teams.find((team) => team.id === item.associatedTeam)?.name
+							.toLowerCase()
+							.includes(filterText.toLowerCase()))
+				);
+			});
+			setTasksData(result);
+		} else if (tableType === 'users') {
+			result = data.users.filter((item) => {
+				return (
+					item.firstName
+						.toLowerCase()
+						.includes(filterText.toLowerCase()) ||
+					item.lastName
+						.toLowerCase()
+						.includes(filterText.toLowerCase())
+				);
+			});
+			setUsersData(result);
+		}
+	}, [filterText, tableType, data]);
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		
+
 		// Handle form submission logic here
 		console.log('Notification Title:', notificationTitle);
 		console.log('Notification Content:', notificationContent);
@@ -214,17 +267,21 @@ export default function AdminNotificationsManagerPage() {
 				<form onSubmit={handleSubmit}>
 					<div className="mt-5 flex flex-col gap-5 bg-gray-100 p-2 rounded">
 						<div className="flex flex-row justify-between bg-white p-2 rounded items-center">
-							<span className="text-3xl cursor-pointer">Notification Form</span>
+							<span className="text-3xl cursor-pointer">
+								Notification Form
+							</span>
 							<button
 								className="py-2 px-3 hover:bg-[#0f4c75] bg-[#153243] text-white border border-[#153243] rounded ml-1"
-								type='submit'
+								type="submit"
 							>
 								Send Notification
 							</button>
 						</div>
 						{/* Notification Name */}
 						<div className="flex flex-row gap-5 items-center flex-wrap">
-							<span className="min-w-20 cursor-pointer">Name:</span>
+							<span className="min-w-20 cursor-pointer">
+								Name:
+							</span>
 							<input
 								type="text"
 								placeholder={'Input Notification Name...'}
@@ -253,7 +310,9 @@ export default function AdminNotificationsManagerPage() {
 						</div>
 						{/* Selected Table */}
 						<div className="flex flex-row gap-5 items-start">
-							<span className="min-w-20 cursor-pointer">Selected:</span>
+							<span className="min-w-20 cursor-pointer">
+								Selected:
+							</span>
 							<DataTable
 								className="border border-gray-200 cursor-pointer"
 								data={selectedRows}
