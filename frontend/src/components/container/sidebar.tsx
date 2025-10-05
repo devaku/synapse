@@ -80,7 +80,7 @@ export default function Sidebar() {
 							/>
 							<SidebarButton
 								tabName="Notific..."
-								routePath="/admin/notification"
+								routePath="/admin/notifications"
 								iconPath=""
 							/>
 							<SidebarButton
