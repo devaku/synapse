@@ -9,11 +9,6 @@ export function setupServerMiddleware(app: Express) {
 	// Attach session
 	app.use(sessionMiddleware);
 
-	// app.use((req: Request, res: Response, next: NextFunction) => {
-	// 	console.log('Session ID:', req.sessionID);
-	// 	next();
-	// });
-
 	// Load CORS
 	app.use(
 		cors({

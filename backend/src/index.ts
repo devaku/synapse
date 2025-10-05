@@ -17,6 +17,14 @@ dotenv.config();
 // Setup favicon. Have to be at the very start. lol
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
+app.get('/docker', (req: Request, res: Response, next: NextFunction) => {
+	res.json({
+		status: 'success',
+		message: 'Image is working correctly!',
+	});
+	return;
+});
+
 // Setup middlewares
 setupServerMiddleware(app);
 
