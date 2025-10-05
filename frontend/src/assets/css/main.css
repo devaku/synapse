@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *):not(.exclude-dark, .exclude-dark *));
+
 @theme {
 	--color-ttg-green: #7bb863;
 	--color-ttg-purple: #737acb;
