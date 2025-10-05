@@ -15,7 +15,7 @@
 		"build": "npm run db:generate && npm run clean && npm run compile && npm run copy",
 		"clean": "rimraf dist",
 		"compile": "tsc",
-		"copy": "cpx \"src/**/*.{json,html,css,ico,png,jpg}\" dist",
+		"copy": "cpx \"src/**/!(uploads)/*\" dist",
 		"format": "npx prettier . --write --config ../.prettierrc.json",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

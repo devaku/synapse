@@ -5,7 +5,6 @@ import favicon from 'serve-favicon';
 import path from 'path';
 
 import { setupServerMiddleware } from './middlewares/initial-middleware';
-import { Server } from 'socket.io';
 import { socketMiddleware } from './middlewares/socket-middleware';
 
 const app = express();
