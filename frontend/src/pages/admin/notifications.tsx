@@ -264,6 +264,7 @@ export default function AdminNotificationsManagerPage() {
 				</div>
 
 				{/* Form Content */}
+				{/* Probably Turn this into a modal or overlay form later */}
 				<form onSubmit={handleSubmit}>
 					<div className="mt-5 flex flex-col gap-5 bg-gray-100 p-2 rounded">
 						<div className="flex flex-row justify-between bg-white p-2 rounded items-center">
