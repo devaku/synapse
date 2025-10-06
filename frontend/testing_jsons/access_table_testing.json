@@ -1,0 +1,124 @@
+{
+	"data": [
+		{
+			"id": 1,
+			"repo_name": "frontend-ui",
+			"requesting_user": "alice",
+			"access_requested": "read"
+		},
+		{
+			"id": 2,
+			"repo_name": "backend-api",
+			"requesting_user": "bob",
+			"access_requested": "write"
+		},
+		{
+			"id": 3,
+			"repo_name": "data-pipeline",
+			"requesting_user": "charlie",
+			"access_requested": "admin"
+		},
+		{
+			"id": 4,
+			"repo_name": "infra-config",
+			"requesting_user": "diana",
+			"access_requested": "read"
+		},
+		{
+			"id": 5,
+			"repo_name": "mobile-app",
+			"requesting_user": "edward",
+			"access_requested": "write"
+		},
+		{
+			"id": 6,
+			"repo_name": "design-assets",
+			"requesting_user": "frank",
+			"access_requested": "read"
+		},
+		{
+			"id": 7,
+			"repo_name": "analytics-service",
+			"requesting_user": "grace",
+			"access_requested": "admin"
+		},
+		{
+			"id": 8,
+			"repo_name": "ci-cd-scripts",
+			"requesting_user": "henry",
+			"access_requested": "write"
+		},
+		{
+			"id": 9,
+			"repo_name": "docs",
+			"requesting_user": "irene",
+			"access_requested": "read"
+		},
+		{
+			"id": 10,
+			"repo_name": "ml-models",
+			"requesting_user": "jack",
+			"access_requested": "admin"
+		},
+		{
+			"id": 11,
+			"repo_name": "security-tools",
+			"requesting_user": "karen",
+			"access_requested": "read"
+		},
+		{
+			"id": 12,
+			"repo_name": "chat-service",
+			"requesting_user": "leo",
+			"access_requested": "write"
+		},
+		{
+			"id": 13,
+			"repo_name": "game-engine",
+			"requesting_user": "maria",
+			"access_requested": "admin"
+		},
+		{
+			"id": 14,
+			"repo_name": "support-bot",
+			"requesting_user": "nick",
+			"access_requested": "read"
+		},
+		{
+			"id": 15,
+			"repo_name": "billing-system",
+			"requesting_user": "olivia",
+			"access_requested": "write"
+		},
+		{
+			"id": 16,
+			"repo_name": "marketing-site",
+			"requesting_user": "peter",
+			"access_requested": "read"
+		},
+		{
+			"id": 17,
+			"repo_name": "search-service",
+			"requesting_user": "quinn",
+			"access_requested": "admin"
+		},
+		{
+			"id": 18,
+			"repo_name": "file-storage",
+			"requesting_user": "rachel",
+			"access_requested": "read"
+		},
+		{
+			"id": 19,
+			"repo_name": "notifications",
+			"requesting_user": "sam",
+			"access_requested": "write"
+		},
+		{
+			"id": 20,
+			"repo_name": "dev-tools",
+			"requesting_user": "tina",
+			"access_requested": "admin"
+		}
+	]
+}

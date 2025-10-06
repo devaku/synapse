@@ -1,48 +1,103 @@
 import HeaderContainer from '../components/container/header_container';
-import Table from '../components/container/table';
-import SearchBar from '../components/ui/searchbar';
+// import Table from '../components/container/table';
+// import SearchBar from '../components/ui/searchbar';
+
+// Data Table React Component - https://react-data-table-component.netlify.app/
+import TableData from '../../testing_jsons/access_table_testing.json';
+// import DataTable from 'react-data-table-component';
+import DataTable from '../components/container/DataTableBase';
+
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import Button from '../components/ui/button';
 import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
-import DynamicModal, {
-	type FieldMetadata,
-} from '../components/modals/generic/dynamic_modal';
+import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import schema from '../assets/schemas/schema.json';
 
-type tableData = {
-	columnName: string[];
-	rowData: any[];
-};
+// type tableData = {
+// 	columnName: string[];
+// 	rowData: any[];
+// };
 
 export default function MyAccesssPage() {
-	let mockAccessAPIResponse = [
+	// let mockAccessAPIResponse = [
+	// 	{
+	// 		id: 1,
+	// 		repo_name: 'Repo 1',
+	// 		requesting_user: 'John',
+	// 		access_requested: 'Read',
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		repo_name: 'Repo 2',
+	// 		requesting_user: 'Jane',
+	// 		access_requested: 'Read',
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		repo_name: 'Repo 3',
+	// 		requesting_user: 'Doe',
+	// 		access_requested: 'Read/Write',
+	// 	},
+	// ];
+
+	// Table react components and stuff
+	const [data, setData] = useState(TableData.data || []);
+	const [filteredItems, setFilteredItems] = useState(data);
+	const [filterText, setFilterText] = useState('');
+
+	const columns = [
 		{
-			id: 1,
-			repo_name: 'Repo 1',
-			requesting_user: 'John',
-			access_requested: 'Read',
+			name: 'ID',
+			selector: (row) => row.id,
+			sortable: true,
+			grow: 0,
 		},
 		{
-			id: 2,
-			repo_name: 'Repo 2',
-			requesting_user: 'Jane',
-			access_requested: 'Read',
+			name: 'Repository Name',
+			selector: (row) => row.repo_name,
+			sortable: true,
 		},
 		{
-			id: 3,
-			repo_name: 'Repo 3',
-			requesting_user: 'Doe',
-			access_requested: 'Read/Write',
+			name: 'Requesting User',
+			selector: (row) => row.requesting_user,
+			sortable: true,
+		},
+		{
+			name: 'Access Requested',
+			selector: (row) => row.access_requested,
+			sortable: true,
 		},
 	];
 
-	const [myAccessTableData, setMyAccessTableData] = useState<tableData>({
-		columnName: [],
-		rowData: [],
-	});
+	useEffect(() => {
+		const result = data.filter((item) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterText.toLowerCase())) ||
+				(item.repo_name &&
+					item.repo_name
+						.toLowerCase()
+						.includes(filterText.toLowerCase())) ||
+				(item.requesting_user &&
+					item.requesting_user
+						.toLowerCase()
+						.includes(filterText.toLowerCase()))
+			);
+		});
+		setFilteredItems(result);
+	}, [filterText, data]);
+
+	// const [myAccessTableData, setMyAccessTableData] = useState<tableData>({
+	// 	columnName: [],
+	// 	rowData: [],
+	// });
+
 	const [showModalCreateAccess, setShowModalCreateAccess] = useState(false);
 	const [showModalAccessInfo, setShowModalAccessInfo] = useState(false);
 
@@ -238,30 +293,38 @@ export default function MyAccesssPage() {
 	return (
 		<main className="flex flex-row h-screen w-full">
 			<HeaderContainer pageTitle={'Access'}>
-				<div className="flex flex-row justify-between items-center p-2.5">
-					<SearchBar />
-					<div className="flex flex-row gap-15">
-						<Button
-							buttonType="add"
-							buttonText="Add Access"
-							buttonOnClick={handleClickCreateAccess}
-						/>
-					</div>
-				</div>
 				{/* TABLES */}
 				<div className="flex w-full gap-1">
 					{/* Access TABLE */}
 					<div className="w-full">
-						<div className="min-h-0 flex flex-col">
-							{myAccessTableData.columnName.length > 0 ? (
-								<Table
-									columnName={myAccessTableData.columnName}
-									rowData={myAccessTableData.rowData}
-									withActions={true}
-								></Table>
-							) : (
-								<div>Table is empty!</div>
-							)}
+						<div className="flex justify-between items-center">
+							<div className="">
+								<input
+									type="text"
+									placeholder="Search logs..."
+									className="mb-4 p-2 border rounded border-gray-300 w-50"
+									value={filterText}
+									onChange={(e) =>
+										setFilterText(e.target.value)
+									}
+								/>
+								<button
+									className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+									onClick={() => {
+										setFilterText('');
+									}}
+								>
+									X
+								</button>
+							</div>
+							<Button
+								buttonType="add"
+								buttonText="Add Access"
+								buttonOnClick={handleClickCreateAccess}
+							/>
+						</div>
+						<div className="">
+							<DataTable columns={columns} data={filteredItems} />
 						</div>
 					</div>
 				</div>
@@ -269,7 +332,7 @@ export default function MyAccesssPage() {
 			{/* Access MODALS */}
 			<SlideModalContainer isOpen={showModalAccessInfo} noFade={false}>
 				<div>
-					<h1>
+					{/* <h1>
 						{
 							findTableEntryById(
 								modalAccessId,
@@ -292,14 +355,14 @@ export default function MyAccesssPage() {
 								mockAccessAPIResponse
 							)?.requesting_user
 						}
-					</p>
+					</p> */}
 					<button onClick={handleModalAccessInfoDisplay}>
 						Close
 					</button>
 				</div>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalCreateAccess} noFade={false}>
-				<DynamicModal
+				<DynamicForm
 					metadata={schema['AccessRequest'] as FieldMetadata[]}
 					onStateChange={handleFormStateChange}
 				/>

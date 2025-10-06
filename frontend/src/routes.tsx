@@ -34,11 +34,18 @@ import HomePage from './pages/home';
 import SettingsPage from './pages/settings';
 import ProfilePage from './pages/profile';
 import ChartsPage from './pages/charts';
-import LogsPage from './pages/logs';
 import AccessPage from './pages/access';
 import TasksPage from './pages/tasks';
 import TeamsPage from './pages/teams';
 import MyTasksPage from './pages/my_tasks';
+
+// ADMIN
+import AdminTeamsPage from './pages/admin/teams';
+import AdminGithubManagerPage from './pages/admin/github';
+import AdminNotificationsManagerPage from './pages/admin/notifications';
+import AdminTaskManagerPage from './pages/admin/tasks';
+import AdminArchiveManagerPage from './pages/admin/archive';
+import LogsPage from './pages/admin/logs';
 
 const protectedRoutes = [
 	{
@@ -52,6 +59,16 @@ const protectedRoutes = [
 			{ path: 'my_tasks', Component: MyTasksPage },
 			{ path: 'charts', Component: ChartsPage },
 			{ path: 'access', Component: AccessPage },
+
+			// ADMIN
+			{ path: 'admin/teams', Component: AdminTeamsPage },
+			{ path: 'admin/github', Component: AdminGithubManagerPage },
+			{
+				path: 'admin/notifications',
+				Component: AdminNotificationsManagerPage,
+			},
+			{ path: 'admin/tasks', Component: AdminTaskManagerPage },
+			{ path: 'admin/archive', Component: AdminArchiveManagerPage },
 			{ path: 'logs', Component: LogsPage },
 		],
 	},
@@ -91,16 +108,15 @@ export const router = createBrowserRouter([
 			{ path: 'register', Component: RegisterPage },
 			{ path: 'forgot_password', Component: ForgotPasswordPage },
 			{ path: 'logged_out', Component: LoggedOutPage },
+
 			/**
 			 * PROTECTED ROUTES
 			 */
-			...protectedRoutes,
+			{
+				Component: ProtectLayout,
+				children: protectedRoutes,
+			},
 		],
-	},
-
-	{
-		Component: ProtectLayout,
-		children: protectedRoutes,
 	},
 
 	// WILD CARD

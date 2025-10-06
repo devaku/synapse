@@ -4,12 +4,32 @@ import { verifyJwt } from '../middlewares/auth-middleware';
 import debugRouter from './debug';
 import taskRouter from './tasks';
 import teamRouter from './teams';
+import githubRouter from './github';
+import userRouter from './users';
+import deletionRequestRouter from './deletion_request';
 
+const mainRouter = express.Router();
 
-const apiRouter = express.Router();
+mainRouter.use(
+	'/api/v1',
 
-apiRouter.use('/api/v1', taskRouter);
-apiRouter.use('/api/v1', teamRouter);
-apiRouter.use('/api/v1', debugRouter);
+	// All routes are now protected
+	verifyJwt,
+	setupApiRoutes()
+);
 
-export default apiRouter;
+function setupApiRoutes(): express.Router {
+	const apiRouter = express.Router();
+
+	// API ROUTES
+	apiRouter.use(taskRouter);
+	apiRouter.use(debugRouter);
+	apiRouter.use(teamRouter);
+	apiRouter.use(githubRouter);
+	apiRouter.use(userRouter);
+	apiRouter.use(deletionRequestRouter);
+
+	return apiRouter;
+}
+
+export default mainRouter;

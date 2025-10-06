@@ -1,8 +1,17 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *):not(.exclude-dark, .exclude-dark *));
 
 @theme {
+	--color-ttg-green: #7bb863;
+	--color-ttg-purple: #737acb;
+	--color-ttg-dark-blue: #153243;
+	--color-ttg-brown: #333333;
+	--color-ttg-white: #ffffff;
+	--color-ttg-black: #000000;
+}
+
+.exclude-dark {
 	--color-ttg-green: #7bb863;
 	--color-ttg-purple: #737acb;
 	--color-ttg-dark-blue: #153243;

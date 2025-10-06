@@ -1,4 +1,6 @@
 {
+	"ext": "ts",
+	"ignore": ["src/**/*.spec.ts"],
 	"execMap": {
 		"ts": "ts-node"
 	}

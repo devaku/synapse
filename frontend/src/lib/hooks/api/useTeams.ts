@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getTeams, createTeam } from '../../services/api/teamsAPI';
+import {
+	getTeams,
+	createTeam,
+	softDeleteTeam,
+	editTeam as editTeamAPI,
+} from '../../services/api/teams';
+
+import { useAuthContext } from '../../contexts/AuthContext';
 
 export interface Team {
 	id: number;
@@ -11,6 +18,7 @@ export function useTeams() {
 	const [teams, setTeams] = useState<Team[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
+	const { token } = useAuthContext();
 
 	// Fetch teams on load
 	useEffect(() => {
@@ -20,7 +28,7 @@ export function useTeams() {
 	async function refreshTeams() {
 		setLoading(true);
 		try {
-			const data = await getTeams();
+			const data = await getTeams(token!);
 			console.log('Raw API response:', data);
 
 			// Ensure data is an array
@@ -46,7 +54,7 @@ export function useTeams() {
 
 	async function addTeam(newTeam: { name: string; description?: string }) {
 		try {
-			const created = await createTeam(newTeam);
+			const created = await createTeam(token!, newTeam);
 
 			if (created) {
 				// Add the new team to the existing list
@@ -63,19 +71,56 @@ export function useTeams() {
 		}
 	}
 
-	// async function removeTeam(id: number | string) {
-	//   setLoading(true);
-	//   try {
-	//     const success = await deleteTeam(id);
-	//     if (success !== undefined) { // deleteTeam returns JSON or undefined
-	//       setTeams((prev) => prev.filter((t) => t.id !== id));
-	//     }
-	//   } catch (err: any) {
-	//     setError(err.message || 'Error deleting team');
-	//   } finally {
-	//     setLoading(false);
-	//   }
-	// }
+	async function softRemoveTeam(teamIdArray: number[]) {
+		setLoading(true);
+		try {
+			const success = await softDeleteTeam(token!, teamIdArray);
+			if (success !== undefined) {
+				// softDeleteTeam returns JSON or undefined
+				setTeams((prev) =>
+					prev.filter((t) => !teamIdArray.includes(t.id))
+				);
+			}
+		} catch (err: any) {
+			setError(err.message || 'Error deleting team');
+		} finally {
+			setLoading(false);
+		}
+	}
 
-	return { teams, loading, error, refreshTeams, addTeam };
+	async function editTeam(updatedTeam: {
+		id: number;
+		name: string;
+		description?: string;
+	}) {
+		try {
+			const edited = await editTeamAPI(token!, updatedTeam);
+
+			if (edited) {
+				// Update the team in the existing list
+				setTeams((prev) =>
+					prev.map((team) =>
+						team.id === updatedTeam.id
+							? { ...team, ...updatedTeam }
+							: team
+					)
+				);
+			}
+
+			return edited;
+		} catch (err: any) {
+			setError(err.message || 'Error updating team');
+			throw err; // Re-throw so the component can handle it
+		}
+	}
+
+	return {
+		teams,
+		loading,
+		error,
+		refreshTeams,
+		addTeam,
+		softRemoveTeam,
+		editTeam,
+	};
 }

@@ -2,9 +2,13 @@
 // Much of this code was adapted from their examples and documentation.
 // https://react-data-table-component.netlify.app/
 
-import HeaderContainer from '../components/container/header_container';
-import DataTable from 'react-data-table-component';
-import TableData from '../../testing_jsons/logs_table_testing_extended_complex.json';
+import HeaderContainer from '../../components/container/header_container';
+
+// import DataTable from 'react-data-table-component';
+import DataTable from '../../components/container/DataTableBase';
+
+// import TableData from '../../testing_jsons/log_data_10000.json';
+import TableData from '../../../testing_jsons/logs_table_testing_extended_complex.json';
 
 import React, { useState, useEffect } from 'react';
 
@@ -151,19 +155,21 @@ export default function LogsPage() {
 						</button>
 					</div>
 				</div>
-				<div className="">
+				<div className="z-0">
 					<DataTable
 						columns={columns}
 						data={filteredItems}
 						selectableRows
 						onSelectedRowsChange={handleRowSelected}
-						fixedHeader
-						fixedHeaderScrollHeight="70vh"
+						// fixedHeader
+						// fixedHeaderScrollHeight="70vh"
 						expandableRows
 						expandableRowsComponent={ExpandedComponent}
 						expandableRowsHideExpander
 						expandOnRowClicked
-						dense
+						// pointerOnHover
+						// highlightOnHover
+						// dense
 					/>
 				</div>
 			</main>

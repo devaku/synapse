@@ -15,35 +15,63 @@ datasource db {
 }
 
 model User {
-    id           Int            @id @default(autoincrement())
-    keycloakId   String         @db.VarChar(255)
-    username     String         @db.VarChar(255)
-    email        String         @db.VarChar(255)
-    team         Team[]
-    firstName    String?        @db.VarChar(255)
-    lastName     String?        @db.VarChar(255)
-    phone        Int?
-    createdAt    DateTime       @default(now()) @db.Timestamp(6)
-    Notification Notification[]
-    isDeleted    Int            @default(0)
-    Logs         Logs[]
+    id                   Int                      @id @default(autoincrement())
+    keycloakId           String                   @unique @db.VarChar(255)
+    username             String                   @db.VarChar(255)
+    email                String                   @db.VarChar(255)
+    firstName            String?                  @db.VarChar(255)
+    lastName             String?                  @db.VarChar(255)
+    phone                Int?
+    lastActivity         DateTime                 @default(now()) @db.Timestamp(6)
+    isDeleted            Int                      @default(0)
+    notification         Notification[]
+    logs                 Logs[]
+    createdTasks         Task[]
+    comment              Comment[]
+    taskVisibleToUsers   TaskVisibleToUsers[]
+    taskHiddenFromUsers  TaskHiddenFromUsers[]
+    teamsUsersBelongTo   TeamsUsersBelongTo[]
+    team                 Team[]                   @relation("TeamMadeByUser")
+    deletionRequest      DeletionRequest[]
+    taskUsersSubscribeTo TaskUserSubscribeTo[]
+    taskArchived         Task[]                   @relation("TaskArchivedBy")
+    repoCollaboratorRequests  RepoColaboratorRequest[]
+}
 
-    createdTasks  Task[]    @relation("TaskCreatedBy")
-    createdTeams  Team[]    @relation("TeamCreatedBy")
-    assignedTasks Task[]    @relation("TaskAssignedTo")
-    Comment       Comment[] @relation("CommentCreatedBy")
+model Task {
+    id                  Int                   @id @default(autoincrement())
+    createdByUserId     Int
+    createdByUser       User                  @relation(fields: [createdByUserId], references: [id])
+    priority            String
+    name                String                @db.VarChar(255)
+    description         String                @db.VarChar(255)
+    image               String?               @db.VarChar(255)
+    startDate           DateTime?             @db.Timestamp(6)
+    createdAt           DateTime              @default(now()) @db.Timestamp(6)
+    isDeleted           Int                   @default(0)
+    completeDate        DateTime?             @db.Timestamp(6)
+    isArchived          Int                   @default(0)
+    archivedByUserId    Int?
+    archivedByUser      User?                 @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
+    comments            Comment[]
+    taskVisibleToUsers  TaskVisibleToUsers[]
+    taskHiddenFromUsers TaskHiddenFromUsers[]
+    taskVisibleToTeams  TaskVisibleToTeams[]
+    deletionRequest     DeletionRequest[]
+    taskUserSubscribeTo TaskUserSubscribeTo[]
 }
 
 model Team {
-    id            Int            @id @default(autoincrement())
-    name          String         @db.VarChar(255)
-    description   String?        @db.VarChar(255)
-    User          User[]
-    createdAt     DateTime       @default(now()) @db.Timestamp(6)
-    createdBy     Int            
-    createdByUser User           @relation("TeamCreatedBy", fields: [createdBy], references: [id])
-    isDeleted     Int            @default(0)
-    Notification  Notification[]
+    id                 Int                  @id @default(autoincrement())
+    name               String               @db.VarChar(255)
+    description        String?              @db.VarChar(255)
+    createdBy          Int
+    createdByUser      User                 @relation("TeamMadeByUser", fields: [createdBy], references: [id])
+    createdAt          DateTime             @default(now()) @db.Timestamp(6)
+    isDeleted          Int                  @default(0)
+    notifications      Notification[]
+    taskVisibleToTeams TaskVisibleToTeams[]
+    teamsUsersBelongTo TeamsUsersBelongTo[]
 }
 
 model Notification {
@@ -68,29 +96,12 @@ model Logs {
     isDeleted   Int      @default(0)
 }
 
-model Task {
-    id               Int       @id @default(autoincrement())
-    createdByUserId  Int
-    createdByUser    User      @relation("TaskCreatedBy", fields: [createdByUserId], references: [id])
-    assignedToUserId Int?
-    assignedToUser   User?     @relation("TaskAssignedTo", fields: [assignedToUserId], references: [id])
-    priority         String
-    name             String    @db.VarChar(255)
-    description      String    @db.VarChar(255)
-    image            String?   @db.VarChar(255)
-    startDate        DateTime? @db.Timestamp(6)
-    completeDate     DateTime? @db.Timestamp(6)
-    createdAt        DateTime  @default(now()) @db.Timestamp(6)
-    isDeleted        Int       @default(0)
-    comments         Comment[]
-}
-
 model Comment {
     id        Int      @id @default(autoincrement())
     userId    Int
-    User      User     @relation("CommentCreatedBy", fields: [userId], references: [id])
+    user      User     @relation(fields: [userId], references: [id])
     message   String   @db.VarChar(255)
-    Task      Task     @relation(fields: [taskId], references: [id])
+    task      Task     @relation(fields: [taskId], references: [id])
     taskId    Int
     createdAt DateTime @default(now()) @db.Timestamp(6)
     isDeleted Int      @default(0)
@@ -102,5 +113,75 @@ model Session {
     expire DateTime @db.Timestamp(6)
 
     @@index([expire], name: "IDX_session_expire")
-    @@map("session")
 }
+
+model DeletionRequest {
+    id                Int      @id @default(autoincrement())
+    taskId            Int
+    task              Task     @relation(fields: [taskId], references: [id])
+    requestedByUserId Int
+    requestedByUser   User     @relation(fields: [requestedByUserId], references: [id])
+    reason            String   @db.VarChar(255)
+    createdAt         DateTime @default(now()) @db.Timestamp(6)
+    isDeleted         Int      @default(0)
+}
+
+model RepoColaboratorRequest {
+    id             Int      @id @default(autoincrement())
+    githubUsername String
+    userId         Int
+    user           User     @relation(fields: [userId], references: [id])
+    repoId         Int
+    permission     String   @db.VarChar(255)
+    createdAt      DateTime @default(now()) @db.Timestamp(6)
+}
+
+/**
+ * LINK TABLES
+ */
+
+model TaskUserSubscribeTo {
+    taskId Int
+    task   Task @relation(fields: [taskId], references: [id])
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+
+    @@id([userId, taskId])
+}
+
+model TeamsUsersBelongTo {
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+    teamId Int
+    team   Team @relation(fields: [teamId], references: [id])
+
+    @@id([userId, teamId])
+}
+
+model TaskVisibleToUsers {
+    taskId Int
+    task   Task @relation(fields: [taskId], references: [id])
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+
+    @@id([userId, taskId])
+}
+
+model TaskVisibleToTeams {
+    taskId Int
+    task   Task @relation(fields: [taskId], references: [id])
+    teamId Int
+    team   Team @relation(fields: [teamId], references: [id])
+
+    @@id([teamId, taskId])
+}
+
+model TaskHiddenFromUsers {
+    taskId Int
+    task   Task @relation(fields: [taskId], references: [id])
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+
+    @@id([userId, taskId])
+}
+

@@ -1,9 +1,25 @@
 import TTGLogo from '../../../assets/images/ttglogo/TTG_Profile.png';
 
+/**
+ * COMPONENTS
+ */
+
 import Button from '../../ui/button';
-import { useState } from 'react';
-import StatusPill from '../../ui/status_pill';
 import CommentCard from '../../container/comment_card';
+
+/**
+ * HOOKS
+ */
+
+import { useState, useEffect } from 'react';
+import { useAuthContext } from '../../../lib/contexts/AuthContext';
+
+/**
+ * SERVICES / HELPERS
+ */
+
+import { archiveTask, readTask } from '../../../lib/services/api/task';
+import { type Comment, type Task } from '../../../lib/types/models';
 
 type myTaskReadModalProps = {
 	handleModalDisplay: () => void;
@@ -14,157 +30,158 @@ export default function MyTaskReadModal({
 	handleModalDisplay,
 	taskId,
 }: myTaskReadModalProps) {
-	const [showModalTaskDelete, setShowModalTaskDelete] = useState(false);
+	const { token, userData } = useAuthContext();
+	const [comments, setComments] = useState<Comment[] | null>(null);
+	const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+
+	/**
+	 * INTERNAL FUNCTIONS
+	 */
+
+	useEffect(() => {
+		async function start() {
+			await fetchTaskInfo(taskId);
+		}
+		start();
+	}, [taskId]);
+
+	async function fetchTaskInfo(taskId: number) {
+		const taskRow = await readTask(token!, taskId);
+		let currentTask: Task = taskRow[0];
+
+		// Load the comments
+		if (currentTask.comments) {
+			setComments(currentTask.comments);
+		}
+
+		// Determine if user viewing the page
+		// is currently subscribed
+		let ids = currentTask.taskUserSubscribeTo?.map((el) => {
+			return el.user?.keycloakId;
+		});
+
+		if (ids?.includes(userData.sub)) {
+			setIsSubscribed(true);
+		} else {
+			setIsSubscribed(false);
+		}
+	}
+
+	function loadComments() {
+		return comments?.map((el, index) => {
+			return (
+				<CommentCard
+					key={index}
+					profile_picture_url={''}
+					comment={el.message}
+					name={el.user?.email!}
+					timestamp={new Date().toString()}
+				></CommentCard>
+			);
+		});
+	}
 
 	/**
 	 * Handlers
 	 */
 
-	async function handleAddTeamClick() {
+	async function handleButtonCompleteClick() {
 		// TODO: Add proper displaying in case there's an error
 		try {
-			handleModalClose();
+			await archiveTask(token!, taskId);
+
+			// Close modal
+			handleModalDisplay();
 		} catch (error) {
 			console.log(error);
 		}
-	}
-
-	function handleButtonDeleteClick() {
-		setShowModalTaskDelete(true);
 	}
 
 	/**
 	 * MODAL HANDLERS
 	 */
 
-	function handleModalClose() {
+	function handleModalClose() {}
+
+	function handleModalTaskDeleteDisplay() {
 		handleModalDisplay();
 	}
 
-	function handleModalTaskDeleteDisplay() {
-		setShowModalTaskDelete(false);
-	}
-
-	function handleModalCloseAll() {
-		handleModalTaskDeleteDisplay();
-		handleModalClose();
-	}
-
 	return (
-		<div className="flex flex-col gap-2 mx-5 pb-2 overflow-y-auto h-screen">
-			{/* TITLE */}
-			<div className="p-2">
-				<p className="text-2xl">Task 1</p>
-				<div className="mt-3">
-					<StatusPill text={'PENDING'}></StatusPill>
-				</div>
-			</div>
-			{/* DESCRIPTION */}
-			<div>
-				<p className="mb-2">Description:</p>
-				<p>
-					Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-					Accusamus possimus nobis nulla placeat temporibus velit,
-					ipsam ducimus cumque illo iusto nihil, repudiandae
-					aspernatur inventore a totam facere sunt vero voluptatibus.
-				</p>
-			</div>
-			{/* Information */}
-			<div className="">
-				<div className="flex">
-					<div className="min-w-32">Created: </div>
-					<div>{new Date().toDateString()}</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Taken: </div>
-					<div>{new Date().toDateString()}</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Due: </div>
-					<div>{new Date().toDateString()}</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Submitted: </div>
-					<div>N/A</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Team: </div>
-					<div>The Best Team</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Assigned By: </div>
-					<div>Manager</div>
-				</div>
-				<div className="flex">
-					<div className="min-w-32">Taken By: </div>
-					<div>Employee</div>
-				</div>
-			</div>
+		<div className="">
 			{/* BUTTONS */}
 			<div className="flex justify-evenly">
-				<Button
-					buttonType="add"
-					buttonText="Complete"
-					buttonOnClick={() => handleModalClose()}
-				/>
+				{isSubscribed ? (
+					<>
+						<Button
+							buttonType="add"
+							buttonText="Complete"
+							buttonOnClick={() => handleButtonCompleteClick()}
+						/>
+						<Button
+							buttonType="add"
+							buttonText="Unsubscribe"
+							buttonOnClick={() => {
+								console.log('Unsub');
+							}}
+						/>
+					</>
+				) : (
+					<Button
+						buttonType="add"
+						buttonText="Subscribe"
+						buttonOnClick={() => {
+							console.log('Sub');
+						}}
+					/>
+				)}
+
 				<Button
 					buttonType="add"
 					buttonText="Back"
-					buttonOnClick={() => handleModalClose()}
+					buttonOnClick={() => handleModalDisplay()}
 				/>
 			</div>
 			{/* COMMENTS SECTION*/}
 			<div>
-				<p className="mb-2">Comments:</p>
+				<p className="my-2">
+					{comments && comments.length > 0
+						? 'Comments:'
+						: 'There are currently no comments.'}
+				</p>
 
 				{/* INPUT */}
-				<div className="p-2 mb-2 rounded-lg shadow-md">
-					{/* Profile */}
-					<div className="flex items-center gap-2">
-						<div className="w-10 h-10">
-							<img src={TTGLogo} alt="" srcSet="" />
+				{/* Input is only displayed if they are subscribed */}
+				{isSubscribed ? (
+					<div className="p-2 mb-2 rounded-lg shadow-md">
+						{/* Profile */}
+						<div className="flex items-center gap-2">
+							<div className="w-10 h-10">
+								<img src={TTGLogo} alt="" srcSet="" />
+							</div>
+							<p>{userData.email}</p>
 						</div>
-						<p>John Doe</p>
+						<textarea
+							className="w-full"
+							name=""
+							id=""
+							rows={5}
+							placeholder="Enter a comment..."
+						></textarea>
+						<div className="mt-2">
+							<Button
+								buttonType="add"
+								buttonText="Comment"
+								buttonOnClick={() => handleModalClose()}
+							/>
+						</div>
 					</div>
-					<textarea
-						className="w-full"
-						name=""
-						id=""
-						rows={5}
-						placeholder="Enter a comment..."
-					></textarea>
-					<div className="mt-2">
-						<Button
-							buttonType="add"
-							buttonText="Comment"
-							buttonOnClick={() => handleModalClose()}
-						/>
-					</div>
-				</div>
+				) : (
+					''
+				)}
+
 				{/* COMMENTS */}
-				<div>
-					<CommentCard
-						key={1}
-						profile_picture_url={''}
-						comment={'lorem ipsum na may dimsum'}
-						name={'Jane Doe'}
-						timestamp={new Date().toString()}
-					></CommentCard>
-					<CommentCard
-						key={2}
-						profile_picture_url={''}
-						comment={'This is the second comment'}
-						name={'Alex King'}
-						timestamp={new Date().toString()}
-					></CommentCard>
-					<CommentCard
-						key={3}
-						profile_picture_url={''}
-						comment={'THIRD'}
-						name={'First Last'}
-						timestamp={new Date().toString()}
-					></CommentCard>
-				</div>
+				<div>{loadComments()}</div>
 			</div>
 		</div>
 	);

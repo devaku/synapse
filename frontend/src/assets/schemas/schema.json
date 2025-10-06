@@ -27,7 +27,7 @@
 			"type": "date"
 		},
 		{
-			"name": "Asigned_by",
+			"name": "Assigned_by",
 			"type": "text"
 		},
 		{
@@ -46,6 +46,14 @@
 		},
 		{
 			"name": "Description",
+			"type": "text"
+		}
+	],
+
+	"MyTaskDeleteRequest": [
+		{
+			"name": "reason",
+			"label": "Reason",
 			"type": "text"
 		}
 	]
