@@ -120,6 +120,34 @@ export async function readTask(token: string, taskId: number) {
 	}
 }
 
+export async function readAllTasks(token: string) {
+	let response: jsonResponse = await fetch(`${url}/tasks`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		credentials: 'include',
+	})
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
 export async function archiveTask(token: string, taskId: number) {
 	let data = {
 		isArchived: 1,
