@@ -7,7 +7,7 @@ import { teamType } from '../types';
  * @returns teamrow
  */
 export async function createTeam(team: teamType){
-    const teamRow = await prisma.team.create({
+    const teamRow = await prismaDb.team.create({
         data: {
             ...team
         },
@@ -22,7 +22,7 @@ export async function createTeam(team: teamType){
  * @returns teamrow
  */
 export async function readAllTeam (){
-    const teamrow = await prisma.team.findMany({
+    const teamrow = await prismaDb.team.findMany({
 
 		include: {
 			createdByUser: {
@@ -45,7 +45,7 @@ export async function readAllTeam (){
  * @returns
  */
 export async function softDeleteTeam(id: number) {
-	const teamRow = await prisma.team.update({
+	const teamRow = await prismaDb.team.update({
 		where: {
 			id,
 		},
@@ -63,7 +63,7 @@ export async function softDeleteTeam(id: number) {
  */
 export async function deleteTeam(id: number) {
 
-    const teamRow = await prisma.team.delete({
+    const teamRow = await prismaDb.team.delete({
         where: {
             id,
         },
@@ -82,7 +82,7 @@ export async function deleteTeam(id: number) {
  */
 export async function updateTeam(id: number, team: teamType) {
 
-	const teamRow = await prisma.team.update({
+	const teamRow = await prismaDb.team.update({
 
 		where: {
 			id: id,
