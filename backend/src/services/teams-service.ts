@@ -2,28 +2,27 @@ import { prismaDb } from '../lib/database';
 import { teamType } from '../types';
 
 /**
- * Creates a team in the team table 
+ * Creates a team in the team table
  * @param team : teamType
  * @returns teamrow
  */
-export async function createTeam(team: teamType){
-    const teamRow = await prismaDb.team.create({
-        data: {
-            ...team
-        },
-    })
+export async function createTeam(team: teamType) {
+	const teamRow = await prismaDb.team.create({
+		data: {
+			...team,
+		},
+	});
 
 	return teamRow;
 }
 
 /**
  * Reads all rows in the team table
- * @param 
+ * @param
  * @returns teamrow
  */
-export async function readAllTeam (){
-    const teamrow = await prismaDb.team.findMany({
-
+export async function readAllTeam() {
+	const teamrow = await prismaDb.team.findMany({
 		include: {
 			createdByUser: {
 				select: {
@@ -36,7 +35,7 @@ export async function readAllTeam (){
 		},
 	});
 
-    return teamrow
+	return teamrow;
 }
 
 /**
@@ -62,36 +61,30 @@ export async function softDeleteTeam(id: number) {
  * @returns
  */
 export async function deleteTeam(id: number) {
+	const teamRow = await prismaDb.team.delete({
+		where: {
+			id,
+		},
+	});
 
-    const teamRow = await prismaDb.team.delete({
-        where: {
-            id,
-        },
-    })
-
-    return teamRow;
-
-
+	return teamRow;
 }
 
 /**
- * Service to fully update an individual team in the teams table 
+ * Service to fully update an individual team in the teams table
  * @param id
  * @param team an object of type teamType
  * @returns
  */
 export async function updateTeam(id: number, team: teamType) {
-
 	const teamRow = await prismaDb.team.update({
-
 		where: {
 			id: id,
 		},
-		data:{
+		data: {
 			...team,
 		},
-	})
+	});
 
 	return teamRow;
-
 }

@@ -17,7 +17,7 @@ export type teamType = {
 	createdAt: Date;
 };
 
-export  type deletionRequestType = {
+export type deletionRequestType = {
 	repoId: number;
 	userId: number;
 	permission: string;
