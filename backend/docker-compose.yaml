@@ -30,7 +30,6 @@ services:
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
 
-
             # IMPORTANT. These database settings need to be removed
             # In final release
             # Database Type

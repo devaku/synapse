@@ -61,11 +61,39 @@ export default function Sidebar() {
 
 					{/* Admin Privileges for accessing logs and stuff unless not necessary */}
 					{adminPrivileges && (
-						<SidebarButton
-							tabName="Logs"
-							routePath="/logs"
-							iconPath="Logs"
-						/>
+						<div className="mt-10 flex flex-col gap-3 cursor-pointer">
+							<h1 className="text-white">Admin Pages</h1>
+							<SidebarButton
+								tabName="Logs"
+								routePath="/logs"
+								iconPath=""
+							/>
+							<SidebarButton
+								tabName="Archives"
+								routePath="/admin/archive"
+								iconPath=""
+							/>
+							<SidebarButton
+								tabName="GitHub"
+								routePath="/admin/github"
+								iconPath=""
+							/>
+							<SidebarButton
+								tabName="Notific..."
+								routePath="/admin/notifications"
+								iconPath=""
+							/>
+							<SidebarButton
+								tabName="Teams"
+								routePath="/admin/teams"
+								iconPath=""
+							/>
+							<SidebarButton
+								tabName="Tasks"
+								routePath="/admin/tasks"
+								iconPath=""
+							/>
+						</div>
 					)}
 				</div>
 			</div>

@@ -11,6 +11,7 @@
 		"compose:stop": "docker compose -p synapse_backend stop",
 		"db:seed": "npx prisma migrate reset && ts-node prisma/index_seed.ts",
 		"db:reset": "npx prisma migrate reset",
+		"format": "npx prettier . --write --config ../.prettierrc.json",
 		"build": "npm run clean && npm run compile && npm run copy",
 		"clean": "rimraf dist",
 		"compile": "tsc",
@@ -30,6 +31,7 @@
 		"express-session": "^1.18.2",
 		"jsonwebtoken": "^9.0.2",
 		"keycloak-connect": "^26.1.1",
+		"node-fetch": "^3.3.2",
 		"serve-favicon": "^2.5.1",
 		"socket.io": "^4.8.1"
 	},

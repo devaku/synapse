@@ -15,15 +15,15 @@ datasource db {
 }
 
 model User {
-    id                   Int                   @id @default(autoincrement())
-    keycloakId           String                @unique @db.VarChar(255)
-    username             String                @db.VarChar(255)
-    email                String                @db.VarChar(255)
-    firstName            String?               @db.VarChar(255)
-    lastName             String?               @db.VarChar(255)
+    id                   Int                      @id @default(autoincrement())
+    keycloakId           String                   @unique @db.VarChar(255)
+    username             String                   @db.VarChar(255)
+    email                String                   @db.VarChar(255)
+    firstName            String?                  @db.VarChar(255)
+    lastName             String?                  @db.VarChar(255)
     phone                Int?
-    lastActivity         DateTime              @default(now()) @db.Timestamp(6)
-    isDeleted            Int                   @default(0)
+    lastActivity         DateTime                 @default(now()) @db.Timestamp(6)
+    isDeleted            Int                      @default(0)
     notification         Notification[]
     logs                 Logs[]
     createdTasks         Task[]
@@ -31,10 +31,11 @@ model User {
     taskVisibleToUsers   TaskVisibleToUsers[]
     taskHiddenFromUsers  TaskHiddenFromUsers[]
     teamsUsersBelongTo   TeamsUsersBelongTo[]
-    team                 Team[]                @relation("TeamMadeByUser")
+    team                 Team[]                   @relation("TeamMadeByUser")
     deletionRequest      DeletionRequest[]
     taskUsersSubscribeTo TaskUserSubscribeTo[]
-    taskArchived         Task[]                @relation("TaskArchivedBy")
+    taskArchived         Task[]                   @relation("TaskArchivedBy")
+    repoCollaboratorRequests  RepoColaboratorRequest[]
 }
 
 model Task {
@@ -125,6 +126,16 @@ model DeletionRequest {
     isDeleted         Int      @default(0)
 }
 
+model RepoColaboratorRequest {
+    id             Int      @id @default(autoincrement())
+    githubUsername String
+    userId         Int
+    user           User     @relation(fields: [userId], references: [id])
+    repoId         Int
+    permission     String   @db.VarChar(255)
+    createdAt      DateTime @default(now()) @db.Timestamp(6)
+}
+
 /**
  * LINK TABLES
  */
@@ -173,3 +184,4 @@ model TaskHiddenFromUsers {
 
     @@id([userId, taskId])
 }
+

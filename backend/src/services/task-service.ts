@@ -60,6 +60,18 @@ export async function readTaskById(id: number) {
 	return await prismaDb.task.findFirst({
 		where: { id, isDeleted: 0 },
 		include: {
+			comments: {
+				include: {
+					user: true,
+				},
+			},
+			taskUserSubscribeTo: {
+				select: {
+					user: {
+						select: { keycloakId: true },
+					},
+				},
+			},
 			createdByUser: {
 				select: {
 					id: true,

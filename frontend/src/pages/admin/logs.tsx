@@ -2,13 +2,13 @@
 // Much of this code was adapted from their examples and documentation.
 // https://react-data-table-component.netlify.app/
 
-import HeaderContainer from '../components/container/header_container';
+import HeaderContainer from '../../components/container/header_container';
 
 // import DataTable from 'react-data-table-component';
-import DataTable from '../components/container/DataTableBase';
+import DataTable from '../../components/container/DataTableBase';
 
 // import TableData from '../../testing_jsons/log_data_10000.json';
-import TableData from '../../testing_jsons/logs_table_testing_extended_complex.json';
+import TableData from '../../../testing_jsons/logs_table_testing_extended_complex.json';
 
 import React, { useState, useEffect } from 'react';
 
