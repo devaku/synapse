@@ -820,3 +820,495 @@ AI Reference Page:
 
     User: export chat to AIReference.txt
     Assistant: [Current conversation exported to AIReference.txt]
+
+======================================================================================================================================================
+
+prompt: how do I Generate a JWT for your GitHub App
+answer: 
+import fs from "fs";
+import jwt from "jsonwebtoken";
+
+export function generateGitHubAppJWT(): string {
+  const appId = process.env.GITHUB_APP_ID!;
+  const privateKey = fs.readFileSync(process.env.GITHUB_PRIVATE_KEY_PATH!, "utf8");
+
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
+
+  const payload = {
+    iat: now - 60,          // issued at time (1 min back to allow clock drift)
+    exp: now + (10 * 60),   // expiration time (10 minutes max)
+    iss: appId              // GitHub App ID
+  };
+
+  return jwt.sign(payload, privateKey, { algorithm: "RS256" });
+}
+
+prompt: make a function that function that takes your JWT and automatically exchanges it for an installation access token
+answer: 
+export async function getInstallationAccessToken(jwt: string, installationId: string): Promise<string> {
+  const url = `https://api.github.com/app/installations/${installationId}/access_tokens`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Failed to get installation token: ${response.status} ${response.statusText} - ${errorBody}`);
+  }
+
+  const data = (await response.json()) as { token: string; expires_at: string };
+  return data.token;
+}
+
+prompt:I want to make a function that takes the repo id, a user github username and the level of access they want and uses my app to add that user to the repo with the requested level of access
+answer: 
+export async function addUserToRepo(
+  repoId: number,
+  username: string,
+  permission: "pull" | "triage" | "push" | "maintain" | "admin"
+) {
+  const token = await getInstallationAccessToken();
+
+  // Get repo owner/name from repoId
+  const repoInfo = await axios.get(`https://api.github.com/repositories/${repoId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  const { full_name } = repoInfo.data; // "owner/repo"
+  const [owner, repo] = full_name.split("/");
+
+  // Invite the collaborator
+  const res = await axios.put(
+    `https://api.github.com/repos/${owner}/${repo}/collaborators/${username}`,
+    { permission },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    }
+  );
+
+  return res.data;
+}
+
+prompt: Make the CRUD functions for this model
+model RepoColaboratorRequest {
+id                int      @id @default(autoincrement())
+userId            int
+user              User     @relation(fields: [userId], references: [id])
+repoId            int
+permission        String   @db.VarChar(255)
+}
+
+in my github services
+answer:
+/**
+ * CREATE - Create a new repository collaborator request
+ */
+export async function createRepoCollaboratorRequest(
+  userId: number,
+  repoId: number,
+  permission: string
+) {
+  const requestRow = await prisma.repoColaboratorRequest.create({
+    data: {
+      userId,
+      repoId,
+      permission,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+  return requestRow;
+}
+
+/**
+ * READ ALL - Get all repository collaborator requests
+ */
+export async function readAllRepoCollaboratorRequests() {
+  return await prisma.repoColaboratorRequest.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY ID - Get repository collaborator request by ID
+ */
+export async function readRepoCollaboratorRequestById(id: number) {
+  return await prisma.repoColaboratorRequest.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY USER ID - Get repository collaborator requests by user ID
+ */
+export async function readRepoCollaboratorRequestsByUserId(userId: number) {
+  return await prisma.repoColaboratorRequest.findMany({
+    where: { userId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY REPO ID - Get repository collaborator requests by repo ID
+ */
+export async function readRepoCollaboratorRequestsByRepoId(repoId: number) {
+  return await prisma.repoColaboratorRequest.findMany({
+    where: { repoId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * UPDATE - Update repository collaborator request
+ */
+export async function updateRepoCollaboratorRequest(
+  id: number,
+  data: {
+    repoId?: number;
+    permission?: string;
+  }
+) {
+  return await prisma.repoColaboratorRequest.update({
+    where: { id },
+    data,
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * DELETE - Delete repository collaborator request
+ */
+export async function deleteRepoCollaboratorRequest(id: number) {
+  return await prisma.repoColaboratorRequest.delete({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * DELETE BY USER ID - Delete all repository collaborator requests for a user
+ */
+export async function deleteRepoCollaboratorRequestsByUserId(userId: number) {
+  return await prisma.repoColaboratorRequest.deleteMany({
+    where: { userId },
+  });
+}
+
+/**
+ * DELETE BY REPO ID - Delete all repository collaborator requests for a repo
+ */
+export async function deleteRepoCollaboratorRequestsByRepoId(repoId: number) {
+  return await prisma.repoColaboratorRequest.deleteMany({
+    where: { repoId },
+  });
+}
+
+Prompt:
+Create the repoColaboratorRequest controlers for my CRUD operations in the gihub controller. follow the teams and task standard
+answer:
+/**
+ * Controller to create a repository collaborator request in the database 
+ *    
+ * @param req - Request object containing userId, repoId, permission, and githubUsername
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 201 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function createRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { userId, repoId, permission, githubUsername } = req.body;
+
+        // Validation: required fields
+        if (!userId || !repoId || !permission || !githubUsername) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Missing required fields: userId, repoId, permission, githubUsername', null));
+        }
+
+        const request = await githubService.createRepoCollaboratorRequest(userId, repoId, permission, githubUsername);
+
+        let finalResponse = buildResponse(
+            201,
+            'Repository collaborator request created successfully!',
+            request
+        );
+
+        res.status(201).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error creating the request', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to read repository collaborator requests from the database
+ *    
+ * @param req - Request object with optional id parameter and query parameters
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function readRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const { userId, repoId } = req.query;
+
+        let requests;
+        let message = '';
+
+        if (id) {
+            // Read a specific request by ID
+            const requestId = parseInt(id);
+            if (isNaN(requestId)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid request ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestById(requestId);
+            if (!requests) {
+                return res
+                    .status(404)
+                    .json(buildError(404, 'Repository collaborator request not found', null));
+            }
+
+            message = 'Repository collaborator request retrieved successfully.';
+        } else if (userId) {
+            // Read requests by user ID
+            const userIdNum = parseInt(userId as string);
+            if (isNaN(userIdNum)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid user ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestsByUserId(userIdNum);
+            message = requests.length > 0 
+                ? 'User repository collaborator requests retrieved successfully.' 
+                : 'No requests found for this user.';
+        } else if (repoId) {
+            // Read requests by repo ID
+            const repoIdNum = parseInt(repoId as string);
+            if (isNaN(repoIdNum)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid repo ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestsByRepoId(repoIdNum);
+            message = requests.length > 0 
+                ? 'Repository collaborator requests retrieved successfully.' 
+                : 'No requests found for this repository.';
+        } else {
+            // Read all requests
+            requests = await githubService.readAllRepoCollaboratorRequests();
+            message = requests.length > 0 
+                ? 'Repository collaborator requests retrieved successfully.' 
+                : 'No repository collaborator requests found.';
+        }
+
+        let finalResponse = buildResponse(200, message, requests);
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error retrieving requests', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to update a repository collaborator request in the database
+ *    
+ * @param req - Request object containing id parameter and update data in body
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function updateRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        if (!id) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Request ID is required', null));
+        }
+
+        const requestId = parseInt(id);
+        if (isNaN(requestId)) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Invalid request ID', null));
+        }
+
+        if (!data || Object.keys(data).length === 0) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Request body cannot be empty', null));
+        }
+
+        const existingRequest = await githubService.readRepoCollaboratorRequestById(requestId);
+        if (!existingRequest) {
+            return res
+                .status(404)
+                .json(buildError(404, 'Repository collaborator request not found', null));
+        }
+
+        const updatedRequest = await githubService.updateRepoCollaboratorRequest(requestId, data);
+
+        let finalResponse = buildResponse(
+            200,
+            'Repository collaborator request updated successfully!',
+            updatedRequest
+        );
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error updating the request', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to delete repository collaborator requests from the database
+ *    
+ * @param req - Request object containing id parameter or requestIdArray in body
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function deleteRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const requestIdArray = req.body?.requestIdArray;
+
+        const deletedRequests = [];
+        let message = '';
+
+        if (id) {
+            // Delete single request
+            const requestId = parseInt(id);
+            if (isNaN(requestId)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid request ID', null));
+            }
+
+            const deletedRequest = await githubService.deleteRepoCollaboratorRequest(requestId);
+            deletedRequests.push(deletedRequest);
+            message = 'Repository collaborator request deleted successfully.';
+        } else if (requestIdArray && Array.isArray(requestIdArray) && requestIdArray.length > 0) {
+            // Delete multiple requests
+            for (const requestIdString of requestIdArray) {
+                const requestId = parseInt(requestIdString);
+                if (!isNaN(requestId)) {
+                    const request = await githubService.deleteRepoCollaboratorRequest(requestId);
+                    if (request) deletedRequests.push(request);
+                }
+            }
+
+            if (deletedRequests.length === 0) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'No requests were deleted. Check if request IDs are valid.', null));
+            }
+
+            message = `${deletedRequests.length} repository collaborator request(s) deleted successfully.`;
+        } else {
+            return res
+                .status(400)
+                .json(buildError(400, 'Provide request ID in URL or requestIdArray in body', null));
+        }
+
+        let finalResponse = buildResponse(200, message, deletedRequests);
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error deleting request(s)', error);
+        res.status(500).json(finalResponse);
+    }
+}
