@@ -35,8 +35,6 @@ export default function SettingsPage() {
 			defaultRadio = radios[0];
 		}
 
-		console.log(theme);
-
 		const [activeRadio, setActiveRadio] = useState(defaultRadio.name);
 
 		return (

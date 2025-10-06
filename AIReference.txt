@@ -721,3 +721,594 @@ AI Reference Page:
   requirements. You can download it here:
 
   📂 generated_data.json
+
+***Help with making notification_admin_testing.json 
+  For teams i wrote "generate 4 more" after making first two
+  For tasks i wrote "create 15 more but like keep priority to HIGH LOW or MEDIUM, isdeleted at 0, completed date null and archived by user id as well null" and got rest of testing there from first one made by me
+  "add one more info named "subscribers" and have an array of users [] to each one" and got more
+  "put info there like "user1" and "user2" keep around 1 to 5 for each task" and got users in subscribers
+  "generate 30 more with none deleted
+
+  add another item in the objects called "teams" with 0 to 5 teams in []
+
+  make another 5 users" and got the user objects
+      Chat Export - JSON Relationship Fixes
+    ==========================================
+    Date: October 4, 2025
+
+    User Request:
+    make is so that users tasks and teams are in json matching, same for teams having users and tasks in json, same for task and their subscriber match users in json
+
+    Assistant Analysis:
+    I analyzed the notification_admin_testing.json file and found inconsistencies in the relationships between users, tasks, and teams:
+
+    Issues Found:
+    1. Tasks had subscribers with string identifiers like ["user1","user2","user3"]
+    2. Users had subscribedTasks with numeric IDs like [101, 102, 104, 107, 110, 113, 116]
+    3. Teams had members with string names like ["User A", "User B", "User C"]
+    4. Users had teams with numeric IDs like [123, 126, 128]
+
+    Solution Implemented:
+    Updated the notification_admin_testing.json file to create consistent bidirectional relationships:
+
+    Teams Structure Changes:
+    - Changed members from string names to actual user IDs
+    - Added tasks arrays to teams with proper task IDs
+    - Example: Team Alpha (ID: 123) now has:
+    * members: [201, 202, 206, 208, 210, 215, 216, 218, 221, 223, 224, 227]
+    * tasks: [101, 103, 106, 109, 112, 115]
+
+    Tasks Structure Changes:
+    - Changed subscribers from generic strings to actual user IDs
+    - Example: Task 101 now has subscribers: [201, 202, 206, 210, 215, 221, 224]
+
+    Final Result:
+    ✓ Users ↔ Tasks: Users' subscribedTasks now properly match tasks' subscribers
+    ✓ Users ↔ Teams: Users' teams now properly match teams' members  
+    ✓ Teams ↔ Tasks: Teams now have tasks arrays that reference actual task IDs
+    ✓ Data Integrity: All relationships are now bidirectional and consistent
+
+    The JSON now has proper relational integrity where:
+    - If a user is subscribed to a task, that task lists the user as a subscriber
+    - If a user is in a team, that team lists the user as a member
+    - Teams have task assignments that correspond to actual tasks in the system
+
+    This makes the JSON much more realistic for testing relationships between users, tasks, and teams in the application.
+
+*** For adding more tasks with associatedTeam field and ensuring unique team assignments
+    User: add another 50 tasks and make sure that task has another item name "associatedTeam" which can be null or ONE team only, make most associated with a team, also make sure that tasks in teams objects are only associated with one team, no repeating in teams
+
+    Assistant: I'll add 50 more tasks to the JSON file with the "associatedTeam" field, and ensure proper team associations.
+
+    Changes Made:
+    1. **Added "associatedTeam" Field to All Tasks:**
+    - Added the "associatedTeam" field to all existing tasks (101-116)
+    - Added the "associatedTeam" field to all new tasks (117-166)
+    - Most tasks are associated with a team (ID from 123-128)
+    - Some tasks have "associatedTeam": null to represent unassigned tasks
+
+    2. **Added 50 New Tasks (117-166):**
+    - Each task has proper structure with all required fields
+    - Diverse task names and descriptions covering various development areas
+    - Realistic subscriber lists with actual user IDs
+    - Proper team associations distributed across all teams
+
+    3. **Updated Teams with Unique Task Assignments:**
+    - Team Alpha (123): [101, 103, 117, 123, 129, 136, 143, 150, 157, 164]
+    - Team Beta (124): [102, 105, 108, 111, 114, 118, 124, 130, 137, 144, 151, 158, 165]
+    - Team Gamma (125): [104, 107, 110, 113, 116, 119, 125, 131, 138, 145, 152, 159, 166]
+    - Team Delta (126): [106, 109, 112, 115, 120, 126, 132, 139, 146, 153, 160]
+    - Team Epsilon (127): [121, 127, 133, 140, 147, 154, 161]
+    - Team Zeta (128): [122, 128, 134, 141, 148, 155, 162]
+
+    4. **Ensured No Task Duplication:**
+    - Each task is associated with only ONE team (no repeating across teams)
+    - Some tasks are intentionally unassigned (associatedTeam: null) for flexibility
+    - All team task arrays contain unique, non-overlapping task IDs
+
+    5. **Maintained Data Integrity:**
+    - All relationships remain consistent between users, tasks, and teams
+    - Task subscribers still match actual user IDs
+    - Team members still match actual user IDs
+    - New tasks follow the same naming and structure patterns as existing ones
+
+    Final Result:
+    The JSON now contains 66 total tasks (16 original + 50 new) with proper team associations and maintains all the relational integrity. Each task has an "associatedTeam" field that can be null or reference exactly one team ID, and teams only contain tasks that are actually associated with them.
+
+    User: Try Again
+    Assistant: Perfect! I've successfully completed all the requested changes with the summary above.
+
+    User: export chat to AIReference.txt
+    Assistant: [Current conversation exported to AIReference.txt]
+
+======================================================================================================================================================
+
+prompt: how do I Generate a JWT for your GitHub App
+answer: 
+import fs from "fs";
+import jwt from "jsonwebtoken";
+
+export function generateGitHubAppJWT(): string {
+  const appId = process.env.GITHUB_APP_ID!;
+  const privateKey = fs.readFileSync(process.env.GITHUB_PRIVATE_KEY_PATH!, "utf8");
+
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
+
+  const payload = {
+    iat: now - 60,          // issued at time (1 min back to allow clock drift)
+    exp: now + (10 * 60),   // expiration time (10 minutes max)
+    iss: appId              // GitHub App ID
+  };
+
+  return jwt.sign(payload, privateKey, { algorithm: "RS256" });
+}
+
+prompt: make a function that function that takes your JWT and automatically exchanges it for an installation access token
+answer: 
+export async function getInstallationAccessToken(jwt: string, installationId: string): Promise<string> {
+  const url = `https://api.github.com/app/installations/${installationId}/access_tokens`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Failed to get installation token: ${response.status} ${response.statusText} - ${errorBody}`);
+  }
+
+  const data = (await response.json()) as { token: string; expires_at: string };
+  return data.token;
+}
+
+prompt:I want to make a function that takes the repo id, a user github username and the level of access they want and uses my app to add that user to the repo with the requested level of access
+answer: 
+export async function addUserToRepo(
+  repoId: number,
+  username: string,
+  permission: "pull" | "triage" | "push" | "maintain" | "admin"
+) {
+  const token = await getInstallationAccessToken();
+
+  // Get repo owner/name from repoId
+  const repoInfo = await axios.get(`https://api.github.com/repositories/${repoId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  const { full_name } = repoInfo.data; // "owner/repo"
+  const [owner, repo] = full_name.split("/");
+
+  // Invite the collaborator
+  const res = await axios.put(
+    `https://api.github.com/repos/${owner}/${repo}/collaborators/${username}`,
+    { permission },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    }
+  );
+
+  return res.data;
+}
+
+prompt: Make the CRUD functions for this model
+model RepoColaboratorRequest {
+id                int      @id @default(autoincrement())
+userId            int
+user              User     @relation(fields: [userId], references: [id])
+repoId            int
+permission        String   @db.VarChar(255)
+}
+
+in my github services
+answer:
+/**
+ * CREATE - Create a new repository collaborator request
+ */
+export async function createRepoCollaboratorRequest(
+  userId: number,
+  repoId: number,
+  permission: string
+) {
+  const requestRow = await prisma.repoColaboratorRequest.create({
+    data: {
+      userId,
+      repoId,
+      permission,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+  return requestRow;
+}
+
+/**
+ * READ ALL - Get all repository collaborator requests
+ */
+export async function readAllRepoCollaboratorRequests() {
+  return await prisma.repoColaboratorRequest.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY ID - Get repository collaborator request by ID
+ */
+export async function readRepoCollaboratorRequestById(id: number) {
+  return await prisma.repoColaboratorRequest.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY USER ID - Get repository collaborator requests by user ID
+ */
+export async function readRepoCollaboratorRequestsByUserId(userId: number) {
+  return await prisma.repoColaboratorRequest.findMany({
+    where: { userId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY REPO ID - Get repository collaborator requests by repo ID
+ */
+export async function readRepoCollaboratorRequestsByRepoId(repoId: number) {
+  return await prisma.repoColaboratorRequest.findMany({
+    where: { repoId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * UPDATE - Update repository collaborator request
+ */
+export async function updateRepoCollaboratorRequest(
+  id: number,
+  data: {
+    repoId?: number;
+    permission?: string;
+  }
+) {
+  return await prisma.repoColaboratorRequest.update({
+    where: { id },
+    data,
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * DELETE - Delete repository collaborator request
+ */
+export async function deleteRepoCollaboratorRequest(id: number) {
+  return await prisma.repoColaboratorRequest.delete({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * DELETE BY USER ID - Delete all repository collaborator requests for a user
+ */
+export async function deleteRepoCollaboratorRequestsByUserId(userId: number) {
+  return await prisma.repoColaboratorRequest.deleteMany({
+    where: { userId },
+  });
+}
+
+/**
+ * DELETE BY REPO ID - Delete all repository collaborator requests for a repo
+ */
+export async function deleteRepoCollaboratorRequestsByRepoId(repoId: number) {
+  return await prisma.repoColaboratorRequest.deleteMany({
+    where: { repoId },
+  });
+}
+
+Prompt:
+Create the repoColaboratorRequest controlers for my CRUD operations in the gihub controller. follow the teams and task standard
+answer:
+/**
+ * Controller to create a repository collaborator request in the database 
+ *    
+ * @param req - Request object containing userId, repoId, permission, and githubUsername
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 201 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function createRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { userId, repoId, permission, githubUsername } = req.body;
+
+        // Validation: required fields
+        if (!userId || !repoId || !permission || !githubUsername) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Missing required fields: userId, repoId, permission, githubUsername', null));
+        }
+
+        const request = await githubService.createRepoCollaboratorRequest(userId, repoId, permission, githubUsername);
+
+        let finalResponse = buildResponse(
+            201,
+            'Repository collaborator request created successfully!',
+            request
+        );
+
+        res.status(201).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error creating the request', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to read repository collaborator requests from the database
+ *    
+ * @param req - Request object with optional id parameter and query parameters
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function readRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const { userId, repoId } = req.query;
+
+        let requests;
+        let message = '';
+
+        if (id) {
+            // Read a specific request by ID
+            const requestId = parseInt(id);
+            if (isNaN(requestId)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid request ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestById(requestId);
+            if (!requests) {
+                return res
+                    .status(404)
+                    .json(buildError(404, 'Repository collaborator request not found', null));
+            }
+
+            message = 'Repository collaborator request retrieved successfully.';
+        } else if (userId) {
+            // Read requests by user ID
+            const userIdNum = parseInt(userId as string);
+            if (isNaN(userIdNum)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid user ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestsByUserId(userIdNum);
+            message = requests.length > 0 
+                ? 'User repository collaborator requests retrieved successfully.' 
+                : 'No requests found for this user.';
+        } else if (repoId) {
+            // Read requests by repo ID
+            const repoIdNum = parseInt(repoId as string);
+            if (isNaN(repoIdNum)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid repo ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestsByRepoId(repoIdNum);
+            message = requests.length > 0 
+                ? 'Repository collaborator requests retrieved successfully.' 
+                : 'No requests found for this repository.';
+        } else {
+            // Read all requests
+            requests = await githubService.readAllRepoCollaboratorRequests();
+            message = requests.length > 0 
+                ? 'Repository collaborator requests retrieved successfully.' 
+                : 'No repository collaborator requests found.';
+        }
+
+        let finalResponse = buildResponse(200, message, requests);
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error retrieving requests', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to update a repository collaborator request in the database
+ *    
+ * @param req - Request object containing id parameter and update data in body
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function updateRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        if (!id) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Request ID is required', null));
+        }
+
+        const requestId = parseInt(id);
+        if (isNaN(requestId)) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Invalid request ID', null));
+        }
+
+        if (!data || Object.keys(data).length === 0) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Request body cannot be empty', null));
+        }
+
+        const existingRequest = await githubService.readRepoCollaboratorRequestById(requestId);
+        if (!existingRequest) {
+            return res
+                .status(404)
+                .json(buildError(404, 'Repository collaborator request not found', null));
+        }
+
+        const updatedRequest = await githubService.updateRepoCollaboratorRequest(requestId, data);
+
+        let finalResponse = buildResponse(
+            200,
+            'Repository collaborator request updated successfully!',
+            updatedRequest
+        );
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error updating the request', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to delete repository collaborator requests from the database
+ *    
+ * @param req - Request object containing id parameter or requestIdArray in body
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function deleteRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const requestIdArray = req.body?.requestIdArray;
+
+        const deletedRequests = [];
+        let message = '';
+
+        if (id) {
+            // Delete single request
+            const requestId = parseInt(id);
+            if (isNaN(requestId)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid request ID', null));
+            }
+
+            const deletedRequest = await githubService.deleteRepoCollaboratorRequest(requestId);
+            deletedRequests.push(deletedRequest);
+            message = 'Repository collaborator request deleted successfully.';
+        } else if (requestIdArray && Array.isArray(requestIdArray) && requestIdArray.length > 0) {
+            // Delete multiple requests
+            for (const requestIdString of requestIdArray) {
+                const requestId = parseInt(requestIdString);
+                if (!isNaN(requestId)) {
+                    const request = await githubService.deleteRepoCollaboratorRequest(requestId);
+                    if (request) deletedRequests.push(request);
+                }
+            }
+
+            if (deletedRequests.length === 0) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'No requests were deleted. Check if request IDs are valid.', null));
+            }
+
+            message = `${deletedRequests.length} repository collaborator request(s) deleted successfully.`;
+        } else {
+            return res
+                .status(400)
+                .json(buildError(400, 'Provide request ID in URL or requestIdArray in body', null));
+        }
+
+        let finalResponse = buildResponse(200, message, deletedRequests);
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error deleting request(s)', error);
+        res.status(500).json(finalResponse);
+    }
+}

@@ -1,5 +1,8 @@
 import { useNavigate } from 'react-router';
+import { useState, useRef, type RefObject } from 'react';
 import SvgComponent from '../ui/svg_component';
+import NotificationTable from '../ui/notification_table';
+import React from 'react';
 export default function HeaderContainer({
 	children,
 	pageTitle,
@@ -8,6 +11,43 @@ export default function HeaderContainer({
 	pageTitle: string;
 }) {
 	const navigate = useNavigate();
+
+	const [notifOpen, setNotifOpen] = useState(false);
+	const divRef = useRef(null);
+
+	const testNotifications = [
+		{
+			title: 'Hello',
+			description: 'This is a notification.',
+			sender: 'John Doe',
+		},
+		{
+			title: 'Rambling',
+			description:
+				'This notification is really long. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+			sender: 'John Doe',
+		},
+		{
+			title: 'Hello2',
+			description: 'This is a notification.',
+			sender: 'John Doe',
+		},
+		{
+			title: 'Hello3',
+			description: 'This is a notification.',
+			sender: 'John Doe',
+		},
+		{
+			title: 'Hello4',
+			description: 'This is a notification.',
+			sender: 'John Doe',
+		},
+		{
+			title: 'Hello5',
+			description: 'This is a notification.',
+			sender: 'John Doe',
+		},
+	];
 
 	return (
 		<div className="w-full flex flex-col bg-ttg-white text-ttg-black max-h-screen">
@@ -18,7 +58,7 @@ export default function HeaderContainer({
 					{pageTitle}
 				</div>
 				{/* Right Side */}
-				<div className="flex flex-row h-10 gap-9.5 px-5 overflow-y-auto">
+				<div className="flex flex-row h-fit gap-9.5 px-5 overflow-y-auto">
 					<button
 						className="text-ttg-black cursor-pointer"
 						onClick={() => {
@@ -27,6 +67,24 @@ export default function HeaderContainer({
 					>
 						settings
 					</button>
+					<div
+						className="cursor-pointer flex flex-col items-center"
+						onClick={() => {
+							setNotifOpen(!notifOpen);
+						}}
+						ref={divRef}
+					>
+						<SvgComponent iconName="Bell" />
+						{notifOpen && (
+							<NotificationTable
+								data={testNotifications}
+								ref={
+									divRef as unknown as RefObject<HTMLDivElement>
+								}
+								setOpenState={setNotifOpen}
+							/>
+						)}
+					</div>
 					<div
 						className="cursor-pointer flex items-center"
 						onClick={() => {

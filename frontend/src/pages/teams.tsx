@@ -323,7 +323,7 @@ export default function TeamsPage() {
 										Name: currentTeam.name,
 										Description:
 											currentTeam.description || '',
-								  }
+									}
 								: {}
 						}
 						onStateChange={handleFormDataChange}

@@ -17,6 +17,21 @@ export type teamType = {
 	createdAt: Date;
 };
 
+export  type deletionRequestType = {
+	repoId: number;
+	userId: number;
+	permission: string;
+	createdAt: Date;
+};
+
+export type repoCollaboratorRequestType = {
+	userId: number;
+	repoId: number;
+	permission: string;
+	githubUsername: string;
+	createdAt: Date;
+};
+
 export type jsonResponse = {
 	statusCode: number;
 	statusText: string;
