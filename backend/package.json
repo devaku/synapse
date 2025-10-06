@@ -6,7 +6,7 @@
 		"dev": "nodemon src/index.ts",
 		"scratch": "nodemon scratch.ts",
 		"dist": "node dist/index.js",
-		"compose:up": "docker compose -p synapse_backend up --build",
+		"compose:up": "docker compose -f ../docker-compose.yaml -p synapse_backend up --build",
 		"compose:down": "docker compose -p synapse_backend down",
 		"compose:stop": "docker compose -p synapse_backend stop",
 		"db:seed": "npx prisma migrate reset --force && ts-node prisma/index_seed.ts",

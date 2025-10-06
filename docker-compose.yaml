@@ -1,6 +1,3 @@
-# DOCKER COMPOSE FILE FOR PRODUCTION
-
-
 services:
     postgres_service:
         image: postgres:15
