@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getInstallationAccessToken } from "../lib/github-app-auth";
-import { prisma } from '../lib/database';
+import { prismaDb } from '../lib/database';
 import { repoCollaboratorRequestType } from '../types';
 
 /**
@@ -13,7 +13,7 @@ export async function createRepoCollaboratorRequest(
   githubUsername: string
 ) {
   try {
-    const requestRow = await prisma.repoColaboratorRequest.create({
+    const requestRow = await prismaDb.repoColaboratorRequest.create({
       data: {
         userId,
         repoId,
@@ -35,7 +35,7 @@ export async function createRepoCollaboratorRequest(
   } catch (error: any) {
     console.error('CREATE REPO COLLABORATOR REQUEST SERVICE ERROR:', error);
     
-    // Handle Prisma errors
+    // Handle prismaDb errors
     if (error.code === 'P2002') {
       throw new Error('A repository collaborator request with these details already exists');
     } else if (error.code === 'P2003') {
@@ -52,7 +52,7 @@ export async function createRepoCollaboratorRequest(
  * READ ALL - Get all repository collaborator requests
  */
 export async function readAllRepoCollaboratorRequests() {
-  return await prisma.repoColaboratorRequest.findMany({
+  return await prismaDb.repoColaboratorRequest.findMany({
     include: {
       user: {
         select: {
@@ -70,7 +70,7 @@ export async function readAllRepoCollaboratorRequests() {
  * READ BY ID - Get repository collaborator request by ID
  */
 export async function readRepoCollaboratorRequestById(id: number) {
-  return await prisma.repoColaboratorRequest.findUnique({
+  return await prismaDb.repoColaboratorRequest.findUnique({
     where: { id },
     include: {
       user: {
@@ -89,7 +89,7 @@ export async function readRepoCollaboratorRequestById(id: number) {
  * READ BY USER ID - Get repository collaborator requests by user ID
  */
 export async function readRepoCollaboratorRequestsByUserId(userId: number) {
-  return await prisma.repoColaboratorRequest.findMany({
+  return await prismaDb.repoColaboratorRequest.findMany({
     where: { userId },
     include: {
       user: {
@@ -108,7 +108,7 @@ export async function readRepoCollaboratorRequestsByUserId(userId: number) {
  * READ BY REPO ID - Get repository collaborator requests by repo ID
  */
 export async function readRepoCollaboratorRequestsByRepoId(repoId: number) {
-  return await prisma.repoColaboratorRequest.findMany({
+  return await prismaDb.repoColaboratorRequest.findMany({
     where: { repoId },
     include: {
       user: {
@@ -134,7 +134,7 @@ export async function updateRepoCollaboratorRequest(
     githubUsername?: string;
   }
 ) {
-  return await prisma.repoColaboratorRequest.update({
+  return await prismaDb.repoColaboratorRequest.update({
     where: { id },
     data,
     include: {
@@ -154,7 +154,7 @@ export async function updateRepoCollaboratorRequest(
  * DELETE - Delete repository collaborator request
  */
 export async function deleteRepoCollaboratorRequest(id: number) {
-  return await prisma.repoColaboratorRequest.delete({
+  return await prismaDb.repoColaboratorRequest.delete({
     where: { id },
     include: {
       user: {
@@ -173,7 +173,7 @@ export async function deleteRepoCollaboratorRequest(id: number) {
  * DELETE BY USER ID - Delete all repository collaborator requests for a user
  */
 export async function deleteRepoCollaboratorRequestsByUserId(userId: number) {
-  return await prisma.repoColaboratorRequest.deleteMany({
+  return await prismaDb.repoColaboratorRequest.deleteMany({
     where: { userId },
   });
 }
@@ -182,7 +182,7 @@ export async function deleteRepoCollaboratorRequestsByUserId(userId: number) {
  * DELETE BY REPO ID - Delete all repository collaborator requests for a repo
  */
 export async function deleteRepoCollaboratorRequestsByRepoId(repoId: number) {
-  return await prisma.repoColaboratorRequest.deleteMany({
+  return await prismaDb.repoColaboratorRequest.deleteMany({
     where: { repoId },
   });
 }

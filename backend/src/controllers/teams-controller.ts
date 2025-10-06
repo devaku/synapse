@@ -58,15 +58,6 @@ export async function readTeam(req: Request, res: Response) {
 			message = 'Table is empty';
 		}
 
-        const team = await teamsService.readAllTeam();
-        let message = ''; 
-
-        if (team.length > 0){
-            message = 'Data was retrieved successfully.';
-        }
-        else{
-            message = 'Table is empty';
-        }
 
         let finalResponse = buildResponse(200,message,team)
  		res.status(200).json(finalResponse);
