@@ -4,6 +4,7 @@ import {
 	readTask,
 	updateTask,
 	deleteTask,
+	readSubscribedTasks,
 } from '../controllers/tasks-controller';
 import {
 	subscribe,
@@ -20,6 +21,9 @@ taskRouter.post('/tasks', express.json(), createTask);
 //  - GET /tasks        → all tasks
 //  - GET /tasks?useronly=1 (boolean) → tasks only visible to that user
 taskRouter.get('/tasks', readTask);
+
+// Get all tasks the user is SUBSCRIBED too
+taskRouter.get('/tasks/subscribed', readSubscribedTasks);
 
 // Archive a task
 taskRouter.put(
@@ -45,9 +49,6 @@ taskRouter.put('/tasks/:id', express.json(), updateTask);
 //  - DELETE /tasks     → delete multiple via { "taskIdArray": [1,2,3] }
 taskRouter.delete('/tasks/:id', deleteTask);
 taskRouter.delete('/tasks', express.json(), deleteTask);
-
-// Get all tasks the user is SUBSCRIBED too
-taskRouter.get('/tasks/subscribed', listSubscribedTasks);
 
 // SUBSCRIPTION routes
 taskRouter.post('/tasks/:id/subscribe', express.json(), subscribe);

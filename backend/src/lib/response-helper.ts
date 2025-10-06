@@ -35,7 +35,7 @@ export function buildError(
 		statusText: getReasonPhrase(statusCode),
 		message,
 		error: {
-			errorMessage: error.message,
+			errorMessage: error.message ? error.message : '',
 		},
 	};
 

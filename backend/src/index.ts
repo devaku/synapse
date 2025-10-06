@@ -8,6 +8,7 @@ import { setupServerMiddleware } from './middlewares/initial-middleware';
 import { socketMiddleware } from './middlewares/socket-middleware';
 
 const app = express();
+
 const PORT = process.env.PORT;
 
 // Load the ENV settings

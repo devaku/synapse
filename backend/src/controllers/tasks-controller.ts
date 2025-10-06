@@ -91,16 +91,19 @@ export async function readTask(req: Request, res: Response) {
 			 */
 			const taskId = parseInt(id);
 			if (isNaN(taskId)) {
+				let error = new Error('Invalid Task Id');
 				return res
 					.status(400)
-					.json(buildError(400, 'Invalid task ID', null));
+					.json(buildError(400, 'Invalid task ID', error));
 			}
 
 			task = await taskService.readTaskById(taskId);
-			if (!task)
+			if (!task) {
+				let error = new Error('Invalid Task Id');
 				return res
 					.status(404)
-					.json(buildError(404, 'Task not found', null));
+					.json(buildError(404, 'Task not found', error));
+			}
 
 			message = 'Task retrieved successfully.';
 		} else if (useronly) {
