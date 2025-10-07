@@ -1,8 +1,20 @@
 import express from 'express';
 import { Request, Response } from 'express';
-import { verifyJwt } from '../middlewares/auth-middleware';
+import { uploadMiddleware } from '../middlewares/upload-middleware';
 
 const debugRouter = express.Router();
+
+debugRouter.post(
+	'/upload',
+	uploadMiddleware.array('pictures'),
+	(req: Request, res: Response) => {
+		console.log(req.files);
+
+		res.json({
+			message: 'This is the upload route',
+		});
+	}
+);
 
 debugRouter.get('/debugWithAuth', (req: Request, res: Response) => {
 	res.json({
