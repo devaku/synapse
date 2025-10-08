@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { useState, useRef, type RefObject } from 'react';
 import SvgComponent from '../ui/svg_component';
 import NotificationTable from '../ui/notification_table';
@@ -10,6 +11,7 @@ export default function HeaderContainer({
 	children: React.ReactNode;
 	pageTitle: string;
 }) {
+	const { serverData } = useAuthContext();
 	const navigate = useNavigate();
 
 	const [notifOpen, setNotifOpen] = useState(false);
@@ -58,7 +60,7 @@ export default function HeaderContainer({
 					{pageTitle}
 				</div>
 				{/* Right Side */}
-				<div className="flex flex-row h-fit gap-9.5 px-5 overflow-y-auto">
+				<div className="flex flex-row items-center  gap-9 px-5">
 					<button
 						className="text-ttg-black cursor-pointer"
 						onClick={() => {
@@ -91,7 +93,11 @@ export default function HeaderContainer({
 							navigate('/profile');
 						}}
 					>
-						<SvgComponent iconName="Profile" />
+						<img
+							className="w-10 h-10 rounded-2xl"
+							src={serverData.image?.imageUrl}
+							alt=""
+						/>
 					</div>
 				</div>
 			</div>
