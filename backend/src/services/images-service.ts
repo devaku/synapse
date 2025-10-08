@@ -1,6 +1,10 @@
-import { prismaDb } from '../lib/database';
+import { PrismaClientOrTransaction } from '../types';
 
-export async function createImage(userId: number, images: string[]) {
+export async function createImage(
+	tx: PrismaClientOrTransaction,
+	userId: number,
+	images: string[]
+) {
 	let finalData = images.map((el) => {
 		return {
 			imageUrl: el,
@@ -8,11 +12,11 @@ export async function createImage(userId: number, images: string[]) {
 		};
 	});
 
-	await prismaDb.image.createMany({
+	await tx.image.createMany({
 		data: [...finalData],
 	});
 
-	const row = await prismaDb.image.findMany({
+	const row = await tx.image.findMany({
 		where: {
 			imageUrl: {
 				in: finalData.map((el) => el.imageUrl),

@@ -24,6 +24,7 @@ const uploader = multer.diskStorage({
 	 * WHERE TO STORE THE FILE
 	 */
 	destination(req, file, callback) {
+		req.upload_location = STORAGE_LOCATION;
 		callback(null, STORAGE_LOCATION);
 	},
 });
