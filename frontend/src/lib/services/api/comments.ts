@@ -3,6 +3,7 @@ const url = import.meta.env.VITE_API_URL;
 
 export async function postComment(
 	token: string,
+	taskId: number,
 	message: string,
 	pictures?: File[]
 ) {
@@ -10,6 +11,7 @@ export async function postComment(
 	const formData = new FormData();
 
 	formData.append('message', message);
+	formData.append('taskId', taskId.toString());
 
 	if (pictures) {
 		pictures.map((el) => {
@@ -17,7 +19,7 @@ export async function postComment(
 		});
 	}
 
-	let response: jsonResponse = await fetch(`${url}/upload`, {
+	let response: jsonResponse = await fetch(`${url}/comments`, {
 		method: 'POST',
 		headers: {
 			Authorization: `Bearer ${token}`,

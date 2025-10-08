@@ -62,7 +62,16 @@ export async function readTaskById(id: number) {
 		include: {
 			comments: {
 				include: {
-					user: true,
+					imagesAttachedToComments: {
+						include: {
+							image: true,
+						},
+					},
+					user: {
+						include: {
+							image: true,
+						},
+					},
 				},
 			},
 			taskUserSubscribeTo: {

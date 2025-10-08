@@ -11,7 +11,7 @@ import { buildResponse, buildError } from '../lib/response-helper';
  * This entire endpoint is atomic
  */
 export async function createComment(req: Request, res: Response) {
-	const IMAGE_STORAGE_URL = `${process.env.SERVER_URL}:${process.env.PORT}/public/uploads`;
+	const IMAGE_STORAGE_URL = `/public/uploads`;
 	return prismaDb.$transaction(async (tx: Prisma.TransactionClient) => {
 		try {
 			// req.files[0].filename

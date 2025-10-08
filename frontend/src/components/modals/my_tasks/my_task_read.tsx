@@ -3,7 +3,7 @@
  */
 
 import Button from '../../ui/button';
-import CommentComponent from '../task/comments';
+import CommentComponent from '../task/comment_component';
 
 /**
  * HOOKS
@@ -58,7 +58,7 @@ export default function MyTaskReadModal({
 			return el.user?.keycloakId;
 		});
 
-		if (ids?.includes(userData.sub)) {
+		if (ids?.includes(userData.sub!)) {
 			setIsSubscribed(true);
 		} else {
 			setIsSubscribed(false);
@@ -129,6 +129,7 @@ export default function MyTaskReadModal({
 			{/* COMMENTS SECTION*/}
 			<div>
 				<CommentComponent
+					taskId={taskId}
 					comments={comments}
 					isSubscribed={isSubscribed}
 				>

@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, type FileWithPath } from 'react-dropzone';
 
 /**
  * COMPONENTS
@@ -13,8 +13,14 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import GalleryDisplay from './gallery_display';
 
 export default function ImageUploader({
+	previews,
+	handleAddPreview,
+	handleClearPreview,
 	onChange,
 }: {
+	previews: string[] | undefined;
+	handleAddPreview: (acceptedFiles: readonly FileWithPath[]) => void;
+	handleClearPreview: () => void;
 	onChange: (...event: any[]) => void;
 }) {
 	const dropzoneSettings = {
@@ -24,7 +30,6 @@ export default function ImageUploader({
 		},
 		multiple: true,
 	};
-	const [previews, setPreviews] = useState<string[]>();
 
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
 		...dropzoneSettings,
@@ -36,18 +41,11 @@ export default function ImageUploader({
 	});
 
 	function handleClearImagesClick() {
-		previews?.forEach((el) => URL.revokeObjectURL(el));
-		setPreviews([]);
+		handleClearPreview();
 	}
 
 	useEffect(() => {
-		let urls = acceptedFiles.map((el) => {
-			let imageUrl = URL.createObjectURL(el);
-
-			return imageUrl;
-		});
-
-		setPreviews(urls);
+		handleAddPreview(acceptedFiles);
 	}, [acceptedFiles]);
 
 	useEffect(() => {

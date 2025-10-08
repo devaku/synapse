@@ -32,7 +32,11 @@ export async function readComment(
 				select: { image: true },
 			},
 			task: true,
-			user: true,
+			user: {
+				include: {
+					image: true,
+				},
+			},
 		},
 	});
 
