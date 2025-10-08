@@ -27,6 +27,7 @@ export default function ImageUploader({
 		accept: {
 			'image/png': ['.png'],
 			'image/jpg': ['.jpg', '.jpeg'],
+			'image/gif': ['.gif'],
 		},
 		multiple: true,
 	};

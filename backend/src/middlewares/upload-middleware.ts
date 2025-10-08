@@ -29,7 +29,7 @@ const uploader = multer.diskStorage({
 	},
 });
 
-const acceptedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+const acceptedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
 
 export const uploadMiddleware = multer({
 	storage: uploader,
