@@ -1,14 +1,18 @@
 import { User } from '../database/generated/prisma';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { Server as SocketIOServer } from 'socket.io';
 
 // Type declaration provided by chatgpt
 declare global {
 	namespace Express {
 		interface Request {
+			upload_location: string;
 			io: SocketIOServer;
 		}
 	}
 }
+
+export type PrismaClientOrTransaction = PrismaClient | Prisma.TransactionClient;
 
 export type teamType = {
 	createdBy: number;

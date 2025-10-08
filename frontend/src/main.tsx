@@ -1,3 +1,4 @@
+import 'react-photo-view/dist/react-photo-view.css';
 import './assets/css/main.css';
 import { StrictMode } from 'react';
 

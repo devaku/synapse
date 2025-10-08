@@ -9,7 +9,7 @@ import {
 import {
 	subscribe,
 	unsubscribe,
-} from '../controllers/task-subscription-controller';
+} from '../controllers/task-subscriptions-controller';
 
 const taskRouter = express.Router();
 

@@ -10,6 +10,7 @@ misc
 
 # Backend
 backend/.env
+backend/src/public/uploads/*
 backend/scratch.ts
 backend/database/generated/prisma
 backend/api/github.http

@@ -1,6 +1,3 @@
-// =======================
-// User
-// =======================
 export interface User {
 	id: number;
 	keycloakId: string;
@@ -9,30 +6,29 @@ export interface User {
 	firstName?: string | null;
 	lastName?: string | null;
 	phone?: number | null;
+	imageId?: number | null;
 	lastActivity: Date;
 	isDeleted: number;
 
-	notification?: Notification[];
-	logs?: Logs[];
-	createdTasks?: Task[];
-	comment?: Comment[];
-	taskVisibleToUsers?: TaskVisibleToUsers[];
-	taskHiddenFromUsers?: TaskHiddenFromUsers[];
-	teamsUsersBelongTo?: TeamsUsersBelongTo[];
-	taskUserSubscribedTo?: TaskUserSubscribeTo[];
-	taskArchived?: Task[];
-
-	team?: Team[]; // Teams created by the user
-	deletionRequest?: DeletionRequest[];
+	image?: Image | null;
+	notification: Notification[];
+	logs: Logs[];
+	createdTasks: Task[];
+	comment: Comment[];
+	taskVisibleToUsers: TaskVisibleToUsers[];
+	taskHiddenFromUsers: TaskHiddenFromUsers[];
+	teamsUsersBelongTo: TeamsUsersBelongTo[];
+	team: Team[];
+	deletionRequest: DeletionRequest[];
+	taskUsersSubscribeTo: TaskUserSubscribeTo[];
+	taskArchived: Task[];
+	repoCollaboratorRequests: RepoColaboratorRequest[];
+	imagesUploaded: Image[];
 }
 
-// =======================
-// Task
-// =======================
 export interface Task {
 	id: number;
 	createdByUserId: number;
-	createdByUser?: User;
 	priority: string;
 	name: string;
 	description: string;
@@ -40,136 +36,159 @@ export interface Task {
 	startDate?: Date | null;
 	createdAt: Date;
 	isDeleted: number;
-	isArchived: number;
-	archivedByUserId: number;
-	archivedByUser?: User;
 	completeDate?: Date | null;
+	isArchived: number;
+	archivedByUserId?: number | null;
 
-	comments?: Comment[];
-	taskVisibleToUsers?: TaskVisibleToUsers[];
-	taskHiddenFromUsers?: TaskHiddenFromUsers[];
-	taskVisibleToTeams?: TaskVisibleToTeams[];
-	taskUserSubscribeTo?: TaskUserSubscribeTo[];
-	deletionRequest?: DeletionRequest[];
+	createdByUser: User;
+	archivedByUser?: User | null;
+	comments: Comment[];
+	taskVisibleToUsers: TaskVisibleToUsers[];
+	taskHiddenFromUsers: TaskHiddenFromUsers[];
+	taskVisibleToTeams: TaskVisibleToTeams[];
+	deletionRequest: DeletionRequest[];
+	taskUserSubscribeTo: TaskUserSubscribeTo[];
 }
 
-// =======================
-// Team
-// =======================
 export interface Team {
 	id: number;
 	name: string;
 	description?: string | null;
 	createdBy: number;
-	createdByUser?: User;
 	createdAt: Date;
 	isDeleted: number;
 
-	notifications?: Notification[];
-	taskVisibleToTeams?: TaskVisibleToTeams[];
-	teamsUsersBelongTo?: TeamsUsersBelongTo[];
+	createdByUser: User;
+	notifications: Notification[];
+	taskVisibleToTeams: TaskVisibleToTeams[];
+	teamsUsersBelongTo: TeamsUsersBelongTo[];
 }
 
-// =======================
-// Notification
-// =======================
 export interface Notification {
 	id: number;
 	name: string;
 	description: string;
 	userId: number;
-	user?: User;
 	teamId?: number | null;
-	team?: Team | null;
 	createdAt: Date;
 	isDeleted: number;
+
+	user: User;
+	team?: Team | null;
 }
 
-// =======================
-// Logs
-// =======================
 export interface Logs {
 	id: number;
 	name: string;
 	description: string;
 	userId: number;
-	user?: User;
 	createdAt: Date;
 	isDeleted: number;
+
+	user: User;
 }
 
-// =======================
-// Comment
-// =======================
 export interface Comment {
 	id: number;
 	userId: number;
-	user?: User;
-	message: string;
 	taskId: number;
-	task?: Task;
+	message: string;
 	createdAt: Date;
 	isDeleted: number;
+
+	user: User;
+	task: Task;
+	imagesAttachedToComments: ImagesAttachedToComments[];
 }
 
-// =======================
-// Session
-// =======================
 export interface Session {
 	sid: string;
-	sess: any; // could be refined if you know the session structure
+	sess: any; // JSON object
 	expire: Date;
 }
 
-// =======================
-// DeletionRequest
-// =======================
 export interface DeletionRequest {
 	id: number;
 	taskId: number;
-	task?: Task;
 	requestedByUserId: number;
-	requestedByUser?: User;
 	reason: string;
 	createdAt: Date;
 	isDeleted: number;
+
+	task: Task;
+	requestedByUser: User;
 }
 
-// =======================
-// Link Tables
-// =======================
-
-export interface TeamsUsersBelongTo {
+export interface RepoColaboratorRequest {
+	id: number;
+	githubUsername: string;
 	userId: number;
-	user?: User;
-	teamId: number;
-	team?: Team;
+	repoId: number;
+	permission: string;
+	createdAt: Date;
+
+	user: User;
 }
 
-export interface TaskVisibleToUsers {
-	taskId: number;
-	task?: Task;
+export interface Image {
+	id: number;
+	imageUrl: string;
 	userId: number;
-	user?: User;
+	createdAt: Date;
+
+	uploadedBy: User;
+	imagesAttachedToComments: ImagesAttachedToComments[];
+	usersUsingAsProfileImage: User[];
 }
 
-export interface TaskVisibleToTeams {
-	taskId: number;
-	task?: Task;
-	teamId: number;
-	team?: Team;
-}
+/**
+ * Link Tables
+ */
 
-export interface TaskHiddenFromUsers {
-	taskId: number;
-	task?: Task;
-	userId: number;
-	user?: User;
+export interface ImagesAttachedToComments {
+	imageId: number;
+	commentId: number;
+
+	image: Image;
+	comment: Comment;
 }
 
 export interface TaskUserSubscribeTo {
-	taskId: number;
-	task?: Task;
 	userId: number;
-	user?: User;
+	taskId: number;
+
+	user: User;
+	task: Task;
+}
+
+export interface TeamsUsersBelongTo {
+	userId: number;
+	teamId: number;
+
+	user: User;
+	team: Team;
+}
+
+export interface TaskVisibleToUsers {
+	userId: number;
+	taskId: number;
+
+	user: User;
+	task: Task;
+}
+
+export interface TaskVisibleToTeams {
+	teamId: number;
+	taskId: number;
+
+	team: Team;
+	task: Task;
+}
+
+export interface TaskHiddenFromUsers {
+	userId: number;
+	taskId: number;
+
+	user: User;
+	task: Task;
 }
