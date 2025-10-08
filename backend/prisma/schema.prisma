@@ -16,27 +16,30 @@ datasource db {
 }
 
 model User {
-    id                   Int                      @id @default(autoincrement())
-    keycloakId           String                   @unique @db.VarChar(255)
-    username             String                   @db.VarChar(255)
-    email                String                   @db.VarChar(255)
-    firstName            String?                  @db.VarChar(255)
-    lastName             String?                  @db.VarChar(255)
-    phone                Int?
-    lastActivity         DateTime                 @default(now()) @db.Timestamp(6)
-    isDeleted            Int                      @default(0)
-    notification         Notification[]
-    logs                 Logs[]
-    createdTasks         Task[]
-    comment              Comment[]
-    taskVisibleToUsers   TaskVisibleToUsers[]
-    taskHiddenFromUsers  TaskHiddenFromUsers[]
-    teamsUsersBelongTo   TeamsUsersBelongTo[]
-    team                 Team[]                   @relation("TeamMadeByUser")
-    deletionRequest      DeletionRequest[]
-    taskUsersSubscribeTo TaskUserSubscribeTo[]
-    taskArchived         Task[]                   @relation("TaskArchivedBy")
-    repoCollaboratorRequests  RepoColaboratorRequest[]
+    id                       Int                      @id @default(autoincrement())
+    keycloakId               String                   @unique @db.VarChar(255)
+    username                 String                   @db.VarChar(255)
+    email                    String                   @db.VarChar(255)
+    firstName                String?                  @db.VarChar(255)
+    lastName                 String?                  @db.VarChar(255)
+    phone                    Int?
+    imageId                  Int?
+    image                    Image?                   @relation("UserProfileImage", fields: [imageId], references: [id])
+    lastActivity             DateTime                 @default(now()) @db.Timestamp(6)
+    isDeleted                Int                      @default(0)
+    notification             Notification[]
+    logs                     Logs[]
+    createdTasks             Task[]
+    comment                  Comment[]
+    taskVisibleToUsers       TaskVisibleToUsers[]
+    taskHiddenFromUsers      TaskHiddenFromUsers[]
+    teamsUsersBelongTo       TeamsUsersBelongTo[]
+    team                     Team[]                   @relation("TeamMadeByUser")
+    deletionRequest          DeletionRequest[]
+    taskUsersSubscribeTo     TaskUserSubscribeTo[]
+    taskArchived             Task[]                   @relation("TaskArchivedBy")
+    repoCollaboratorRequests RepoColaboratorRequest[]
+    imagesUploaded           Image[]                  @relation("ImagesUploadedByUser")
 }
 
 model Task {
@@ -98,14 +101,15 @@ model Logs {
 }
 
 model Comment {
-    id        Int      @id @default(autoincrement())
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    message   String   @db.VarChar(255)
-    task      Task     @relation(fields: [taskId], references: [id])
-    taskId    Int
-    createdAt DateTime @default(now()) @db.Timestamp(6)
-    isDeleted Int      @default(0)
+    id                       Int                        @id @default(autoincrement())
+    userId                   Int
+    user                     User                       @relation(fields: [userId], references: [id])
+    message                  String                     @db.VarChar(255)
+    task                     Task                       @relation(fields: [taskId], references: [id])
+    taskId                   Int
+    createdAt                DateTime                   @default(now()) @db.Timestamp(6)
+    isDeleted                Int                        @default(0)
+    imagesAttachedToComments ImagesAttachedToComments[]
 }
 
 model Session {
@@ -137,9 +141,28 @@ model RepoColaboratorRequest {
     createdAt      DateTime @default(now()) @db.Timestamp(6)
 }
 
+model Image {
+    id                       Int                        @id @default(autoincrement())
+    imageUrl                 String
+    userId                   Int
+    uploadedBy               User                       @relation("ImagesUploadedByUser", fields: [userId], references: [id])
+    createdAt                DateTime                   @default(now()) @db.Timestamp(6)
+    imagesAttachedToComments ImagesAttachedToComments[]
+    usersUsingAsProfileImage User[]                     @relation("UserProfileImage")
+}
+
 /**
  * LINK TABLES
  */
+
+model ImagesAttachedToComments {
+    imageId   Int
+    image     Image   @relation(fields: [imageId], references: [id])
+    commentId Int
+    comment   Comment @relation(fields: [commentId], references: [id])
+
+    @@id([imageId, commentId])
+}
 
 model TaskUserSubscribeTo {
     taskId Int
@@ -185,4 +208,3 @@ model TaskHiddenFromUsers {
 
     @@id([userId, taskId])
 }
-
