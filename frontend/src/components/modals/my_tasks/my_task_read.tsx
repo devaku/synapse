@@ -1,11 +1,9 @@
-import TTGLogo from '../../../assets/images/ttglogo/TTG_Profile.png';
-
 /**
  * COMPONENTS
  */
 
 import Button from '../../ui/button';
-import CommentCard from '../../container/comment_card';
+import CommentComponent from '../task/comments';
 
 /**
  * HOOKS
@@ -65,20 +63,6 @@ export default function MyTaskReadModal({
 		} else {
 			setIsSubscribed(false);
 		}
-	}
-
-	function loadComments() {
-		return comments?.map((el, index) => {
-			return (
-				<CommentCard
-					key={index}
-					profile_picture_url={''}
-					comment={el.message}
-					name={el.user?.email!}
-					timestamp={new Date().toString()}
-				></CommentCard>
-			);
-		});
 	}
 
 	/**
@@ -144,44 +128,18 @@ export default function MyTaskReadModal({
 			</div>
 			{/* COMMENTS SECTION*/}
 			<div>
-				<p className="my-2">
-					{comments && comments.length > 0
-						? 'Comments:'
-						: 'There are currently no comments.'}
-				</p>
-
-				{/* INPUT */}
-				{/* Input is only displayed if they are subscribed */}
-				{isSubscribed ? (
-					<div className="p-2 mb-2 rounded-lg shadow-md">
-						{/* Profile */}
-						<div className="flex items-center gap-2">
-							<div className="w-10 h-10">
-								<img src={TTGLogo} alt="" srcSet="" />
-							</div>
-							<p>{userData.email}</p>
-						</div>
-						<textarea
-							className="w-full"
-							name=""
-							id=""
-							rows={5}
-							placeholder="Enter a comment..."
-						></textarea>
-						<div className="mt-2">
-							<Button
-								buttonType="add"
-								buttonText="Comment"
-								buttonOnClick={() => handleModalClose()}
-							/>
-						</div>
-					</div>
-				) : (
-					''
-				)}
-
-				{/* COMMENTS */}
-				<div>{loadComments()}</div>
+				<CommentComponent
+					comments={comments}
+					isSubscribed={isSubscribed}
+				>
+					{/* <div className="mt-2">
+						<Button
+							buttonType="add"
+							buttonText="Comment"
+							buttonOnClick={() => handleModalClose()}
+						/>
+					</div> */}
+				</CommentComponent>
 			</div>
 		</div>
 	);

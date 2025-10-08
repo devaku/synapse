@@ -136,7 +136,7 @@ export default function TasksPage() {
 			await refreshTable();
 		}
 		start();
-	}, [modalTaskCreate.isOpen, modalTaskUpdate.isOpen]);
+	}, [modalTaskCreate.isOpen, modalTaskInfo.isOpen, modalTaskUpdate.isOpen]);
 
 	/**
 	 * USE EFFECT to handling FILTERING
