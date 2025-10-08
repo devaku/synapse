@@ -49,7 +49,7 @@ export default function CommentComponent({
 	const [internalComments, setInternalComments] = useState<Comment[] | null>(
 		comments
 	);
-	const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
 	const {
 		register,
 		handleSubmit,
@@ -67,16 +67,14 @@ export default function CommentComponent({
 
 	function loadComments() {
 		return internalComments?.map((el, index) => {
-			const profilePicture = `${SERVER_URL}${el.user.image?.imageUrl}`
-				? `${SERVER_URL}${el.user.image?.imageUrl}`
+			const profilePicture = el.user.image?.imageUrl
+				? el.user.image?.imageUrl
 				: undefined;
 
 			let imageUrl: string[] = [];
 			if (el.imagesAttachedToComments.length > 0) {
 				el.imagesAttachedToComments.map((imageElement) => {
-					imageUrl.push(
-						`${SERVER_URL}${imageElement.image.imageUrl}`
-					);
+					imageUrl.push(imageElement.image.imageUrl);
 				});
 			}
 
@@ -169,8 +167,8 @@ export default function CommentComponent({
 							<img
 								className="rounded-2xl"
 								src={
-									`${SERVER_URL}${serverData.image?.imageUrl}`
-										? `${SERVER_URL}${serverData.image?.imageUrl}`
+									serverData.image?.imageUrl
+										? serverData.image?.imageUrl
 										: undefined
 								}
 								alt=""
