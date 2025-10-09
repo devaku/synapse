@@ -12,7 +12,7 @@ export default function Sidebar() {
 
 	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
 
-	console.log(userData);
+	// console.log(userData);
 
 	useEffect(() => {
 		if (

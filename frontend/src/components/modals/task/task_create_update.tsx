@@ -296,7 +296,6 @@ export default function TaskCreateUpdateModal({
 									id=""
 									{...register('priority', {
 										required: true,
-										value: 'LOW',
 									})}
 								>
 									<option value="LOW">LOW</option>
