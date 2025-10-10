@@ -5,9 +5,6 @@ import { PrismaClientOrTransaction } from '../types';
  * REFACTOR THIS CODE TO BE DEPENDENCY INJECTABLE
  */
 
-// Used AI to help with the hidden features on the CRUD FUnctionality stuff, most of the code there is from ChatGPT
-// PROMPT: "Help me with adding visibility to the CRUD functions"
-
 export const createTaskService = (tx: PrismaClientOrTransaction) => {
 	return {
 		createTask: async function createTask(taskObj: any) {
@@ -33,7 +30,7 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 		},
 
 		readAllTask: async function readAllTask() {
-			return await tx.task.findMany({
+			let row = await tx.task.findMany({
 				where: { isDeleted: 0 },
 				include: {
 					createdByUser: {
@@ -49,12 +46,16 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 					taskVisibleToUsers: true,
 				},
 			});
+			return row;
 		},
 
 		readTaskById: async function readTaskById(id: number) {
-			return await tx.task.findFirst({
+			let row = await tx.task.findFirst({
 				where: { id, isDeleted: 0 },
 				include: {
+					imagesAttachedToTasks: {
+						include: { image: true },
+					},
 					comments: {
 						include: {
 							imagesAttachedToComments: {
@@ -110,12 +111,13 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 					},
 				},
 			});
+			return row;
 		},
 
 		readTasksFilteredForUser: async function readTasksFilteredForUser(
 			userId: number
 		) {
-			return await tx.task.findMany({
+			let row = await tx.task.findMany({
 				where: {
 					isArchived: 0,
 					isDeleted: 0,
@@ -142,12 +144,13 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 					taskVisibleToTeams: true,
 				},
 			});
+			return row;
 		},
 
 		readTasksUserIsSubscribedTo: async function readTasksUserIsSubscribedTo(
 			userId: number
 		) {
-			return await tx.task.findMany({
+			let row = await tx.task.findMany({
 				where: {
 					isArchived: 0,
 					taskUserSubscribeTo: {
@@ -163,10 +166,11 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 					taskVisibleToTeams: true,
 				},
 			});
+			return row;
 		},
 
 		updateTask: async function updateTask(id: number, data: Task) {
-			return await tx.task.update({
+			let row = await tx.task.update({
 				where: { id },
 				data: {
 					...data,
@@ -185,13 +189,15 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 					taskVisibleToUsers: true,
 				},
 			});
+			return row;
 		},
 
 		deleteTask: async function deleteTask(id: number) {
-			return await tx.task.update({
+			let row = await tx.task.update({
 				where: { id },
 				data: { isDeleted: 1 },
 			});
+			return row;
 		},
 	};
 };

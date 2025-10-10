@@ -18,3 +18,5 @@ export const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET
 export const SESSION_SECRET = process.env.SESSION_SECRET
 	? process.env.SESSION_SECRET
 	: 'DERGS';
+
+export const IMAGE_STORAGE_URL = `${process.env.SERVER_URL}/public/uploads`;

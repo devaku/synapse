@@ -10,6 +10,7 @@ import {
 	subscribe,
 	unsubscribe,
 } from '../controllers/task-subscriptions-controller';
+import { uploadMiddleware } from '../middlewares/upload-middleware';
 
 const taskRouter = express.Router();
 
@@ -18,7 +19,7 @@ const taskRouter = express.Router();
  */
 
 // CREATE
-taskRouter.post('/tasks', express.json(), createTask);
+taskRouter.post('/tasks', uploadMiddleware.array('pictures'), createTask);
 
 // READ all or one
 //  - GET /tasks        → all tasks

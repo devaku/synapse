@@ -1,65 +1,128 @@
+import { Prisma } from '../../database/generated/prisma';
+import { prismaDb, txtimeoutValue } from '../lib/database';
 import { Request, Response } from 'express';
 import { createTaskService } from '../services/task-service';
-import * as visiblityService from '../services/visibility-service';
+import { createImageService } from '../services/images-service';
+import { createImageLinkService } from '../services/image-link-service';
+import { createVisibilityService } from '../services/visibility-service';
 import { buildResponse, buildError } from '../lib/response-helper';
-import { Prisma } from '@prisma/client';
-import { prismaDb, txtimeoutValue } from '../lib/database';
+
+import { deleteUploadedFiles } from '../lib/file-helper';
+import { IMAGE_STORAGE_URL } from '../lib/env-variables';
 
 // CREATE - Create a new task
 export async function createTask(req: Request, res: Response) {
-	try {
-		// TODO: This will dramatically change when image
-		// uploading is added.
+	return prismaDb.$transaction(
+		async (tx: Prisma.TransactionClient) => {
+			const taskService = createTaskService(tx);
+			const imageLinkService = createImageLinkService(tx);
+			const imageService = createImageService(tx);
 
-		let data = req.body;
-		const userId = req.session.userData?.user.id;
+			try {
+				let data = req.body;
+				const userId = req.session.userData?.user.id;
 
-		// Attach creator
-		data.createdByUserId = userId;
+				// Attach creator
+				data.createdByUserId = userId;
 
-		// TODO: These validations need to be relegated to Zod in a future update
-		// #region Validation
-		// Validation: required fields
-		if (!data || Object.keys(data).length === 0) {
-			return res
-				.status(400)
-				.json(buildError(400, 'Request body cannot be empty', null));
+				// TODO: These validations need to be relegated to Zod in a future update
+				// #region Validation
+				// Validation: required fields
+				if (!data || Object.keys(data).length === 0) {
+					return res
+						.status(400)
+						.json(
+							buildError(
+								400,
+								'Request body cannot be empty',
+								null
+							)
+						);
+				}
+				if (!data.name || !data.description || !data.createdByUserId) {
+					return res
+						.status(400)
+						.json(
+							buildError(
+								400,
+								'Missing required fields: name, description, createdByUserId',
+								null
+							)
+						);
+				}
+
+				// #endregion
+
+				// Attach the visiblity rules
+				data = createTaskVisiblityRules(data);
+
+				// Have the user who created it be subscribed to it by default
+				data.taskUserSubscribeTo = {
+					create: {
+						userId,
+					},
+				};
+
+				// Create the task
+				const task = await taskService.createTask(data);
+
+				// Save the images
+				let imageRows;
+				if (Array.isArray(req.files)) {
+					const uploaded = req.files;
+					if (uploaded.length > 0) {
+						const images = uploaded.map((el: any) => {
+							return `${IMAGE_STORAGE_URL}/${el.filename}`;
+						});
+						imageRows = await imageService.createImage(
+							userId!,
+							images
+						);
+					}
+				}
+
+				// Link the images to the task created
+				if (imageRows) {
+					let imageIds = imageRows.map((el: any) => el.id);
+					await imageLinkService.linkImagesToTasks(imageIds, task.id);
+				}
+
+				// Retrieve the task again, this time with the images. lol
+				const taskRow = await taskService.readTaskById(task.id);
+
+				return res
+					.status(201)
+					.json(
+						buildResponse(
+							201,
+							'Task created successfully!',
+							taskRow
+						)
+					);
+			} catch (error: any) {
+				/**
+				 * If there was ever any error
+				 * make sure to properly destroy any uploaded images
+				 */
+
+				if (Array.isArray(req.files)) {
+					const uploaded = req.files;
+					if (uploaded.length > 0) {
+						deleteUploadedFiles(uploaded, req.upload_location);
+					}
+				}
+
+				return res
+					.status(500)
+					.json(
+						buildError(500, 'Error in creating the task!', error)
+					);
+			}
+		},
+		{
+			timeout: txtimeoutValue(),
 		}
-		if (!data.name || !data.description || !data.createdByUserId) {
-			return res
-				.status(400)
-				.json(
-					buildError(
-						400,
-						'Missing required fields: name, description, createdByUserId',
-						null
-					)
-				);
-		}
-
-		// #endregion
-
-		// Attach the visiblity rules
-		data = createTaskVisiblityRules(data);
-
-		// Have the user who created it be subscribed to it by default
-		data.taskUserSubscribeTo = {
-			create: {
-				userId,
-			},
-		};
-
-		const task = await taskService.createTask(data);
-
-		return res
-			.status(201)
-			.json(buildResponse(201, 'Task created successfully!', task));
-	} catch (error: any) {
-		console.error('CREATE TASK ERROR:', error);
-		return res
-			.status(500)
-			.json(buildError(500, 'Error creating task', error));
-	}
+	);
 }
 
 // READ - Get tasks
@@ -327,7 +390,7 @@ function createTaskVisiblityRules(data: any) {
 
 	data.taskVisibleToUsers = {
 		create: ids.map((el: Number) => {
-			return { userId: el };
+			return { userId: Number(el) };
 		}),
 	};
 
@@ -335,7 +398,7 @@ function createTaskVisiblityRules(data: any) {
 		let ids = data.taskVisibleToTeams;
 		data.taskVisibleToTeams = {
 			create: ids.map((el: Number) => {
-				return { teamId: el };
+				return { teamId: Number(el) };
 			}),
 		};
 	}
@@ -344,7 +407,7 @@ function createTaskVisiblityRules(data: any) {
 		let ids = data.taskHiddenFromUsers;
 		data.taskHiddenFromUsers = {
 			create: ids.map((el: Number) => {
-				return { userId: el };
+				return { userId: Number(el) };
 			}),
 		};
 	}
@@ -357,6 +420,7 @@ async function updateTaskVisiblityRules(
 	data: any,
 	existingTask: any
 ) {
+	const visiblityService = createVisibilityService(tx);
 	const taskId = existingTask.id;
 
 	// Check the TaskVisibleToUsers
@@ -377,7 +441,6 @@ async function updateTaskVisiblityRules(
 		);
 
 		await visiblityService.updateTaskVisibleToUsersRelations(
-			tx,
 			removedValues,
 			valuesCreated,
 			taskId
@@ -402,7 +465,6 @@ async function updateTaskVisiblityRules(
 		);
 
 		await visiblityService.updateTaskVisibleToTeamsRelations(
-			tx,
 			removedValues,
 			valuesCreated,
 			taskId
@@ -427,7 +489,6 @@ async function updateTaskVisiblityRules(
 		);
 
 		await visiblityService.updateTaskHiddenFromUsersRelations(
-			tx,
 			removedValues,
 			valuesCreated,
 			taskId
