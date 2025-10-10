@@ -9,4 +9,4 @@ export function txtimeoutValue() {
 		return 5000;
 	}
 }
-export const prismaDb = new PrismaClient();
+export const prismaDb: PrismaClient = new PrismaClient();

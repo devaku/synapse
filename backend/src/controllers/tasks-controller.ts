@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as taskService from '../services/task-service';
+import { createTaskService } from '../services/task-service';
 import * as visiblityService from '../services/visibility-service';
 import { buildResponse, buildError } from '../lib/response-helper';
 import { Prisma } from '@prisma/client';
@@ -37,12 +37,6 @@ export async function createTask(req: Request, res: Response) {
 				);
 		}
 
-		// Used AI to set default priority of a task as 'Medium" |
-		// Prompt: "How do I set a task with a default priority state of Medium?"
-		if (!data.priority) {
-			data.priority = 'MEDIUM';
-		}
-
 		// #endregion
 
 		// Attach the visiblity rules
@@ -70,6 +64,7 @@ export async function createTask(req: Request, res: Response) {
 
 // READ - Get tasks
 export async function readTask(req: Request, res: Response) {
+	const taskService = createTaskService(prismaDb);
 	try {
 		const { id } = req.params;
 		const { useronly } = req.query;
@@ -132,6 +127,7 @@ export async function readTask(req: Request, res: Response) {
 }
 
 export async function readSubscribedTasks(req: Request, res: Response) {
+	const taskService = createTaskService(prismaDb);
 	try {
 		const userId = req.session.userData!.user.id;
 
@@ -176,7 +172,7 @@ export async function updateTask(req: Request, res: Response) {
 				.status(400)
 				.json(buildError(400, 'Request body cannot be empty', null));
 		//#endregion
-
+		const taskService = createTaskService(prismaDb);
 		const existingTask = await taskService.readTaskById(taskId);
 		if (!existingTask)
 			return res
@@ -210,8 +206,8 @@ export async function updateTask(req: Request, res: Response) {
 					delete data.taskHiddenFromUsers;
 					delete data.taskVisibleToTeams;
 
+					const taskService = createTaskService(tx);
 					const updatedTask = await taskService.updateTask(
-						tx,
 						taskId,
 						data
 					);
@@ -242,6 +238,7 @@ export async function updateTask(req: Request, res: Response) {
 
 // DELETE - Delete tasks (single or multiple)
 export async function deleteTask(req: Request, res: Response) {
+	const taskService = createTaskService(prismaDb);
 	try {
 		const { id } = req.params;
 		const taskIdArray = req.body?.taskIdArray; // safe even if body is undefined
