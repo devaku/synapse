@@ -52,7 +52,7 @@ taskRouter.put(
 taskRouter.get('/tasks/:id', readTask);
 
 // UPDATE
-taskRouter.put('/tasks/:id', express.json(), updateTask);
+taskRouter.put('/tasks/:id', uploadMiddleware.array('pictures'), updateTask);
 
 // DELETE
 //  - DELETE /tasks/:id → delete one

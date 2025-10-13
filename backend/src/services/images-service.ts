@@ -2,7 +2,10 @@ import { PrismaClientOrTransaction } from '../types';
 
 export const createImageService = (tx: PrismaClientOrTransaction) => {
 	return {
-		createImage: async function (userId: number, images: string[]) {
+		createImage: async function createImage(
+			userId: number,
+			images: string[]
+		) {
 			let finalData = images.map((el) => {
 				return {
 					imageUrl: el,
@@ -23,6 +26,16 @@ export const createImageService = (tx: PrismaClientOrTransaction) => {
 			});
 
 			return row;
+		},
+
+		deleteImages: async function deleteImages(images: number[]) {
+			await tx.image.deleteMany({
+				where: {
+					id: {
+						in: images,
+					},
+				},
+			});
 		},
 	};
 };

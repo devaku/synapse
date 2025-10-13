@@ -1,10 +1,6 @@
 import { Task } from '../../database/generated/prisma';
 import { PrismaClientOrTransaction } from '../types';
 
-/**
- * REFACTOR THIS CODE TO BE DEPENDENCY INJECTABLE
- */
-
 export const createTaskService = (tx: PrismaClientOrTransaction) => {
 	return {
 		createTask: async function createTask(taskObj: any) {
@@ -184,6 +180,7 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 							lastName: true,
 						},
 					},
+					imagesAttachedToTasks: true,
 					taskHiddenFromUsers: true,
 					taskVisibleToTeams: true,
 					taskVisibleToUsers: true,

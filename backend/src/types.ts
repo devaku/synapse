@@ -10,6 +10,8 @@ declare global {
 			io: SocketIOServer;
 		}
 	}
+
+	var ROOT_DIR: string;
 }
 
 export type PrismaClientOrTransaction = PrismaClient | Prisma.TransactionClient;

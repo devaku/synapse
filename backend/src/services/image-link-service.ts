@@ -33,5 +33,21 @@ export const createImageLinkService = (tx: PrismaClientOrTransaction) => {
 
 			return rows;
 		},
+
+		unlinkImagesToTasks: async function unlinkImagesToTasks(
+			imageIds: number[],
+			taskId: number
+		) {
+			const rows = await tx.imagesAttachedToTasks.deleteMany({
+				where: {
+					taskId,
+					imageId: {
+						in: imageIds,
+					},
+				},
+			});
+
+			return rows;
+		},
 	};
 };
