@@ -56,3 +56,26 @@ export const deletionRequest = [
 		reason: 'This is a seeded request',
 	},
 ];
+
+export const imagesAttachedToTasks = [
+	{
+		imageId: 51,
+		taskId: 1,
+	},
+	{
+		imageId: 52,
+		taskId: 1,
+	},
+	{
+		imageId: 53,
+		taskId: 1,
+	},
+	{
+		imageId: 54,
+		taskId: 1,
+	},
+	{
+		imageId: 55,
+		taskId: 1,
+	},
+];
