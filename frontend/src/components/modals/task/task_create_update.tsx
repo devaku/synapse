@@ -378,7 +378,7 @@ export default function TaskCreateUpdateModal({
 										Existing Attached Images. Click to
 										remove.
 									</label>
-									<div className="grid grid-cols-4">
+									<div className="grid grid-cols-4 gap-2">
 										{taskReference?.imagesAttachedToTasks.map(
 											(el, index) => {
 												return (
