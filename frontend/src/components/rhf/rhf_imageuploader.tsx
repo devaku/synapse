@@ -7,7 +7,7 @@ import { useDropzone, type FileWithPath } from 'react-dropzone';
 /**
  * COMPONENTS
  */
-import GalleryDisplay from './gallery_display';
+import GalleryDisplay from '../ui/gallery_display';
 
 export default function RHFImageUploader({
 	value,
@@ -64,6 +64,7 @@ export default function RHFImageUploader({
 	 */
 
 	function handleClearImagesClick() {
+		onChange([]);
 		handleClearPreview();
 	}
 	function handleAddPreview(acceptedFiles: readonly FileWithPath[]) {

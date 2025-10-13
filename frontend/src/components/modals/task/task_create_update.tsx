@@ -3,9 +3,11 @@
  */
 
 import { type Task, type User } from '../../../lib/types/models';
-import Select, { type MultiValue } from 'react-select';
 import { type Team } from '../../../lib/types/models';
+import Select from 'react-select';
 import Spinner from '../../ui/spinner';
+import RHFImageUploader from '../../rhf/rhf_imageuploader';
+import RHFImageSelect from '../../rhf/rhf_imageselect';
 
 /**
  * HOOKS
@@ -43,6 +45,8 @@ interface FormValues extends Task {
 	selectTaskVisibleToTeams: OptionType[];
 	selectTaskVisibleToUsers: OptionType[];
 	selectTaskHiddenFromUsers: OptionType[];
+	pictures?: File[];
+	removedImages?: number[];
 }
 
 export default function TaskCreateUpdateModal({
@@ -61,8 +65,14 @@ export default function TaskCreateUpdateModal({
 		control,
 		setValue,
 		getValues,
+		reset,
 		formState: { errors },
-	} = useForm<FormValues>();
+	} = useForm<FormValues>({
+		defaultValues: {
+			pictures: [],
+			removedImages: [],
+		},
+	});
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [taskReference, setTaskReference] = useState<Task | null>(null);
@@ -173,72 +183,116 @@ export default function TaskCreateUpdateModal({
 	 * HANDLERS
 	 */
 
+	function ProcessSelectOptions(options: OptionType[]) {
+		let ids: number[] = [];
+		if (options) {
+			ids = options.map((el) => {
+				return Number(el.value);
+			});
+
+			return ids;
+		} else {
+			return [];
+		}
+	}
+
+	function buildArrayFormData(
+		formData: FormData,
+		key: string,
+		value: number[]
+	) {
+		value.map((el) => {
+			formData.append(`${key}[]`, el.toString());
+		});
+	}
+
 	async function handleFormSubmit(data: FormValues) {
 		try {
 			setIsLoading(true);
-			// TODO: https://www.youtube.com/watch?v=XlAs-Lid-TA
-			// Handling image uploading in the future
 
-			// TODO: Add proper error handling from API call
+			const formData = new FormData();
 
 			/**
 			 * VISIBLITY RULES
 			 */
 
 			// Get IDs
-			let taskHiddenFromUsers: number[] = [];
-			let thu = getValues('selectTaskHiddenFromUsers');
-			if (thu) {
-				taskHiddenFromUsers = thu.map((el) => {
-					return Number(el.value);
-				});
-			} else {
-				taskHiddenFromUsers = [];
+			let taskHiddenFromUsers: number[] = ProcessSelectOptions(
+				getValues('selectTaskHiddenFromUsers')
+			);
+			let taskVisibleToUsers: number[] = ProcessSelectOptions(
+				getValues('selectTaskVisibleToUsers')
+			);
+			let taskVisibleToTeams: number[] = ProcessSelectOptions(
+				getValues('selectTaskVisibleToTeams')
+			);
+
+			formData.append('name', data.name);
+			formData.append('priority', data.priority);
+			formData.append('description', data.description);
+
+			if (taskVisibleToTeams) {
+				buildArrayFormData(
+					formData,
+					'taskVisibleToTeams',
+					taskVisibleToTeams
+				);
 			}
 
-			let taskVisibleToUsers: number[] = [];
-			let tvu = getValues('selectTaskVisibleToUsers');
-			if (tvu) {
-				taskVisibleToUsers = tvu.map((el) => {
-					return Number(el.value);
-				});
-			} else {
-				taskVisibleToUsers = [];
+			if (taskVisibleToUsers) {
+				buildArrayFormData(
+					formData,
+					'taskVisibleToUsers',
+					taskVisibleToUsers
+				);
 			}
 
-			let taskVisibleToTeams: number[] = [];
-			let tvt = getValues('selectTaskVisibleToTeams');
-			if (tvt) {
-				taskVisibleToTeams = tvt.map((el) => {
-					return Number(el.value);
-				});
-			} else {
-				taskVisibleToTeams = [];
+			if (taskHiddenFromUsers) {
+				buildArrayFormData(
+					formData,
+					'taskHiddenFromUsers',
+					taskHiddenFromUsers
+				);
 			}
 
-			let finalTaskObj: any = {};
-
-			// Begin mapping data
-			finalTaskObj.name = data.name;
-			finalTaskObj.priority = data.priority;
-			finalTaskObj.description = data.description;
-			finalTaskObj.taskVisibleToTeams = taskVisibleToTeams;
-			finalTaskObj.taskVisibleToUsers = taskVisibleToUsers;
-			finalTaskObj.taskHiddenFromUsers = taskHiddenFromUsers;
+			// Attach uploaded pictures, if there are any
+			const { pictures } = data;
+			if (pictures) {
+				pictures.map((el: any) => {
+					formData.append('pictures', el);
+				});
+			}
 
 			// If a taskId was given, it is an update
 			if (taskId) {
-				finalTaskObj.createdByUserId = taskReference?.createdByUserId;
+				const creator = taskReference?.createdByUserId.toString();
+				formData.append('createdByUserId', creator!);
 
-				// console.log(finalTaskObj);
-				await updateTask(token!, taskId, finalTaskObj);
+				buildArrayFormData(
+					formData,
+					'taskHiddenFromUsers',
+					taskHiddenFromUsers
+				);
+
+				// console.log(data.removedImages);
+
+				if (data.removedImages) {
+					buildArrayFormData(
+						formData,
+						'removedImages',
+						data.removedImages
+					);
+				}
+
+				await updateTask(token!, taskId, formData);
 			} else {
 				// Create the task in the backend
-				await createTask(token!, finalTaskObj);
+				await createTask(token!, formData);
 			}
 
 			// Close modal
 			handleModalDisplay();
+			setIsLoading(false);
 		} catch (error) {
 			setIsLoading(false);
 			console.log(error);
@@ -315,6 +369,68 @@ export default function TaskCreateUpdateModal({
 										required: true,
 									})}
 								></textarea>
+							</div>
+							{/* REMOVE Attached Images */}
+							{taskReference?.imagesAttachedToTasks &&
+							taskReference?.imagesAttachedToTasks.length > 0 ? (
+								<div>
+									<label className="">
+										Existing Attached Images. Click to
+										remove.
+									</label>
+									<div className="grid grid-cols-4">
+										{taskReference?.imagesAttachedToTasks.map(
+											(el, index) => {
+												return (
+													<Controller
+														key={index}
+														name="removedImages"
+														control={control}
+														render={({ field }) => {
+															return (
+																<RHFImageSelect
+																	onChange={
+																		field.onChange
+																	}
+																	imageUrl={
+																		el.image
+																			.imageUrl
+																	}
+																	fieldValue={
+																		field.value!
+																	}
+																	imageIndex={
+																		el.image
+																			.id
+																	}
+																></RHFImageSelect>
+															);
+														}}
+													></Controller>
+												);
+											}
+										)}
+									</div>
+								</div>
+							) : (
+								''
+							)}
+
+							{/* UPLOAD IMAGES */}
+							<div>
+								<label>Attach Images: </label>
+								<Controller
+									name={'pictures'}
+									control={control}
+									render={({ field }) => {
+										return (
+											<RHFImageUploader
+												value={field.value}
+												onChange={field.onChange}
+											></RHFImageUploader>
+										);
+									}}
+								></Controller>
 							</div>
 
 							{/* VISIBILITY RULES */}

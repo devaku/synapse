@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
  * COMPONENTS
  */
 import CommentCard from '../../ui/comment_card';
-import RHFImageUploader from '../../ui/rhf_imageuploader';
+import RHFImageUploader from '../../rhf/rhf_imageuploader';
 
 /**
  * SERVICES
