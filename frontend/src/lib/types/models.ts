@@ -32,7 +32,7 @@ export interface Task {
 	priority: string;
 	name: string;
 	description: string;
-	image?: string | null;
+
 	startDate?: Date | null;
 	createdAt: Date;
 	isDeleted: number;
@@ -43,6 +43,7 @@ export interface Task {
 	createdByUser: User;
 	archivedByUser?: User | null;
 	comments: Comment[];
+	imagesAttachedToTasks: ImagesAttachedToTasks[];
 	taskVisibleToUsers: TaskVisibleToUsers[];
 	taskHiddenFromUsers: TaskHiddenFromUsers[];
 	taskVisibleToTeams: TaskVisibleToTeams[];
@@ -144,6 +145,14 @@ export interface Image {
 /**
  * Link Tables
  */
+
+export interface ImagesAttachedToTasks {
+	imageId: number;
+	taskId: number;
+
+	image: Image;
+	task: Task;
+}
 
 export interface ImagesAttachedToComments {
 	imageId: number;

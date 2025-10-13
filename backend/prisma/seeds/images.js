@@ -200,3 +200,26 @@ export const userIcons = [
 		userId: 1,
 	},
 ];
+
+export const taskImages = [
+	{
+		imageUrl: 'http://localhost:8080/public/uploads/azul.jpg',
+		userId: 2,
+	},
+	{
+		imageUrl: 'http://localhost:8080/public/uploads/bliss.jpg',
+		userId: 2,
+	},
+	{
+		imageUrl: 'http://localhost:8080/public/uploads/follow.jpg',
+		userId: 2,
+	},
+	{
+		imageUrl: 'http://localhost:8080/public/uploads/tulips.jpg',
+		userId: 2,
+	},
+	{
+		imageUrl: 'http://localhost:8080/public/uploads/vortec_space.jpg',
+		userId: 2,
+	},
+];

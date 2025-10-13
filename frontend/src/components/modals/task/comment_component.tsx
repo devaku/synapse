@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
  * COMPONENTS
  */
 import CommentCard from '../../ui/comment_card';
-import ImageUploader from '../../ui/image_uploader';
+import RHFImageUploader from '../../rhf/rhf_imageuploader';
 
 /**
  * SERVICES
@@ -37,6 +37,11 @@ type CommentProps = {
 interface FormValues extends Comment {
 	pictures?: File[];
 }
+
+/**
+ * Integration of react-hook-form with react-gallery-view
+ * was made possible with assistance of AI
+ */
 
 export default function CommentComponent({
 	taskId,
@@ -202,16 +207,10 @@ export default function CommentComponent({
 									control={control}
 									render={({ field }) => {
 										return (
-											<ImageUploader
-												previews={previews}
-												handleAddPreview={
-													handleAddPreview
-												}
-												handleClearPreview={
-													handleClearPreview
-												}
+											<RHFImageUploader
+												value={field.value}
 												onChange={field.onChange}
-											></ImageUploader>
+											></RHFImageUploader>
 										);
 									}}
 								></Controller>

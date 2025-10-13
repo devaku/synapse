@@ -3,6 +3,7 @@
  */
 
 import StatusPill from '../../ui/status_pill';
+import GalleryDisplay from '../../ui/gallery_display';
 
 /**
  * HOOKS
@@ -49,6 +50,7 @@ export default function MyTaskModalHeader({
 
 	async function fetchTaskInfo(taskId: number) {
 		const taskRow = await readTask(token!, taskId);
+		console.log(taskRow);
 		setTask(taskRow[0]);
 	}
 
@@ -84,6 +86,19 @@ export default function MyTaskModalHeader({
 					<div className="min-w-32">Created By: </div>
 					<div>{task?.createdByUser?.username}</div>
 				</div>
+				{task?.imagesAttachedToTasks &&
+				task?.imagesAttachedToTasks.length > 0 ? (
+					<div>
+						<div className="min-w-32 mb-2">Attached Images: </div>
+						<GalleryDisplay
+							images={task?.imagesAttachedToTasks.map(
+								(el) => el.image.imageUrl
+							)}
+						></GalleryDisplay>
+					</div>
+				) : (
+					''
+				)}
 				<hr className="my-2" />
 			</div>
 			{children}

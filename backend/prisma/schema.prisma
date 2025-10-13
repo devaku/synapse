@@ -43,26 +43,26 @@ model User {
 }
 
 model Task {
-    id                  Int                   @id @default(autoincrement())
-    createdByUserId     Int
-    createdByUser       User                  @relation(fields: [createdByUserId], references: [id])
-    priority            String
-    name                String                @db.VarChar(255)
-    description         String                @db.VarChar(255)
-    image               String?               @db.VarChar(255)
-    startDate           DateTime?             @db.Timestamp(6)
-    createdAt           DateTime              @default(now()) @db.Timestamp(6)
-    isDeleted           Int                   @default(0)
-    completeDate        DateTime?             @db.Timestamp(6)
-    isArchived          Int                   @default(0)
-    archivedByUserId    Int?
-    archivedByUser      User?                 @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
-    comments            Comment[]
-    taskVisibleToUsers  TaskVisibleToUsers[]
-    taskHiddenFromUsers TaskHiddenFromUsers[]
-    taskVisibleToTeams  TaskVisibleToTeams[]
-    deletionRequest     DeletionRequest[]
-    taskUserSubscribeTo TaskUserSubscribeTo[]
+    id                    Int                     @id @default(autoincrement())
+    createdByUserId       Int
+    createdByUser         User                    @relation(fields: [createdByUserId], references: [id])
+    priority              String
+    name                  String                  @db.VarChar(255)
+    description           String                  @db.VarChar(255)
+    startDate             DateTime?               @db.Timestamp(6)
+    createdAt             DateTime                @default(now()) @db.Timestamp(6)
+    isDeleted             Int                     @default(0)
+    completeDate          DateTime?               @db.Timestamp(6)
+    isArchived            Int                     @default(0)
+    archivedByUserId      Int?
+    archivedByUser        User?                   @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
+    comments              Comment[]
+    taskVisibleToUsers    TaskVisibleToUsers[]
+    taskHiddenFromUsers   TaskHiddenFromUsers[]
+    taskVisibleToTeams    TaskVisibleToTeams[]
+    deletionRequest       DeletionRequest[]
+    taskUserSubscribeTo   TaskUserSubscribeTo[]
+    imagesAttachedToTasks ImagesAttachedToTasks[]
 }
 
 model Team {
@@ -149,11 +149,21 @@ model Image {
     createdAt                DateTime                   @default(now()) @db.Timestamp(6)
     imagesAttachedToComments ImagesAttachedToComments[]
     usersUsingAsProfileImage User[]                     @relation("UserProfileImage")
+    ImagesAttachedToTasks    ImagesAttachedToTasks[]
 }
 
 /**
  * LINK TABLES
  */
+
+model ImagesAttachedToTasks {
+    imageId Int
+    image   Image @relation(fields: [imageId], references: [id])
+    taskId  Int
+    task    Task  @relation(fields: [taskId], references: [id])
+
+    @@id([imageId, taskId])
+}
 
 model ImagesAttachedToComments {
     imageId   Int

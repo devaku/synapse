@@ -13,7 +13,7 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 export default function GalleryDisplay({ images }: { images?: string[] }) {
 	return (
 		<>
-			<div className="grid grid-cols-4 gap-2">
+			<div className="grid grid-cols-4 gap-2 px-2">
 				<PhotoProvider>
 					{images?.map((el, index) => {
 						return (

@@ -22,7 +22,7 @@ services:
             - synapse_network
 
     keycloak_service:
-        container_name: synapse_auth
+        container_name: synapse_keycloak
         image: quay.io/keycloak/keycloak:26.2.5
         ports:
             - '4000:8080'

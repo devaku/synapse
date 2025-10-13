@@ -1,18 +1,22 @@
-import fs from 'fs/promises';
 import { prismaDb } from '../lib/database';
 import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
-import * as imageService from '../services/images-service';
+import { createImageService } from '../services/images-service';
 import * as commentService from '../services/comments-service';
-import * as imageLinkService from '../services/image-link-service';
+import { createImageLinkService } from '../services/image-link-service';
 import { buildResponse, buildError } from '../lib/response-helper';
+import { deleteUploadedFiles } from '../lib/file-helper';
+import { IMAGE_STORAGE_URL } from '../lib/env-variables';
 
 /**
  * This entire endpoint is atomic
  */
 export async function createComment(req: Request, res: Response) {
-	const IMAGE_STORAGE_URL = `${process.env.SERVER_URL}/public/uploads`;
 	return prismaDb.$transaction(async (tx: Prisma.TransactionClient) => {
+		// Load up the service
+		const imageService = createImageService(tx);
+		const imageLinkService = createImageLinkService(tx);
+
 		try {
 			// req.files[0].filename
 			// console.log(req.files);
@@ -39,11 +43,7 @@ export async function createComment(req: Request, res: Response) {
 					const images = uploaded.map((el: any) => {
 						return `${IMAGE_STORAGE_URL}/${el.filename}`;
 					});
-					imageRows = await imageService.createImage(
-						tx,
-						userId!,
-						images
-					);
+					imageRows = await imageService.createImage(userId!, images);
 				}
 			}
 
@@ -51,7 +51,6 @@ export async function createComment(req: Request, res: Response) {
 			if (imageRows) {
 				let imageIds = imageRows.map((el: any) => el.id);
 				await imageLinkService.linkImagesToComments(
-					tx,
 					imageIds,
 					commentRow.id
 				);
@@ -77,14 +76,7 @@ export async function createComment(req: Request, res: Response) {
 			if (Array.isArray(req.files)) {
 				const uploaded = req.files;
 				if (uploaded.length > 0) {
-					const images = uploaded.map((el: any) => {
-						return `${req.upload_location}/${el.filename}`;
-					});
-
-					// Begin deleting them
-					images.map(async (el) => {
-						await fs.unlink(el);
-					});
+					deleteUploadedFiles(uploaded, req.upload_location);
 				}
 			}
 
