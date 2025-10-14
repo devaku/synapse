@@ -139,6 +139,9 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 					taskVisibleToUsers: true,
 					taskVisibleToTeams: true,
 				},
+				orderBy: {
+					createdAt: 'desc',
+				},
 			});
 			return row;
 		},
