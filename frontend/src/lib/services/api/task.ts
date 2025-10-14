@@ -1,15 +1,15 @@
 import type { jsonResponse } from '../../types/custom';
 const url = import.meta.env.VITE_API_URL;
 
-export async function createTask(token: string, taskObj: any) {
+export async function createTask(token: string, taskObj: FormData) {
+	// Attach the data to the form
 	let response: jsonResponse = await fetch(`${url}/tasks`, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${token}`,
+			Authorization: `Bearer ${token}`,
 		},
 		credentials: 'include',
-		body: JSON.stringify(taskObj),
+		body: taskObj,
 	})
 		.then((res) => res.json())
 		.catch((error) => {
@@ -31,15 +31,18 @@ export async function createTask(token: string, taskObj: any) {
 	}
 }
 
-export async function updateTask(token: string, taskId: number, taskObj: any) {
+export async function updateTask(
+	token: string,
+	taskId: number,
+	taskObj: FormData
+) {
 	let response: jsonResponse = await fetch(`${url}/tasks/${taskId}`, {
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${token}`,
+			Authorization: `Bearer ${token}`,
 		},
 		credentials: 'include',
-		body: JSON.stringify(taskObj),
+		body: taskObj,
 	})
 		.then((res) => res.json())
 		.catch((error) => {
@@ -94,6 +97,34 @@ export async function readTasksFilteredForUser(token: string) {
  */
 export async function readTask(token: string, taskId: number) {
 	let response: jsonResponse = await fetch(`${url}/tasks/${taskId}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		credentials: 'include',
+	})
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
+export async function readAllTasks(token: string) {
+	let response: jsonResponse = await fetch(`${url}/tasks`, {
 		method: 'GET',
 		headers: {
 			Authorization: `Bearer ${token}`,

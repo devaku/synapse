@@ -2,16 +2,27 @@ import TTGLogo from '@/assets/images/ttglogo/TTG_Spiral_Logo_White.png';
 import TTGIcon from '@/assets/images/ttglogo/TTG_Icon.ico';
 import SidebarButton from '../ui/sidebar_button';
 import { useNavigate } from 'react-router';
-import useAuth from '../../lib/hooks/auth/useAuth';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
+import { useEffect, useState } from 'react';
 
 export default function Sidebar() {
 	const navigate = useNavigate();
 
-	const { keycloak, isAuthenticated, token } = useAuthContext();
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-	// TODO: Change this to actual check
-	const adminPrivileges = true;
+	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+
+	// console.log(userData);
+
+	useEffect(() => {
+		if (
+			userData?.resource_access?.client_synapse.roles.includes('admins')
+		) {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+	}, [userData]);
 
 	return (
 		<div className="h-screen flex flex-col items-center md:w-50 max-md:w-20 bg-ttg-dark-blue px-3 pt-3">
@@ -25,7 +36,10 @@ export default function Sidebar() {
 				alt="TTG Icon"
 				className="mb-10 max-h-10 10 max-md:visible md:hidden"
 			/>
-			<div className="flex flex-col justify-between flex-1 overflow-y-auto">
+			<div
+				style={{ scrollbarWidth: 'thin' }}
+				className="flex flex-col w-full justify-between flex-1 overflow-y-auto"
+			>
 				{/* Tab Buttons */}
 				<div className="flex flex-col gap-7.5 md:px-5 max-md:px-0 max-md:items-center max-md:h-10">
 					<SidebarButton
@@ -60,7 +74,7 @@ export default function Sidebar() {
 					/>
 
 					{/* Admin Privileges for accessing logs and stuff unless not necessary */}
-					{adminPrivileges && (
+					{isAdmin ? (
 						<div className="mt-10 flex flex-col gap-3 cursor-pointer">
 							<h1 className="text-white">Admin Pages</h1>
 							<SidebarButton
@@ -94,6 +108,8 @@ export default function Sidebar() {
 								iconPath=""
 							/>
 						</div>
+					) : (
+						''
 					)}
 				</div>
 			</div>

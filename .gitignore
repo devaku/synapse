@@ -1,15 +1,19 @@
 # Miscellaneous
 notes.txt
+misc
 
 # Apply to both
 */**/.env
 */**/node_modules
 */**/dist
+*/**/synapses-test.2025-09-30.private-key.pem
 
 # Backend
 backend/.env
+backend/src/public/uploads/*
 backend/scratch.ts
 backend/database/generated/prisma
+backend/api/github.http
 
 # Frontend
 frontend/src/scratch

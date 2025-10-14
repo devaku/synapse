@@ -56,3 +56,20 @@ export async function readUser(userId: number) {
 
 	return rows;
 }
+
+export async function readUserByKeycloakId(keycloakId: string) {
+	const rows = await prismaDb.user.findUnique({
+		where: {
+			keycloakId,
+		},
+		include: {
+			image: true,
+			team: true,
+			teamsUsersBelongTo: true,
+			createdTasks: true,
+			notification: true,
+		},
+	});
+
+	return rows;
+}

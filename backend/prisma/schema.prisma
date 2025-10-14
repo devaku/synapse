@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client-js"
-    output   = "../database/generated/prisma"
+    provider      = "prisma-client-js"
+    output        = "../database/generated/prisma"
+    binaryTargets = ["windows", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -15,49 +16,53 @@ datasource db {
 }
 
 model User {
-    id                   Int                   @id @default(autoincrement())
-    keycloakId           String                @unique @db.VarChar(255)
-    username             String                @db.VarChar(255)
-    email                String                @db.VarChar(255)
-    firstName            String?               @db.VarChar(255)
-    lastName             String?               @db.VarChar(255)
-    phone                Int?
-    lastActivity         DateTime              @default(now()) @db.Timestamp(6)
-    isDeleted            Int                   @default(0)
-    notification         Notification[]
-    logs                 Logs[]
-    createdTasks         Task[]
-    comment              Comment[]
-    taskVisibleToUsers   TaskVisibleToUsers[]
-    taskHiddenFromUsers  TaskHiddenFromUsers[]
-    teamsUsersBelongTo   TeamsUsersBelongTo[]
-    team                 Team[]                @relation("TeamMadeByUser")
-    deletionRequest      DeletionRequest[]
-    taskUsersSubscribeTo TaskUserSubscribeTo[]
-    taskArchived         Task[]                @relation("TaskArchivedBy")
+    id                       Int                      @id @default(autoincrement())
+    keycloakId               String                   @unique @db.VarChar(255)
+    username                 String                   @db.VarChar(255)
+    email                    String                   @db.VarChar(255)
+    firstName                String?                  @db.VarChar(255)
+    lastName                 String?                  @db.VarChar(255)
+    phone                    Int?
+    imageId                  Int?
+    image                    Image?                   @relation("UserProfileImage", fields: [imageId], references: [id])
+    lastActivity             DateTime                 @default(now()) @db.Timestamp(6)
+    isDeleted                Int                      @default(0)
+    notification             Notification[]
+    logs                     Logs[]
+    createdTasks             Task[]
+    comment                  Comment[]
+    taskVisibleToUsers       TaskVisibleToUsers[]
+    taskHiddenFromUsers      TaskHiddenFromUsers[]
+    teamsUsersBelongTo       TeamsUsersBelongTo[]
+    team                     Team[]                   @relation("TeamMadeByUser")
+    deletionRequest          DeletionRequest[]
+    taskUsersSubscribeTo     TaskUserSubscribeTo[]
+    taskArchived             Task[]                   @relation("TaskArchivedBy")
+    repoCollaboratorRequests RepoColaboratorRequest[]
+    imagesUploaded           Image[]                  @relation("ImagesUploadedByUser")
 }
 
 model Task {
-    id                  Int                   @id @default(autoincrement())
-    createdByUserId     Int
-    createdByUser       User                  @relation(fields: [createdByUserId], references: [id])
-    priority            String
-    name                String                @db.VarChar(255)
-    description         String                @db.VarChar(255)
-    image               String?               @db.VarChar(255)
-    startDate           DateTime?             @db.Timestamp(6)
-    createdAt           DateTime              @default(now()) @db.Timestamp(6)
-    isDeleted           Int                   @default(0)
-    completeDate        DateTime?             @db.Timestamp(6)
-    isArchived          Int                   @default(0)
-    archivedByUserId    Int?
-    archivedByUser      User?                 @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
-    comments            Comment[]
-    taskVisibleToUsers  TaskVisibleToUsers[]
-    taskHiddenFromUsers TaskHiddenFromUsers[]
-    taskVisibleToTeams  TaskVisibleToTeams[]
-    deletionRequest     DeletionRequest[]
-    taskUserSubscribeTo TaskUserSubscribeTo[]
+    id                    Int                     @id @default(autoincrement())
+    createdByUserId       Int
+    createdByUser         User                    @relation(fields: [createdByUserId], references: [id])
+    priority              String
+    name                  String                  @db.VarChar(255)
+    description           String                  @db.VarChar(255)
+    startDate             DateTime?               @db.Timestamp(6)
+    createdAt             DateTime                @default(now()) @db.Timestamp(6)
+    isDeleted             Int                     @default(0)
+    completeDate          DateTime?               @db.Timestamp(6)
+    isArchived            Int                     @default(0)
+    archivedByUserId      Int?
+    archivedByUser        User?                   @relation("TaskArchivedBy", fields: [archivedByUserId], references: [id])
+    comments              Comment[]
+    taskVisibleToUsers    TaskVisibleToUsers[]
+    taskHiddenFromUsers   TaskHiddenFromUsers[]
+    taskVisibleToTeams    TaskVisibleToTeams[]
+    deletionRequest       DeletionRequest[]
+    taskUserSubscribeTo   TaskUserSubscribeTo[]
+    imagesAttachedToTasks ImagesAttachedToTasks[]
 }
 
 model Team {
@@ -96,14 +101,15 @@ model Logs {
 }
 
 model Comment {
-    id        Int      @id @default(autoincrement())
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    message   String   @db.VarChar(255)
-    task      Task     @relation(fields: [taskId], references: [id])
-    taskId    Int
-    createdAt DateTime @default(now()) @db.Timestamp(6)
-    isDeleted Int      @default(0)
+    id                       Int                        @id @default(autoincrement())
+    userId                   Int
+    user                     User                       @relation(fields: [userId], references: [id])
+    message                  String                     @db.VarChar(255)
+    task                     Task                       @relation(fields: [taskId], references: [id])
+    taskId                   Int
+    createdAt                DateTime                   @default(now()) @db.Timestamp(6)
+    isDeleted                Int                        @default(0)
+    imagesAttachedToComments ImagesAttachedToComments[]
 }
 
 model Session {
@@ -125,9 +131,48 @@ model DeletionRequest {
     isDeleted         Int      @default(0)
 }
 
+model RepoColaboratorRequest {
+    id             Int      @id @default(autoincrement())
+    githubUsername String
+    userId         Int
+    user           User     @relation(fields: [userId], references: [id])
+    repoId         Int
+    permission     String   @db.VarChar(255)
+    createdAt      DateTime @default(now()) @db.Timestamp(6)
+}
+
+model Image {
+    id                       Int                        @id @default(autoincrement())
+    imageUrl                 String
+    userId                   Int
+    uploadedBy               User                       @relation("ImagesUploadedByUser", fields: [userId], references: [id])
+    createdAt                DateTime                   @default(now()) @db.Timestamp(6)
+    imagesAttachedToComments ImagesAttachedToComments[]
+    usersUsingAsProfileImage User[]                     @relation("UserProfileImage")
+    ImagesAttachedToTasks    ImagesAttachedToTasks[]
+}
+
 /**
  * LINK TABLES
  */
+
+model ImagesAttachedToTasks {
+    imageId Int
+    image   Image @relation(fields: [imageId], references: [id])
+    taskId  Int
+    task    Task  @relation(fields: [taskId], references: [id])
+
+    @@id([imageId, taskId])
+}
+
+model ImagesAttachedToComments {
+    imageId   Int
+    image     Image   @relation(fields: [imageId], references: [id])
+    commentId Int
+    comment   Comment @relation(fields: [commentId], references: [id])
+
+    @@id([imageId, commentId])
+}
 
 model TaskUserSubscribeTo {
     taskId Int

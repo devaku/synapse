@@ -1,5 +1,5 @@
 import express from 'express';
-import { createDeletionRequest } from '../controllers/deletion-request-controller';
+import { createDeletionRequest } from '../controllers/deletion-requests-controller';
 
 const deletionRequestRouter = express.Router();
 

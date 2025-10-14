@@ -5,6 +5,11 @@ import DataTable from '../components/container/DataTableBase';
 import { type TableColumn } from 'react-data-table-component';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
+	useTeamTasks,
+	type LeaderboardTeam,
+	type Task,
+} from '../lib/hooks/api/useTeamTasks';
+import {
 	Chart as ChartJS,
 	CategoryScale,
 	LinearScale,
@@ -29,19 +34,10 @@ ChartJS.register(
 export default function ChartsPage() {
 	const style = getComputedStyle(document.body);
 
-	type DataRowLeaderboard = {
-		ranking?: number;
-		name: string;
-		tasks: number;
-	};
+	const { leaderboardData, tasks } = useTeamTasks();
 
-	type DataRowActiveTasks = {
-		priority: string;
-		name: string;
-		description: string;
-		createdBy: string;
-		startDate?: string;
-		completeDate?: string;
+	type DataRowLeaderboard = LeaderboardTeam & {
+		ranking?: number;
 	};
 
 	const columnsLeaderboard: TableColumn<DataRowLeaderboard>[] = [
@@ -65,7 +61,7 @@ export default function ChartsPage() {
 		},
 	];
 
-	const columnsActiveTasks: TableColumn<DataRowActiveTasks>[] = [
+	const columnsActiveTasks: TableColumn<Task>[] = [
 		{
 			name: 'Priority',
 			sortable: true,
@@ -81,89 +77,15 @@ export default function ChartsPage() {
 			selector: (row) => row.description,
 			sortable: true,
 		},
-		{
-			name: 'Created By',
-			selector: (row) => row.createdBy,
-			sortable: true,
-		},
-		{
-			name: 'Start Date',
-			selector: (row) => {
-				if (row.startDate === undefined) {
-					return '';
-				}
-				return row.startDate;
-			},
-			sortable: true,
-		},
-		{
-			name: 'Complete Date',
-			selector: (row) => {
-				if (row.completeDate === undefined) {
-					return '';
-				}
-				return row.completeDate;
-			},
-			sortable: true,
-		},
-	];
-
-	const dataLeaderboard = [
-		{
-			id: 1,
-			name: 'Average dude',
-			tasks: 10,
-		},
-		{
-			id: 2,
-			name: 'Exceptional dude',
-			tasks: 99,
-		},
-		{
-			id: 3,
-			name: 'Terrible dude',
-			tasks: 4,
-		},
-	];
-
-	const dataActiveTasks = [
-		{
-			id: 1,
-			priority: 'OVERDUE',
-			name: 'Build something',
-			description: 'Please do this!',
-			createdBy: 'Your boss',
-		},
-		{
-			id: 2,
-			priority: 'URGENT',
-			name: 'Build something else',
-			description: 'Please do this!',
-			createdBy: 'Your boss again',
-		},
-		{
-			id: 3,
-			priority: 'PENDING',
-			name: 'Buy supplies',
-			description: 'We need them',
-			createdBy: 'A coworker',
-		},
-		{
-			id: 4,
-			priority: 'PENDING',
-			name: 'Do work',
-			description: 'You have work to do',
-			createdBy: 'Your manager',
-		},
 	];
 
 	const pieChartData = {
-		labels: ['Average dude', 'Exceptional dude', 'Terrible dude'],
+		labels: ['Team 1', 'Team 2'],
 		datasets: [
 			{
 				label: 'Tasks Completed',
-				data: [10, 99, 4],
-				backgroundColor: ['#7BB863', '#153243', '#436e35'],
+				data: [3, 2],
+				backgroundColor: ['#7BB863', '#153243'],
 				borderColor: [style.getPropertyValue('--ttg-white')],
 				borderWidth: 1,
 			},
@@ -179,11 +101,11 @@ export default function ChartsPage() {
 	};
 
 	const barChartData = {
-		labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+		labels: ['June', 'July', 'August', 'September', 'October'],
 		datasets: [
 			{
 				label: '# of Tasks',
-				data: [12, 19, 3, 5, 2],
+				data: [12, 19, 3, 4, 5],
 				borderWidth: 1,
 				backgroundColor: 'rgba(53, 162, 235, 0.5)',
 			},
@@ -231,7 +153,7 @@ export default function ChartsPage() {
 									<DataTable
 										title="Active Tasks"
 										columns={columnsActiveTasks}
-										data={dataActiveTasks}
+										data={tasks}
 										defaultSortFieldId={1}
 									/>
 								</div>
@@ -246,7 +168,7 @@ export default function ChartsPage() {
 									<DataTable
 										title="Monthly Leaderboard"
 										columns={columnsLeaderboard}
-										data={dataLeaderboard}
+										data={leaderboardData}
 										defaultSortFieldId={3}
 										defaultSortAsc={false}
 									/>

@@ -1,0 +1,66 @@
+# DOCKER COMPOSE FILE FOR PRODUCTION
+
+
+services:
+    postgres_service:
+        image: postgres:15
+        container_name: synapse_postgres_db
+        restart: unless-stopped
+
+        # Database credentials
+        environment:
+            POSTGRES_USER: myuser
+            POSTGRES_PASSWORD: mypassword
+            POSTGRES_DB: synapse_db
+
+        # Bind the LOCAL 4001 to the 5432 port of the container.
+        # Access 5432 container port via LOCAL 4001
+        ports:
+            - '4001:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+        # Needs to be removed in final release
+        networks:
+            - synapse_network
+
+    keycloak_service:
+        container_name: synapse_auth
+        image: quay.io/keycloak/keycloak:26.2.5
+        ports:
+            - '4000:8080'
+        environment:
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+            # IMPORTANT. These database settings need to be removed
+            # In final release because Keycloak should handle its own database
+            # and not stored in the local database
+            # Database Type
+            KC_DB: postgres
+
+            # Name of the SERVICE
+            # That is running the database
+            KC_DB_URL_HOST: postgres_service
+
+            # Database Credentials
+            # Should be the same as the one in the DB setup
+            KC_DB_URL_DATABASE: synapse_db
+            KC_DB_USERNAME: myuser
+            KC_DB_PASSWORD: mypassword
+
+        # Needs to be removed in final release
+        # Reference the SERVICE
+        depends_on:
+            - postgres_service
+        networks:
+            - synapse_network
+
+        command: start-dev
+
+volumes:
+    postgres_data:
+
+# Needs to be removed in final release
+networks:
+    synapse_network:

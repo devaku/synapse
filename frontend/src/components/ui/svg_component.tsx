@@ -16,6 +16,7 @@ import SORT from '@/assets/images/svgs/sort.svg';
 import TEAMS from '@/assets/images/svgs/teams.svg';
 import TRASHCAN from '@/assets/images/svgs/trashcan.svg';
 import WRENCH from '@/assets/images/svgs/wrench.svg';
+import BELL from '@/assets/images/svgs/bell.svg';
 
 type svgProps = {
 	iconName: string;
@@ -111,6 +112,10 @@ export default function SvgComponent(props: svgProps) {
 
 		case 'WRENCH':
 			html = <img className={classes} src={WRENCH} alt="" />;
+			break;
+
+		case 'BELL':
+			html = <img className={classes} src={BELL} alt="" />;
 			break;
 	}
 

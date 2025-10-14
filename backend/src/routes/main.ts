@@ -4,7 +4,9 @@ import { verifyJwt } from '../middlewares/auth-middleware';
 import debugRouter from './debug';
 import taskRouter from './tasks';
 import teamRouter from './teams';
+import githubRouter from './github';
 import userRouter from './users';
+import commentRouter from './comments';
 import deletionRequestRouter from './deletion_request';
 
 const mainRouter = express.Router();
@@ -24,6 +26,8 @@ function setupApiRoutes(): express.Router {
 	apiRouter.use(taskRouter);
 	apiRouter.use(debugRouter);
 	apiRouter.use(teamRouter);
+	apiRouter.use(commentRouter);
+	apiRouter.use(githubRouter);
 	apiRouter.use(userRouter);
 	apiRouter.use(deletionRequestRouter);
 
