@@ -7,9 +7,7 @@ import SearchBar from '../components/ui/searchbar';
 import { useEffect, useState, useCallback } from 'react';
 import SvgComponent from '../components/ui/svg_component';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
-import TeamCreateModal from '../components/modals/teams/team_create';
-import TeamReadModal from '../components/modals/teams/team_read';
-import TeamUpdateModal from '../components/modals/teams/team_update';
+import TeamsCreateUpdateModal from '../components/modals/teams/team_create_update';
 import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
 // import DataTable, { type TableColumn } from 'react-data-table-component';
@@ -76,7 +74,7 @@ export default function TeamsPage() {
 					</button>
 					<button
 						className="cursor-pointer w-6 h-6"
-						onClick={() => handleEditTeam(row)}
+						onClick={() => handleEditTeam(row.id)}
 						title="Edit Team"
 					>
 						<SvgComponent iconName="WRENCH" />
@@ -118,88 +116,24 @@ export default function TeamsPage() {
 		setFormData(data);
 	}, []);
 
-	const handleCreateTeam = async () => {
-		try {
-			const teamData = {
-				name: formData.Name || '',
-				description: formData.Description || '',
-			};
-
-			if (!teamData.name) {
-				alert('Team name is required!');
-				return;
-			}
-
-			const createdTeam = await addTeam(teamData);
-
-			await refreshTeams();
-
-			createTeamModal.close();
-
-			setFormData({});
-		} catch (error) {
-			console.error('Error creating team:', error);
-			alert('Failed to create team. Please try again.');
-		}
-	};
-
+	// Simplified handlers using new unified modal
 	const handleViewTeam = (team: Team) => {
-		console.log('View team:', team);
+		setCurrentTeam(team);
 		readTeamModal.open();
 	};
 
-	const handleEditTeam = async (
-		team?: Team,
-		action: 'open' | 'update' = 'open'
-	) => {
-		if (action === 'open' && team) {
-			// Handle opening modal and setting data
-			setCurrentTeam(team);
-			setFormData({
-				Name: team.name,
-				Description: team.description || '',
-			});
-			updateTeamModal.open();
-		} else if (action === 'update') {
-			// Handle the API update
-			if (!currentTeam) return;
-
-			try {
-				const teamData = {
-					id: currentTeam.id,
-					name: formData.Name || '',
-					description: formData.Description || '',
-				};
-
-				if (!teamData.name) {
-					alert('Team name is required!');
-					return;
-				}
-
-				const editedTeam = await editTeam(teamData);
-
-				await refreshTeams();
-
-				updateTeamModal.close();
-				setFormData({});
-				setCurrentTeam(null);
-			} catch (error) {
-				console.error('Error editing team:', error);
-				alert('Failed to edit team. Please try again.');
-			}
-		}
+	const handleEditTeam = (teamId: number) => {
+		setCurrentTeam(teams.find((t) => t.id === teamId) || null);
+		updateTeamModal.open();
 	};
 
 	const handleDeleteTeam = async (team: Team) => {
 		if (confirm(`Are you sure you want to delete "${team.name}"?`)) {
 			try {
-				// TODO: Implement removeTeam function in useTeams hook
 				console.log('Delete team:', team);
 				const deletedTeams = await softRemoveTeam([team.id]);
 				await refreshTeams();
-
 				createTeamModal.close();
-
 				setFormData({});
 			} catch (error) {
 				console.error('Error deleting team:', error);
@@ -265,89 +199,30 @@ export default function TeamsPage() {
 				</div>
 			</HeaderContainer>
 
-			{/* Create Modal with Dynamic Form */}
+			{/* Create Modal */}
 			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
-				<div className="flex flex-col gap-5 mx-5">
-					<div className="mt-5 p-2">
-						<p className="text-2xl">Create Team</p>
-					</div>
-
-					<DynamicForm
-						key="create-team"
-						metadata={teamSchema}
-						onStateChange={handleFormDataChange}
-					/>
-
-					<div className="flex justify-evenly mb-5">
-						<Button
-							buttonType="add"
-							buttonText="Create Team"
-							buttonOnClick={handleCreateTeam}
-						/>
-						<Button
-							buttonType="add"
-							buttonText="Close"
-							buttonOnClick={() => {
-								createTeamModal.close();
-								setFormData({});
-							}}
-						/>
-					</div>
-				</div>
+				<TeamsCreateUpdateModal
+					modalTitle="Create Team"
+					handleModalDisplay={createTeamModal.toggle}
+				/>
 			</SlideModalContainer>
 
 			{/* Read Modal */}
 			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
-				<TeamReadModal
+				<TeamsCreateUpdateModal
+					modalTitle="View Team"
+					teamId={currentTeam?.id}
 					handleModalDisplay={readTeamModal.toggle}
-				></TeamReadModal>
+				/>
 			</SlideModalContainer>
 
 			{/* Update Modal */}
 			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
-				<div className="flex flex-col gap-5 mx-5">
-					<div className="mt-5 p-2">
-						<p className="text-2xl">Update Team</p>
-					</div>
-
-					<DynamicForm
-						key={
-							currentTeam
-								? `edit-team-${currentTeam.id}`
-								: 'edit-team'
-						}
-						metadata={teamSchema}
-						initialData={
-							currentTeam
-								? {
-										Name: currentTeam.name,
-										Description:
-											currentTeam.description || '',
-									}
-								: {}
-						}
-						onStateChange={handleFormDataChange}
-					/>
-
-					<div className="flex justify-evenly mb-5">
-						<Button
-							buttonType="add"
-							buttonText="Update Team"
-							buttonOnClick={() =>
-								handleEditTeam(undefined, 'update')
-							}
-						/>
-						<Button
-							buttonType="add"
-							buttonText="Close"
-							buttonOnClick={() => {
-								updateTeamModal.close();
-								setFormData({});
-								setCurrentTeam(null);
-							}}
-						/>
-					</div>
-				</div>
+				<TeamsCreateUpdateModal
+					modalTitle="Update Team"
+					teamId={currentTeam?.id}
+					handleModalDisplay={updateTeamModal.toggle}
+				/>
 			</SlideModalContainer>
 		</>
 	);
