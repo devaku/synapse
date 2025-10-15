@@ -1,9 +1,21 @@
+import React from 'react';
+
+/**
+ * HOOKS
+ */
 import { useNavigate } from 'react-router';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
-import { useState, useRef, type RefObject } from 'react';
+import { useState, useEffect, useRef, type RefObject } from 'react';
+import { useSocketContext } from '../../lib/contexts/SocketContext';
+
+/**
+ * COMPONENTS
+ */
 import SvgComponent from '../ui/svg_component';
 import NotificationTable from '../ui/notification_table';
-import React from 'react';
+
+import * as socketEvents from '../../lib/helpers/socket-events';
+
 export default function HeaderContainer({
 	children,
 	pageTitle,
@@ -11,6 +23,7 @@ export default function HeaderContainer({
 	children: React.ReactNode;
 	pageTitle: string;
 }) {
+	const { socket } = useSocketContext();
 	const { serverData } = useAuthContext();
 	const navigate = useNavigate();
 
@@ -50,6 +63,29 @@ export default function HeaderContainer({
 			sender: 'John Doe',
 		},
 	];
+
+	useEffect(() => {
+		// Fetch all the unread notifications for the current user
+	}, []);
+
+	// Subscribe to Socket
+
+	useEffect(() => {
+		async function start() {
+			// This should be put into its own thing
+			const url = `${
+				import.meta.env.VITE_FRONTEND_URL
+			}/notification1.mp3`;
+
+			const audio = new Audio(url);
+			audio.play();
+		}
+
+		socket?.on(socketEvents.NOTIFICATION.NOTIFICATION, start);
+		return () => {
+			socket?.off(socketEvents.NOTIFICATION.NOTIFICATION, start);
+		};
+	}, [socket]);
 
 	return (
 		<div className="w-full flex flex-col bg-ttg-white text-ttg-black max-h-screen">
