@@ -44,7 +44,7 @@ export function socketMiddleware(httpServer: HttpServer) {
 		 * - When a Task is completed but you didn't complete it yourself
 		 */
 
-		listAllRooms(io);
+		// listAllRooms(io);
 
 		socket.on('DEBUG:ACKNOWLEDGEBMENT', (arg1, callback) => {
 			console.log(arg1); // 1
