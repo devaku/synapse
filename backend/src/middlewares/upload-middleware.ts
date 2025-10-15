@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 const STORAGE_LOCATION = `${path.join(__dirname, '..')}/public/uploads`;
 
 // Create folder if it doesn't exist
@@ -16,7 +16,7 @@ const uploader = multer.diskStorage({
 		let foo = file.mimetype.split('/');
 		let extension = foo[1];
 
-		const finalFilename = `${timestamp}-${uuidv4()}.${extension}`;
+		const finalFilename = `${timestamp}-${crypto.randomUUID()}.${extension}`;
 		callback(null, finalFilename);
 	},
 

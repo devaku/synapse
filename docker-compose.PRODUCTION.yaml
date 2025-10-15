@@ -1,7 +1,22 @@
-# DOCKER COMPOSE FILE FOR PRODUCTION
-
+# FOR PRODUCTION
 
 services:
+    backend_service:
+      image: devaku/synapse-backend
+      # build: ./backend/
+      container_name: synapse_backend
+      restart: unless-stopped  
+      env_file: 
+        - backend.env
+
+      # HOST - CONTAINER
+      ports:
+          - '8080:8080'
+      volumes:
+          - backend_data:/usr/src/app/backend/dist/public/uploads
+      networks:
+          - synapse_network
+
     postgres_service:
         image: postgres:15
         container_name: synapse_postgres_db
@@ -20,12 +35,11 @@ services:
         volumes:
             - postgres_data:/var/lib/postgresql/data
 
-        # Needs to be removed in final release
         networks:
             - synapse_network
 
     keycloak_service:
-        container_name: synapse_auth
+        container_name: synapse_keycloak
         image: quay.io/keycloak/keycloak:26.2.5
         ports:
             - '4000:8080'
@@ -60,6 +74,7 @@ services:
 
 volumes:
     postgres_data:
+    backend_data:
 
 # Needs to be removed in final release
 networks:

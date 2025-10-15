@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import * as subscriptionService from '../services/task-subscription-service';
-import { buildResponse, buildError } from '../lib/response-helper';
+import { createTaskSubscriptionService } from '../services/task-subscription-service';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { prismaDb } from '../lib/database';
+
+const subscriptionService = createTaskSubscriptionService(prismaDb);
 
 /**
  * Subscribe to a task

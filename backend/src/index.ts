@@ -8,13 +8,14 @@ import { setupServerMiddleware } from './middlewares/initial-middleware';
 import { socketMiddleware } from './middlewares/socket-middleware';
 
 globalThis.ROOT_DIR = __dirname;
+const ENV_PATH = path.join(__dirname, '..', '.env');
+
+// Load the ENV settings
+dotenv.config({ path: ENV_PATH });
 
 const app = express();
 
 const PORT = process.env.PORT;
-
-// Load the ENV settings
-dotenv.config();
 
 // Setup favicon. Have to be at the very start. lol
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

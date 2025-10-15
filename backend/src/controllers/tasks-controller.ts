@@ -16,13 +16,10 @@ import { createVisibilityService } from '../services/visibility-service';
 /**
  * HELPERS
  */
-import { buildResponse, buildError } from '../lib/response-helper';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
-import {
-	removeImages,
-	uploadImages,
-	pingUsersBasedOnVisiblity,
-} from '../lib/helpers/task-helper';
+import { removeImages, uploadImages } from '../lib/helpers/task-helper';
+import { pingUsersBasedOnVisiblity } from '../lib/helpers/socket-helper';
 
 // CREATE - Create a new task
 export async function createTask(req: Request, res: Response) {
