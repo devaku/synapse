@@ -22,7 +22,7 @@ debugRouter.get('/debugWithAuth', (req: Request, res: Response) => {
 	});
 });
 
-debugRouter.get('/debug', (req: Request, res: Response) => {
+debugRouter.get('/', (req: Request, res: Response) => {
 	res.json({
 		message: 'This is the debug route',
 	});

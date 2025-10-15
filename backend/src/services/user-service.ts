@@ -52,7 +52,6 @@ export const createUserService = (tx: PrismaClientOrTransaction) => {
 					team: true,
 					teamsUsersBelongTo: true,
 					createdTasks: true,
-					notification: true,
 				},
 			});
 
@@ -71,7 +70,6 @@ export const createUserService = (tx: PrismaClientOrTransaction) => {
 					team: true,
 					teamsUsersBelongTo: true,
 					createdTasks: true,
-					notification: true,
 				},
 			});
 

@@ -19,9 +19,6 @@ EXPOSE 8080
 # Build the application
 RUN npm run build
 
-# Seed the database
-# RUN npm run db:seed
-
 # Run the application
 CMD ["npm", "run", "dist"]
 
