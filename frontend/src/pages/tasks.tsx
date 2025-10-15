@@ -34,6 +34,7 @@ import {
 } from '../lib/services/api/task';
 import { formatDate } from '../lib/helpers/datehelpers';
 import TaskCreateUpdateModal from '../components/modals/task/task_create_update';
+import * as SocketEvents from '../lib/helpers/socket-events';
 
 export default function TasksPage() {
 	const { token } = useAuthContext();
@@ -133,10 +134,10 @@ export default function TasksPage() {
 		}
 
 		// Subscribe to sockets
-		socket?.on('TASK:REFRESH', start);
+		socket?.on(SocketEvents.TASK.MAIN_TABLE, start);
 
 		return () => {
-			socket?.off('TASK:REFRESH', start);
+			socket?.off(SocketEvents.TASK.MAIN_TABLE, start);
 		};
 	}, [socket]);
 
