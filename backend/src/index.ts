@@ -8,9 +8,10 @@ import { setupServerMiddleware } from './middlewares/initial-middleware';
 import { socketMiddleware } from './middlewares/socket-middleware';
 
 globalThis.ROOT_DIR = __dirname;
+const ENV_PATH = path.join(__dirname, '..', '.env');
 
 // Load the ENV settings
-dotenv.config();
+dotenv.config({ path: ENV_PATH });
 
 const app = express();
 
