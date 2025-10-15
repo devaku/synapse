@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { buildResponse, buildError } from '../lib/response-helper';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { prismaDb } from '../lib/database';
 import { createUserService } from '../services/user-service';
 

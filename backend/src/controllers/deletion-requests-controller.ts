@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as delreqService from '../services/deletion-request-service';
-import { buildResponse, buildError } from '../lib/response-helper';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 
 export async function createDeletionRequest(req: Request, res: Response) {
 	try {
