@@ -65,6 +65,9 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 								},
 							},
 						},
+						orderBy: {
+							createdAt: 'desc',
+						},
 					},
 					taskUserSubscribeTo: {
 						select: {
@@ -135,7 +138,11 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 				},
 				include: {
 					createdByUser: true,
-					comments: true,
+					comments: {
+						orderBy: {
+							createdAt: 'desc',
+						},
+					},
 					taskVisibleToUsers: true,
 					taskVisibleToTeams: true,
 				},
