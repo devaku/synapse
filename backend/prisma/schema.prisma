@@ -152,6 +152,11 @@ model Image {
     ImagesAttachedToTasks    ImagesAttachedToTasks[]
 }
 
+model Socket {
+    keycloakId String @unique
+    sessionId  String @unique
+}
+
 /**
  * LINK TABLES
  */

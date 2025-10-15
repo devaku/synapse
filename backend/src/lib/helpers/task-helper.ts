@@ -1,9 +1,12 @@
 import { createImageService } from '../../services/images-service';
 import { createImageLinkService } from '../../services/image-link-service';
 import { IMAGE_STORAGE_URL } from '../env-variables';
-import { PrismaClientOrTransaction } from '../../types';
+
 import { createTaskService } from '../../services/task-service';
 import { deleteUploadedFiles } from '../file-helper';
+
+import { PrismaClientOrTransaction } from '../../types';
+import { Server as SocketIOServer } from 'socket.io';
 
 export async function uploadImages(
 	tx: PrismaClientOrTransaction,
@@ -72,5 +75,26 @@ export async function removeImages(
 		}
 	} catch (error) {
 		throw error;
+	}
+}
+
+export function pingUsersBasedOnVisiblity(
+	io: SocketIOServer,
+	taskVisibleToTeams?: number[],
+	taskVisibleToUsers?: number[]
+) {
+	if (taskVisibleToTeams && taskVisibleToTeams.length > 0) {
+		console.log('UPDATING TEAMS');
+		console.log(taskVisibleToTeams);
+		taskVisibleToTeams.map((el) => {
+			io.to(`TEAM-${Number(el)}`).emit('TASK:REFRESH');
+		});
+	}
+
+	if (taskVisibleToUsers && taskVisibleToUsers.length > 0) {
+		console.log('UPDATING USERS');
+		taskVisibleToUsers.map((el) => {
+			io.to(`USER-${Number(el)}`).emit('TASK:REFRESH');
+		});
 	}
 }
