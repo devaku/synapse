@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 import { prismaDb } from '../lib/database';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import type { Server as HttpServer } from 'http';
@@ -93,7 +93,7 @@ async function validateSession(socket: Socket) {
 	// Check if a session ID has been generated for the user
 	let sessionId = socket.handshake.auth.sessionId;
 	if (!sessionId) {
-		sessionId = uuidv4();
+		sessionId = crypto.randomUUID();
 		// Send back a session ID to the user
 		socket.emit('CONFIG:SESSION', { sessionId });
 	}
