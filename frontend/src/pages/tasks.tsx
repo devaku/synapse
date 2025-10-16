@@ -22,6 +22,7 @@ import { useModal } from '../lib/hooks/ui/useModal';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../lib/contexts/AuthContext';
 import { useSocketContext } from '../lib/contexts/SocketContext';
+import { useSearchParams } from 'react-router';
 
 /**
  * SERVICES / HELPERS
@@ -39,6 +40,11 @@ import * as SocketEvents from '../lib/helpers/socket-events';
 export default function TasksPage() {
 	const { token } = useAuthContext();
 	const { socket } = useSocketContext();
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const viewParams = searchParams.get('view')
+		? Number(searchParams.get('view'))
+		: null;
 
 	/**
 	 * There are two states for keeping track of table content
@@ -126,6 +132,23 @@ export default function TasksPage() {
 		}
 		start();
 	}, []);
+
+	useEffect(() => {
+		// Open the modal
+		if (viewParams) {
+			// Check if given taskId exist in the columns.
+			const exists = myTaskData.filter((el) => el.id == viewParams);
+
+			// Only display if it exists
+			if (exists.length > 0) {
+				setModalTaskInfoId(viewParams);
+
+				setTimeout(() => {
+					modalTaskInfo.open();
+				}, 500);
+			}
+		}
+	}, [viewParams]);
 
 	// SOCKET LISTENERS
 	useEffect(() => {

@@ -7,7 +7,7 @@ import { Server as SocketIOServer } from 'socket.io';
  * TYPES
  */
 import { PrismaClientOrTransaction } from '../types';
-import { User } from '../../database/generated/prisma';
+import { Notification, User } from '../../database/generated/prisma';
 
 /**
  * SERVICES
@@ -138,11 +138,16 @@ async function setupNotification(
 
 		// Build the details of the comment
 		const comment = commentRow.message;
-		const name = `${createdByUser.firstName} left a comment on task ${taskRow.name}`;
+		const title = `${createdByUser.firstName} left a comment on task ${taskRow.name}`;
 		const description = `${createdByUser.firstName} commented: ${comment}`;
+		const payload = {
+			taskId,
+		};
 		const notificationData = {
+			title,
 			description,
-			name,
+			createdByUserId: createdByUser.id,
+			payload,
 		};
 
 		// Create the notification
@@ -159,7 +164,7 @@ async function setupNotification(
 		// Inform the users
 		pingUsersOfNewCommentOnTask(io, userList, {
 			notification: notificationRow,
-			taskId,
+			payload: { taskId },
 		});
 	}
 }
