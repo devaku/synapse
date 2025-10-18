@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import { sessionMiddleware } from './session-middleware';
 import path from 'path';
+import { corsValues } from '../lib/cors';
 const PUBLIC_FOLDER = `${path.join(__dirname, '..')}/public`;
 
 export function setupServerMiddleware(app: Express) {
@@ -14,7 +15,8 @@ export function setupServerMiddleware(app: Express) {
 	// Load CORS
 	app.use(
 		cors({
-			origin: ['http://localhost:3000', 'http://localhost:8080'],
+			// origin: '*',
+			origin: corsValues,
 			credentials: true,
 		})
 	);
