@@ -16,19 +16,21 @@ import { createVisibilityService } from '../services/visibility-service';
 /**
  * HELPERS
  */
-import { buildResponse, buildError } from '../lib/response-helper';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
 import { removeImages, uploadImages } from '../lib/helpers/task-helper';
+import { pingUsersBasedOnVisiblity } from '../lib/helpers/socket-helper';
 
 // CREATE - Create a new task
 export async function createTask(req: Request, res: Response) {
-	return prismaDb.$transaction(
+	await prismaDb.$transaction(
 		async (tx: Prisma.TransactionClient) => {
 			const taskService = createTaskService(tx);
 
 			try {
 				let data = req.body;
 				const userId = req.session.userData?.user.id;
+				const { taskVisibleToTeams, taskVisibleToUsers } = req.body;
 
 				// Attach creator
 				data.createdByUserId = userId;
@@ -82,6 +84,13 @@ export async function createTask(req: Request, res: Response) {
 
 				// Retrieve the task again, this time with the images. lol
 				const taskRow = await taskService.readTaskById(task.id);
+
+				// Update EVERYONE who can see the new task that was created
+				pingUsersBasedOnVisiblity(
+					req.io,
+					taskVisibleToTeams,
+					taskVisibleToUsers
+				);
 
 				return res
 					.status(201)

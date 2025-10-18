@@ -16,10 +16,28 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	useEffect(() => {
 		if (token) {
-			// console.log('GIVEN JWT TOKEN: ', token);
-			setSocket(initializeSocket(token));
+			let socketSessionId = localStorage.getItem('SOCKET-SESSIONID');
+			if (socketSessionId) {
+				setSocket(initializeSocket(token, socketSessionId));
+			} else {
+				setSocket(initializeSocket(token));
+			}
 		}
 	}, [token]);
+
+	useEffect(() => {
+		function onHandleSession({ sessionId }: { sessionId: string }) {
+			// console.log('RECEIVED SESSION ID FOR SOCKET: ', sessionId);
+			localStorage.setItem('SOCKET-SESSIONID', sessionId);
+		}
+		socket?.on('CONFIG:SESSION', onHandleSession);
+
+		return () => {
+			if (socket) {
+				socket.off('CONFIG:SESSION', onHandleSession);
+			}
+		};
+	}, [socket]);
 
 	const value: socketContextType = {
 		socket,

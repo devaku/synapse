@@ -1,8 +1,33 @@
 import express from 'express';
 import { Request, Response } from 'express';
 import { uploadMiddleware } from '../middlewares/upload-middleware';
+import { pingUsersOfNewCommentOnTask } from '../lib/helpers/socket-helper';
 
 const debugRouter = express.Router();
+
+debugRouter.get('/', (req: Request, res: Response) => {
+	res.json({
+		message: 'This is the debug route',
+	});
+});
+
+debugRouter.post(
+	'/notification',
+	express.json(),
+	(req: Request, res: Response) => {
+		pingUsersOfNewCommentOnTask(req.io, req.body.userIdList, {
+			notification: {
+				title: req.body.title,
+				description: req.body.description,
+				createdByUserId: 1,
+			},
+			payload: req.body.payload,
+		});
+		res.json({
+			message: 'Successfully sent notification',
+		});
+	}
+);
 
 debugRouter.post(
 	'/upload',
@@ -22,15 +47,8 @@ debugRouter.get('/debugWithAuth', (req: Request, res: Response) => {
 	});
 });
 
-debugRouter.get('/debug', (req: Request, res: Response) => {
-	res.json({
-		message: 'This is the debug route',
-	});
-});
-
-debugRouter.get('/socket/:id', (req: Request, res: Response) => {
-	const id = req.params.id;
-	req.io.emit('DEBUG:PING', Number(id));
+debugRouter.get('/socket', (req: Request, res: Response) => {
+	req.io.emit('TASK:DEBUG', { status: 'HELLOOOO' });
 	res.json({
 		message: 'This is the debug route',
 	});

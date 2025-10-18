@@ -5,7 +5,6 @@ import * as _ from 'lodash';
  */
 import StatusPill from '../components/ui/status_pill';
 import SvgComponent from '../components/ui/svg_component';
-
 import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import MyTaskModalHeader from '../components/modals/my_tasks/my_task_header';
@@ -22,6 +21,8 @@ import type { Task } from '../lib/types/models';
 import { useModal } from '../lib/hooks/ui/useModal';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../lib/contexts/AuthContext';
+import { useSocketContext } from '../lib/contexts/SocketContext';
+import { useSearchParams } from 'react-router';
 
 /**
  * SERVICES / HELPERS
@@ -34,15 +35,16 @@ import {
 } from '../lib/services/api/task';
 import { formatDate } from '../lib/helpers/datehelpers';
 import TaskCreateUpdateModal from '../components/modals/task/task_create_update';
+import * as SocketEvents from '../lib/helpers/socket-events';
 
 export default function TasksPage() {
 	const { token } = useAuthContext();
+	const { socket } = useSocketContext();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	const [formState, setFormState] = useState<Record<string, any>>({});
-	// Handle form state updates from the dynamic modal
-	const handleFormStateChange = (newState: Record<string, any>) => {
-		setFormState(newState);
-	};
+	const viewParams = searchParams.get('view')
+		? Number(searchParams.get('view'))
+		: null;
 
 	/**
 	 * There are two states for keeping track of table content
@@ -77,6 +79,7 @@ export default function TasksPage() {
 		{
 			name: 'ID',
 			selector: (row) => row.id,
+			omit: true,
 			sortable: true,
 		},
 		{
@@ -125,15 +128,46 @@ export default function TasksPage() {
 	// Initial Load
 	useEffect(() => {
 		async function start() {
-			await refreshTable();
+			await refreshTableHTTP();
 		}
 		start();
 	}, []);
 
+	useEffect(() => {
+		// Open the modal
+		if (viewParams) {
+			// Check if given taskId exist in the columns.
+			const exists = myTaskData.filter((el) => el.id == viewParams);
+
+			// Only display if it exists
+			if (exists.length > 0) {
+				setModalTaskInfoId(viewParams);
+
+				setTimeout(() => {
+					modalTaskInfo.open();
+				}, 500);
+			}
+		}
+	}, [viewParams]);
+
+	// SOCKET LISTENERS
+	useEffect(() => {
+		async function start() {
+			await refreshTableHTTP();
+		}
+
+		// Subscribe to sockets
+		socket?.on(SocketEvents.TASK.MAIN_TABLE, start);
+
+		return () => {
+			socket?.off(SocketEvents.TASK.MAIN_TABLE, start);
+		};
+	}, [socket]);
+
 	// refresh table after closing or creating if you want
 	useEffect(() => {
 		async function start() {
-			await refreshTable();
+			await refreshTableHTTP();
 		}
 		start();
 	}, [modalTaskCreate.isOpen, modalTaskInfo.isOpen, modalTaskUpdate.isOpen]);
@@ -171,7 +205,7 @@ export default function TasksPage() {
 	 * INTERNAL FUNCTIONS
 	 */
 
-	async function refreshTable() {
+	async function refreshTableHTTP() {
 		// TODO: API requests will throw an error if there was a problem
 		let subscribedTaskRows = await readTasksFilteredForUser(token!);
 
@@ -240,7 +274,8 @@ export default function TasksPage() {
 						highlightOnHover={true}
 						columns={taskColumns}
 						data={filteredTasks}
-						defaultSortFieldId={1}
+						defaultSortFieldId={3}
+						pagination
 					></DataTable>
 				</div>
 			</HeaderContainer>

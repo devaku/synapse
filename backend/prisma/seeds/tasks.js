@@ -343,4 +343,4 @@ const archivedSeeds = [
 		},
 	},
 ];
-export const taskSeeds = [...activeSeeds, ...archivedSeeds];
+module.exports.taskSeeds = [...activeSeeds, ...archivedSeeds];

@@ -6,7 +6,7 @@ import {
 } from '../lib/github-app-auth';
 import { addUserToRepo as addUserToRepoService } from '../services/github-services';
 import * as githubService from '../services/github-services';
-import { buildResponse, buildError } from '../lib/response-helper';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import axios from 'axios';
 
 const app = express();
@@ -322,8 +322,9 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid request ID', null));
 			}
 
-			requests =
-				await githubService.readRepoCollaboratorRequestById(requestId);
+			requests = await githubService.readRepoCollaboratorRequestById(
+				requestId
+			);
 			if (!requests) {
 				return res
 					.status(404)
@@ -346,10 +347,9 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid user ID', null));
 			}
 
-			requests =
-				await githubService.readRepoCollaboratorRequestsByUserId(
-					userIdNum
-				);
+			requests = await githubService.readRepoCollaboratorRequestsByUserId(
+				userIdNum
+			);
 			message =
 				requests.length > 0
 					? 'User repository collaborator requests retrieved successfully.'
@@ -363,10 +363,9 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid repo ID', null));
 			}
 
-			requests =
-				await githubService.readRepoCollaboratorRequestsByRepoId(
-					repoIdNum
-				);
+			requests = await githubService.readRepoCollaboratorRequestsByRepoId(
+				repoIdNum
+			);
 			message =
 				requests.length > 0
 					? 'Repository collaborator requests retrieved successfully.'

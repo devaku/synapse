@@ -50,6 +50,7 @@ export default function CommentComponent({
 	children,
 }: CommentProps) {
 	const { token, userData, serverData } = useAuthContext();
+
 	const [previews, setPreviews] = useState<string[]>();
 	const [internalComments, setInternalComments] = useState<Comment[] | null>(
 		comments
@@ -118,7 +119,7 @@ export default function CommentComponent({
 
 				let createdComment: Comment = response[response.length - 1];
 				if (internalComments) {
-					setInternalComments([...internalComments, createdComment]);
+					setInternalComments([createdComment, ...internalComments]);
 				} else {
 					setInternalComments([createdComment]);
 				}
@@ -139,14 +140,6 @@ export default function CommentComponent({
 			setIsLoading(false);
 			console.log(error);
 		}
-	}
-
-	function handleAddPreview(acceptedFiles: readonly FileWithPath[]) {
-		let urls = acceptedFiles.map((el: any) => {
-			let imageUrl = URL.createObjectURL(el);
-			return imageUrl;
-		});
-		setPreviews(urls);
 	}
 
 	function handleClearPreview() {
@@ -195,6 +188,7 @@ export default function CommentComponent({
 									className="p-1 w-full"
 									id=""
 									rows={5}
+									maxLength={255}
 									placeholder="Enter a description..."
 									{...register('message', {
 										required: false,

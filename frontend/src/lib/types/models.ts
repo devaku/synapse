@@ -67,15 +67,14 @@ export interface Team {
 
 export interface Notification {
 	id: number;
-	name: string;
+	title: string;
 	description: string;
-	userId: number;
-	teamId?: number | null;
+	payload: object;
+	createdByUserId: number;
+	user: User;
+	notificationForUsers: NotificationForUsers[];
 	createdAt: Date;
 	isDeleted: number;
-
-	user: User;
-	team?: Team | null;
 }
 
 export interface Logs {
@@ -145,6 +144,13 @@ export interface Image {
 /**
  * Link Tables
  */
+
+export interface NotificationForUsers {
+	userId: number;
+	notificationId: number;
+	status: string;
+	updateAt: Date;
+}
 
 export interface ImagesAttachedToTasks {
 	imageId: number;

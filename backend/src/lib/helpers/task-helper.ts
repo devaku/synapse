@@ -1,9 +1,11 @@
 import { createImageService } from '../../services/images-service';
 import { createImageLinkService } from '../../services/image-link-service';
 import { IMAGE_STORAGE_URL } from '../env-variables';
-import { PrismaClientOrTransaction } from '../../types';
+
 import { createTaskService } from '../../services/task-service';
 import { deleteUploadedFiles } from '../file-helper';
+
+import { PrismaClientOrTransaction } from '../../types';
 
 export async function uploadImages(
 	tx: PrismaClientOrTransaction,
