@@ -1,7 +1,7 @@
 import Keycloak from 'keycloak-connect';
 import session from 'express-session';
-import keycloakConfig from '../../config/keycloak.json';
-import { SESSION_SECRET } from './env-variables';
+import keycloakConfig from '../../../config/keycloak.json';
+import { SESSION_SECRET } from '../env-variables';
 
 // needed to manage server-side states for
 const memoryStore = new session.MemoryStore();

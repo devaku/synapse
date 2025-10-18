@@ -11,6 +11,7 @@ import CommentComponent from '../task/comment_component';
 
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
+import { useSocketContext } from '../../../lib/contexts/SocketContext';
 
 /**
  * SERVICES / HELPERS
@@ -18,6 +19,7 @@ import { useAuthContext } from '../../../lib/contexts/AuthContext';
 
 import { archiveTask, readTask } from '../../../lib/services/api/task';
 import { type Comment, type Task } from '../../../lib/types/models';
+import * as socketEvents from '../../../lib/helpers/socket-events';
 
 type myTaskReadModalProps = {
 	handleModalDisplay: () => void;
@@ -29,6 +31,7 @@ export default function MyTaskReadModal({
 	taskId,
 }: myTaskReadModalProps) {
 	const { token, userData } = useAuthContext();
+	const { socket } = useSocketContext();
 	const [comments, setComments] = useState<Comment[] | null>(null);
 	const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
@@ -42,6 +45,20 @@ export default function MyTaskReadModal({
 		}
 		start();
 	}, [taskId]);
+
+	// SOCKET SUBSCRIPTION
+
+	useEffect(() => {
+		async function start() {
+			await fetchTaskInfo(taskId);
+		}
+		start();
+
+		socket?.on(socketEvents.TASK.COMMENTS_SECTION, start);
+		return () => {
+			socket?.off(socketEvents.TASK.COMMENTS_SECTION, start);
+		};
+	}, [socket]);
 
 	async function fetchTaskInfo(taskId: number) {
 		const taskRow = await readTask(token!, taskId);
@@ -79,16 +96,6 @@ export default function MyTaskReadModal({
 		} catch (error) {
 			console.log(error);
 		}
-	}
-
-	/**
-	 * MODAL HANDLERS
-	 */
-
-	function handleModalClose() {}
-
-	function handleModalTaskDeleteDisplay() {
-		handleModalDisplay();
 	}
 
 	return (

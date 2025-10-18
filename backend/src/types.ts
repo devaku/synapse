@@ -1,6 +1,6 @@
 import { User } from '../database/generated/prisma';
 import { PrismaClient, Prisma } from '../database/generated/prisma';
-import { Server as SocketIOServer } from 'socket.io';
+import { Socket, Server as SocketIOServer } from 'socket.io';
 
 // Type declaration provided by chatgpt
 declare global {
@@ -12,6 +12,17 @@ declare global {
 	}
 
 	var ROOT_DIR: string;
+}
+
+declare module 'socket.io' {
+	interface Socket {
+		session: {
+			userData?: {
+				user: User;
+				roles: string[];
+			};
+		};
+	}
 }
 
 export type PrismaClientOrTransaction = PrismaClient | Prisma.TransactionClient;

@@ -27,7 +27,6 @@ model User {
     image                    Image?                   @relation("UserProfileImage", fields: [imageId], references: [id])
     lastActivity             DateTime                 @default(now()) @db.Timestamp(6)
     isDeleted                Int                      @default(0)
-    notification             Notification[]
     logs                     Logs[]
     createdTasks             Task[]
     comment                  Comment[]
@@ -40,6 +39,8 @@ model User {
     taskArchived             Task[]                   @relation("TaskArchivedBy")
     repoCollaboratorRequests RepoColaboratorRequest[]
     imagesUploaded           Image[]                  @relation("ImagesUploadedByUser")
+    notificationForUsers     NotificationForUsers[]
+    notification             Notification[]
 }
 
 model Task {
@@ -73,21 +74,20 @@ model Team {
     createdByUser      User                 @relation("TeamMadeByUser", fields: [createdBy], references: [id])
     createdAt          DateTime             @default(now()) @db.Timestamp(6)
     isDeleted          Int                  @default(0)
-    notifications      Notification[]
     taskVisibleToTeams TaskVisibleToTeams[]
     teamsUsersBelongTo TeamsUsersBelongTo[]
 }
 
 model Notification {
-    id          Int      @id @default(autoincrement())
-    name        String   @db.VarChar(255)
-    description String   @db.VarChar(255)
-    userId      Int
-    user        User     @relation(fields: [userId], references: [id])
-    teamId      Int?
-    team        Team?    @relation(fields: [teamId], references: [id])
-    createdAt   DateTime @default(now()) @db.Timestamp(6)
-    isDeleted   Int      @default(0)
+    id                   Int                    @id @default(autoincrement())
+    title                String                 @db.VarChar(255)
+    description          String                 @db.VarChar(255)
+    payload              Json
+    createdByUserId      Int
+    user                 User                   @relation(fields: [createdByUserId], references: [id])
+    notificationForUsers NotificationForUsers[]
+    createdAt            DateTime               @default(now()) @db.Timestamp(6)
+    isDeleted            Int                    @default(0)
 }
 
 model Logs {
@@ -152,9 +152,25 @@ model Image {
     ImagesAttachedToTasks    ImagesAttachedToTasks[]
 }
 
+model Socket {
+    keycloakId String @unique
+    sessionId  String @unique
+}
+
 /**
  * LINK TABLES
  */
+
+model NotificationForUsers {
+    userId         Int
+    user           User         @relation(fields: [userId], references: [id])
+    notificationId Int
+    notification   Notification @relation(fields: [notificationId], references: [id])
+    status         String
+    updatedAt      DateTime     @default(now()) @db.Timestamp(6)
+
+    @@id([userId, notificationId])
+}
 
 model ImagesAttachedToTasks {
     imageId Int
