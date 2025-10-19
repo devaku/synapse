@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback } from 'react';
 import SvgComponent from '../components/ui/svg_component';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import TeamsCreateUpdateModal from '../components/modals/teams/team_create_update';
+import TeamsViewModal from '../components/modals/teams/team_view';
 import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
 // import DataTable, { type TableColumn } from 'react-data-table-component';
@@ -207,11 +208,10 @@ export default function TeamsPage() {
 				/>
 			</SlideModalContainer>
 
-			{/* Read Modal */}
+			{/* View Modal - Read Only */}
 			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
-				<TeamsCreateUpdateModal
-					modalTitle="View Team"
-					teamId={currentTeam?.id}
+				<TeamsViewModal
+					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}
 				/>
 			</SlideModalContainer>

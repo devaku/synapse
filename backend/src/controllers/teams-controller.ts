@@ -5,14 +5,13 @@ import { buildResponse, buildError } from '../lib/helpers/response-helper';
 /**
  * Controller to create a team in the database
  *
- * @param req - Request object containing a team object
+ * @param req - Request object containing a team object with optional users array
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 201 message
+ * @returns A JSON response with the HTTP 201 message and created team with members
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-
 export async function createTeam(req: Request, res: Response) {
 	try {
 		let data = req.body;
@@ -20,13 +19,13 @@ export async function createTeam(req: Request, res: Response) {
 
 		let finalResponse = buildResponse(
 			201,
-			'Data was created successfully!',
+			'Team was created successfully!',
 			team
 		);
 
 		res.status(201).json(finalResponse);
 	} catch (error: any) {
-		let finalResponse = buildError(500, 'There was an error', error);
+		let finalResponse = buildError(500, 'There was an error creating the team', error);
 		res.status(500).json(finalResponse);
 	}
 }
@@ -34,27 +33,25 @@ export async function createTeam(req: Request, res: Response) {
 /**
  * Controller to read all teams in the database
  *
- * @param req - Request object containing teamIdArray in its body
+ * @param req - Request object
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 200 message
+ * @returns A JSON response with the HTTP 200 message and all teams with members
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-
 export async function readAllTeams(req: Request, res: Response) {
 	try {
-		let data = req.body;
-		const team = await teamsService.readAllTeam();
+		const teams = await teamsService.readAllTeam();
 		let message = '';
 
-		if (team.length > 0) {
+		if (teams.length > 0) {
 			message = 'Data was retrieved successfully.';
 		} else {
 			message = 'Table is empty';
 		}
 
-		let finalResponse = buildResponse(200, message, team);
+		let finalResponse = buildResponse(200, message, teams);
 		res.status(200).json(finalResponse);
 	} catch (error) {
 		let finalResponse = buildError(500, 'There was an error', error);
@@ -68,7 +65,7 @@ export async function readAllTeams(req: Request, res: Response) {
  * @param req - Request object containing teamIdArray in its body
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 204 message and the amount of rows deleted
+ * @returns A JSON response with the HTTP 200 message and the amount of rows deleted
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
@@ -83,9 +80,9 @@ export async function softDeleteTeam(req: Request, res: Response) {
 			deletedTeams.push(team);
 		}
 
-		let message = `${deletedTeams.length} row/s soft deleted successfully.`;
+		let message = `${deletedTeams.length} team(s) soft deleted successfully.`;
 
-		let finalResponse = buildResponse(204, message, deletedTeams);
+		let finalResponse = buildResponse(200, message, deletedTeams);
 
 		res.status(200).json(finalResponse);
 	} catch (error) {
@@ -95,12 +92,12 @@ export async function softDeleteTeam(req: Request, res: Response) {
 }
 
 /**
- * Controller to bulk soft delete function for the team object
+ * Controller to permanently delete teams
  *
  * @param req - Request object containing teamIdArray in its body
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 204 message and the amount of rows deleted
+ * @returns A JSON response with the HTTP 200 message and the amount of rows deleted
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
@@ -115,9 +112,9 @@ export async function deleteTeam(req: Request, res: Response) {
 			deletedTeams.push(team);
 		}
 
-		let message = `${deletedTeams.length} row/s soft deleted successfully.`;
+		let message = `${deletedTeams.length} team(s) permanently deleted successfully.`;
 
-		let finalResponse = buildResponse(204, message, deletedTeams);
+		let finalResponse = buildResponse(200, message, deletedTeams);
 
 		res.status(200).json(finalResponse);
 	} catch (error) {
@@ -126,19 +123,29 @@ export async function deleteTeam(req: Request, res: Response) {
 	}
 }
 
+/**
+ * Controller to update a team and its members
+ *
+ * @param req - Request object containing team object with optional users array
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message and updated team with members
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
 export async function updateTeam(req: Request, res: Response) {
 	try {
 		const team = req.body;
-		const updatedTeam = teamsService.updateTeam(team.id, team);
+		const updatedTeam = await teamsService.updateTeam(team.id, team);
 
 		let finalResponse = buildResponse(
 			200,
 			'Team was updated successfully!',
-			team
+			updatedTeam
 		);
 		res.status(200).json(finalResponse);
 	} catch (error) {
-		let finalResponse = buildError(500, 'There was an error', error);
+		let finalResponse = buildError(500, 'There was an error updating the team', error);
 		res.status(500).json(finalResponse);
 	}
 }

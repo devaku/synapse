@@ -5,9 +5,9 @@ import Spinner from '../../ui/spinner';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
 import { readAllUsers } from '../../../lib/services/api/user';
 import { createTeam, getTeams, editTeam } from '../../../lib/services/api/teams';
-import type { Team, User } from '../../../lib/types/models';
+import type { User } from '../../../lib/types/models';
 
-type OptionType = { value: number; label: string; };
+type OptionType = { value: number; label: string };
 
 interface FormValues {
   name: string;
@@ -15,11 +15,22 @@ interface FormValues {
   selectTeamMembers: OptionType[];
 }
 
-// Extend Team type locally to include users
-interface TeamWithUsers extends Team {
-  users?: User[];
+interface TeamData {
+  id: number;
+  name: string;
+  description?: string | null;
+  createdBy: number;
+  createdAt: Date;
+  isDeleted: number;
+  createdByUser?: { id: number; username: string; firstName?: string; lastName?: string };
+  teamsUsersBelongTo?: Array<{
+    userId: number;
+    teamId: number;
+    user: User;
+  }>;
 }
 
+// Handles both creation and editing of teams with form inputs and user selection.
 export default function TeamsCreateUpdateModal({
   modalTitle,
   teamId,
@@ -30,12 +41,23 @@ export default function TeamsCreateUpdateModal({
   handleModalDisplay: () => void;
 }) {
   const { token } = useAuthContext();
-  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<FormValues>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userOptions, setUserOptions] = useState<OptionType[]>([]);
-  const [teamReference, setTeamReference] = useState<TeamWithUsers | null>(null);
+  const [teamReference, setTeamReference] = useState<TeamData | null>(null);
 
+
+  // Loads users and optionally existing team data for editing.
+  // Used AI for this section (lines 62–106)
+  // Prompt: "Write a React useEffect that loads user data and pre-fills form fields 
+  // if editing an existing team. Include inline comments."
   useEffect(() => {
     async function start() {
       if (!token) {
@@ -46,15 +68,26 @@ export default function TeamsCreateUpdateModal({
       try {
         await loadUsers();
         if (teamId) {
-          // Use getTeams to find the team
-          const teams = await getTeams(token);
-          const teamObj = teams.find((t: TeamWithUsers) => t.id === teamId) as TeamWithUsers | undefined;
+          const response = await getTeams(token);
+          const teamsArray = response.data || response;
+          const teamObj = teamsArray.find(
+            (t: TeamData) => t.id === teamId
+          ) as TeamData | undefined;
+
           if (teamObj) {
             setTeamReference(teamObj);
             setValue('name', teamObj.name);
             setValue('description', teamObj.description || '');
-            if (teamObj.users?.length) {
-              const members = teamObj.users.map((u) => ({ label: u.username, value: u.id }));
+
+            // Load existing team members
+            if (
+              teamObj.teamsUsersBelongTo &&
+              teamObj.teamsUsersBelongTo.length > 0
+            ) {
+              const members = teamObj.teamsUsersBelongTo.map((membership) => ({
+                label: membership.user.username,
+                value: membership.user.id,
+              }));
               setValue('selectTeamMembers', members);
             }
           }
@@ -71,7 +104,10 @@ export default function TeamsCreateUpdateModal({
   async function loadUsers() {
     if (!token) return;
     const usersData: User[] = await readAllUsers(token);
-    const options = usersData.map((u) => ({ value: u.id, label: u.username }));
+    const options = usersData.map((u) => ({
+      value: u.id,
+      label: u.username,
+    }));
     setUserOptions(options);
   }
 
@@ -91,9 +127,18 @@ export default function TeamsCreateUpdateModal({
       };
 
       if (teamId) {
-        await editTeam(token, { id: teamId, name: payload.name, description: payload.description });
+        await editTeam(token, {
+          id: teamId,
+          name: payload.name,
+          description: payload.description,
+          users: payload.users,
+        });
       } else {
-        await createTeam(token, { name: payload.name, description: payload.description });
+        await createTeam(token, {
+          name: payload.name,
+          description: payload.description,
+          users: payload.users,
+        });
       }
 
       handleModalDisplay();
@@ -110,7 +155,9 @@ export default function TeamsCreateUpdateModal({
         <Spinner />
       ) : (
         <div className="flex flex-col gap-2 ml-5 pb-2 pr-2 overflow-y-auto h-screen">
-          <div className="pt-2"><p className="text-2xl">{modalTitle}</p></div>
+          <div className="pt-2">
+            <p className="text-2xl">{modalTitle}</p>
+          </div>
 
           {teamId && (
             <div>
@@ -138,7 +185,9 @@ export default function TeamsCreateUpdateModal({
                 rows={4}
                 {...register('description', { required: true })}
               />
-              {errors.description && <span className="text-red-500">Required</span>}
+              {errors.description && (
+                <span className="text-red-500">Required</span>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
