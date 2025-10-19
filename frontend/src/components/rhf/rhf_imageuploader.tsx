@@ -1,28 +1,22 @@
 /**
  * HOOKS
  */
-
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDropzone, type FileWithPath } from 'react-dropzone';
 
 /**
  * COMPONENTS
  */
+import GalleryDisplay from '../ui/gallery_display';
 
-import { PhotoProvider, PhotoView } from 'react-photo-view';
-import GalleryDisplay from './gallery_display';
-
-export default function ImageUploader({
-	previews,
-	handleAddPreview,
-	handleClearPreview,
+export default function RHFImageUploader({
+	value,
 	onChange,
 }: {
-	previews: string[] | undefined;
-	handleAddPreview: (acceptedFiles: readonly FileWithPath[]) => void;
-	handleClearPreview: () => void;
-	onChange: (...event: any[]) => void;
+	value: File[] | undefined;
+	onChange: (files: any[]) => void;
 }) {
+	const [previews, setPreviews] = useState<string[]>();
 	const dropzoneSettings = {
 		accept: {
 			'image/png': ['.png'],
@@ -41,9 +35,18 @@ export default function ImageUploader({
 		noKeyboard: true,
 	});
 
-	function handleClearImagesClick() {
-		handleClearPreview();
-	}
+	/**
+	 * EFFECTS
+	 */
+
+	// When reset() is called from the hook form
+	// value will be passed down and will trigger this
+	useEffect(() => {
+		// Reset the previews
+		if (value?.length == 0) {
+			setPreviews([]);
+		}
+	}, [value]);
 
 	useEffect(() => {
 		handleAddPreview(acceptedFiles);
@@ -54,6 +57,28 @@ export default function ImageUploader({
 			previews?.forEach((el) => URL.revokeObjectURL(el));
 		};
 	}, [previews]);
+
+	/**
+	 * HANDLERS
+	 *
+	 */
+
+	function handleClearImagesClick() {
+		onChange([]);
+		handleClearPreview();
+	}
+	function handleAddPreview(acceptedFiles: readonly FileWithPath[]) {
+		let urls = acceptedFiles.map((el: any) => {
+			let imageUrl = URL.createObjectURL(el);
+			return imageUrl;
+		});
+		setPreviews(urls);
+	}
+
+	function handleClearPreview() {
+		previews?.forEach((el) => URL.revokeObjectURL(el));
+		setPreviews([]);
+	}
 
 	return (
 		<>

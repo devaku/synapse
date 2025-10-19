@@ -1,6 +1,6 @@
 import { getReasonPhrase } from 'http-status-codes';
 
-import { jsonResponse } from '../types';
+import { jsonResponse } from '../../types';
 
 export function buildResponse(statusCode: number, message: string, data?: any) {
 	let finalData;

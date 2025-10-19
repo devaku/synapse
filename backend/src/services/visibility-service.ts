@@ -1,49 +1,78 @@
 import { Prisma } from '@prisma/client';
+import { PrismaClientOrTransaction } from '../types';
 
-export async function updateTaskVisibleToTeamsRelations(
-	tx: Prisma.TransactionClient,
-	valuesToBeDeleted: number[],
-	valuesToBeCreated: number[],
-	taskId: number
-) {
-	if (valuesToBeDeleted.length > 0) {
-		await deleteTaskVisibleToTeamRelations(tx, valuesToBeDeleted, taskId);
-	}
+export const createVisibilityService = (tx: PrismaClientOrTransaction) => {
+	return {
+		updateTaskVisibleToTeamsRelations:
+			async function updateTaskVisibleToTeamsRelations(
+				valuesToBeDeleted: number[],
+				valuesToBeCreated: number[],
+				taskId: number
+			) {
+				if (valuesToBeDeleted.length > 0) {
+					await deleteTaskVisibleToTeamRelations(
+						tx,
+						valuesToBeDeleted,
+						taskId
+					);
+				}
 
-	if (valuesToBeCreated.length > 0) {
-		await createTaskVisibleToTeamRelations(tx, valuesToBeCreated, taskId);
-	}
-}
+				if (valuesToBeCreated.length > 0) {
+					await createTaskVisibleToTeamRelations(
+						tx,
+						valuesToBeCreated,
+						taskId
+					);
+				}
+			},
 
-export async function updateTaskVisibleToUsersRelations(
-	tx: Prisma.TransactionClient,
-	valuesToBeDeleted: number[],
-	valuesToBeCreated: number[],
-	taskId: number
-) {
-	if (valuesToBeDeleted.length > 0) {
-		await deleteTaskVisibleToUsersRelations(tx, valuesToBeDeleted, taskId);
-	}
+		updateTaskVisibleToUsersRelations:
+			async function updateTaskVisibleToUsersRelations(
+				valuesToBeDeleted: number[],
+				valuesToBeCreated: number[],
+				taskId: number
+			) {
+				if (valuesToBeDeleted.length > 0) {
+					await deleteTaskVisibleToUsersRelations(
+						tx,
+						valuesToBeDeleted,
+						taskId
+					);
+				}
 
-	if (valuesToBeCreated.length > 0) {
-		await createTaskVisibleToUsersRelations(tx, valuesToBeCreated, taskId);
-	}
-}
+				if (valuesToBeCreated.length > 0) {
+					await createTaskVisibleToUsersRelations(
+						tx,
+						valuesToBeCreated,
+						taskId
+					);
+				}
+			},
 
-export async function updateTaskHiddenFromUsersRelations(
-	tx: Prisma.TransactionClient,
-	valuesToBeDeleted: number[],
-	valuesToBeCreated: number[],
-	taskId: number
-) {
-	if (valuesToBeDeleted.length > 0) {
-		await deleteTaskHiddenFromUsersRelations(tx, valuesToBeDeleted, taskId);
-	}
+		updateTaskHiddenFromUsersRelations:
+			async function updateTaskHiddenFromUsersRelations(
+				valuesToBeDeleted: number[],
+				valuesToBeCreated: number[],
+				taskId: number
+			) {
+				if (valuesToBeDeleted.length > 0) {
+					await deleteTaskHiddenFromUsersRelations(
+						tx,
+						valuesToBeDeleted,
+						taskId
+					);
+				}
 
-	if (valuesToBeCreated.length > 0) {
-		await createTaskHiddenFromUsersRelations(tx, valuesToBeCreated, taskId);
-	}
-}
+				if (valuesToBeCreated.length > 0) {
+					await createTaskHiddenFromUsersRelations(
+						tx,
+						valuesToBeCreated,
+						taskId
+					);
+				}
+			},
+	};
+};
 
 async function createTaskVisibleToTeamRelations(
 	tx: Prisma.TransactionClient,

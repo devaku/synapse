@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as teamsService from '../services/teams-service';
-import { buildResponse, buildError } from '../lib/response-helper';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
 
 /**
  * Controller to create a team in the database
@@ -42,7 +42,7 @@ export async function createTeam(req: Request, res: Response) {
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
 
-export async function readTeam(req: Request, res: Response) {
+export async function readAllTeams(req: Request, res: Response) {
 	try {
 		let data = req.body;
 		const team = await teamsService.readAllTeam();

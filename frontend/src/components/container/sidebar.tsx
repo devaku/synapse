@@ -12,7 +12,7 @@ export default function Sidebar() {
 
 	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
 
-	console.log(userData);
+	// console.log(userData);
 
 	useEffect(() => {
 		if (
@@ -119,6 +119,9 @@ export default function Sidebar() {
 				<button
 					className="text-white my-10 cursor-pointer"
 					onClick={() => {
+						//  Clear socket session ID
+						localStorage.setItem('SOCKET-SESSIONID', '');
+
 						keycloak.logout({
 							redirectUri: 'http://localhost:3000',
 						});

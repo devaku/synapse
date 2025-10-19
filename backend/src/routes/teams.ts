@@ -1,7 +1,7 @@
 import express from 'express';
 import {
 	createTeam,
-	readTeam,
+	readAllTeams,
 	deleteTeam,
 	softDeleteTeam,
 	updateTeam,
@@ -9,8 +9,9 @@ import {
 
 const teamRouter = express.Router();
 
-// endpoint to read team
-teamRouter.get('/teams', readTeam);
+// endpoint to read all team
+teamRouter.get('/teams', readAllTeams);
+
 // endpoint to create team
 teamRouter.post('/teams', express.json(), createTeam);
 // endpoint to delete multiple team
