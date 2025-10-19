@@ -20,12 +20,14 @@
 		"compile": "tsc",
 		"copy": "cpx \"src/**/!(uploads)/*\" dist",
 		"format": "npx prettier . --write --config ../.prettierrc.json",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"mcp": "tsx src/mcp/index.ts"
 	},
 	"author": "",
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.20.0",
 		"@prisma/client": "^6.16.1",
 		"axios": "^1.12.2",
 		"connect-pg-simple": "^10.0.0",
@@ -38,7 +40,10 @@
 		"multer": "^2.0.2",
 		"node-fetch": "^3.3.2",
 		"serve-favicon": "^2.5.1",
-		"socket.io": "^4.8.1"
+		"socket.io": "^4.8.1",
+		"uuid": "^13.0.0",
+		"zod": "^3.25.76",
+		"zod-to-json-schema": "^3.24.6"
 	},
 	"devDependencies": {
 		"@types/connect-pg-simple": "^7.0.3",
@@ -49,6 +54,7 @@
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/multer": "^2.0.0",
 		"@types/node": "^24.7.2",
+		"@types/node": "^24.7.2",
 		"@types/serve-favicon": "^2.5.7",
 		"@types/socket.io": "^3.0.2",
 		"@types/socket.io-client": "^3.0.0",
@@ -58,6 +64,7 @@
 		"prisma": "^6.16.1",
 		"rimraf": "^6.0.1",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.9.2"
+		"tsx": "^4.20.6",
+		"typescript": "^5.9.3"
 	}
 }
