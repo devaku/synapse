@@ -286,8 +286,12 @@ export async function createRepoCollaboratorRequest(
 
 		res.status(201).json(finalResponse);
 	} catch (error: any) {
-		console.error('CREATE REPO REQUEST ERROR:', error && error.stack ? error.stack : error);
-		const message = error?.message || 'There was an error creating the request';
+		console.error(
+			'CREATE REPO REQUEST ERROR:',
+			error && error.stack ? error.stack : error
+		);
+		const message =
+			error?.message || 'There was an error creating the request';
 		let finalResponse = buildError(500, message, { error: message });
 		res.status(500).json(finalResponse);
 	}
@@ -320,9 +324,8 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid request ID', null));
 			}
 
-			requests = await githubService.readRepoCollaboratorRequestById(
-				requestId
-			);
+			requests =
+				await githubService.readRepoCollaboratorRequestById(requestId);
 			if (!requests) {
 				return res
 					.status(404)
@@ -345,9 +348,10 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid user ID', null));
 			}
 
-			requests = await githubService.readRepoCollaboratorRequestsByUserId(
-				userIdNum
-			);
+			requests =
+				await githubService.readRepoCollaboratorRequestsByUserId(
+					userIdNum
+				);
 			message =
 				requests.length > 0
 					? 'User repository collaborator requests retrieved successfully.'
@@ -361,9 +365,10 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid repo ID', null));
 			}
 
-			requests = await githubService.readRepoCollaboratorRequestsByRepoId(
-				repoIdNum
-			);
+			requests =
+				await githubService.readRepoCollaboratorRequestsByRepoId(
+					repoIdNum
+				);
 			message =
 				requests.length > 0
 					? 'Repository collaborator requests retrieved successfully.'
