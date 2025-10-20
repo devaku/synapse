@@ -14,8 +14,8 @@ import { prismaDb, txtimeoutValue } from '../lib/database';
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
 export async function readAllNotifications(req: Request, res: Response) {
-    const notificationService = createNotificationService(prismaDb);
-    try {
+	const notificationService = createNotificationService(prismaDb);
+	try {
 		const notifications = await notificationService.readAllNotifications();
 		let message = '';
 

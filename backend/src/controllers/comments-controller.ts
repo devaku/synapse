@@ -151,9 +151,8 @@ async function setupNotification(
 		};
 
 		// Create the notification
-		const notificationRow = await notificationService.createNotification(
-			notificationData
-		);
+		const notificationRow =
+			await notificationService.createNotification(notificationData);
 
 		// Create the links
 		await notificationForUsersService.linkNotificationToUsers(

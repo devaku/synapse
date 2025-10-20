@@ -4,270 +4,302 @@ import * as visibilityService from '../../services/visibility-service';
 import { prismaDb } from '../../lib/database';
 
 export class TaskHandlers {
-  /**
-   * Create a new task
-   */
-  static async createTask(params: any, userId: number) {
-    try {
-      // Attach creator
-      params.createdByUserId = userId;
+	/**
+	 * Create a new task
+	 */
+	static async createTask(params: any, userId: number) {
+		try {
+			// Attach creator
+			params.createdByUserId = userId;
 
-      // Set default priority
-      if (!params.priority) {
-        params.priority = 'MEDIUM';
-      }
+			// Set default priority
+			if (!params.priority) {
+				params.priority = 'MEDIUM';
+			}
 
-      // Build visibility rules (similar to createTaskVisiblityRules)
-      let visibleUserIds: number[] = params.taskVisibleToUsers || [];
-      
-      // Always include creator
-      if (!visibleUserIds.includes(userId)) {
-        visibleUserIds.push(userId);
-      }
+			// Build visibility rules (similar to createTaskVisiblityRules)
+			let visibleUserIds: number[] = params.taskVisibleToUsers || [];
 
-      params.taskVisibleToUsers = {
-        create: visibleUserIds.map((id) => ({ userId: id })),
-      };
+			// Always include creator
+			if (!visibleUserIds.includes(userId)) {
+				visibleUserIds.push(userId);
+			}
 
-      if (params.taskVisibleToTeams) {
-        params.taskVisibleToTeams = {
-          create: params.taskVisibleToTeams.map((id: number) => ({ teamId: id })),
-        };
-      }
+			params.taskVisibleToUsers = {
+				create: visibleUserIds.map((id) => ({ userId: id })),
+			};
 
-      if (params.taskHiddenFromUsers) {
-        params.taskHiddenFromUsers = {
-          create: params.taskHiddenFromUsers.map((id: number) => ({ userId: id })),
-        };
-      }
+			if (params.taskVisibleToTeams) {
+				params.taskVisibleToTeams = {
+					create: params.taskVisibleToTeams.map((id: number) => ({
+						teamId: id,
+					})),
+				};
+			}
 
-      // Auto-subscribe creator
-      params.taskUserSubscribeTo = {
-        create: { userId },
-      };
+			if (params.taskHiddenFromUsers) {
+				params.taskHiddenFromUsers = {
+					create: params.taskHiddenFromUsers.map((id: number) => ({
+						userId: id,
+					})),
+				};
+			}
 
-      const task = await taskService.createTask(params);
+			// Auto-subscribe creator
+			params.taskUserSubscribeTo = {
+				create: { userId },
+			};
 
-      return {
-        success: true,
-        data: task,
-        message: 'Task created successfully',
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        message: 'Failed to create task',
-      };
-    }
-  }
+			const task = await taskService.createTask(params);
 
-  /**
-   * Read tasks
-   */
-  static async readTasks(params: any, userId: number) {
-    try {
-      let tasks;
-      let message = '';
+			return {
+				success: true,
+				data: task,
+				message: 'Task created successfully',
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				error: error.message,
+				message: 'Failed to create task',
+			};
+		}
+	}
 
-      if (params.taskId) {
-        // Read specific task
-        const task = await taskService.readTaskById(params.taskId);
-        tasks = task ? [task] : [];
-        message = task ? 'Task retrieved successfully' : 'Task not found';
-      } else if (params.subscribedOnly) {
-        // Read subscribed tasks
-        tasks = await taskService.readTasksUserIsSubscribedTo(userId);
-        message = `Found ${tasks.length} subscribed tasks`;
-      } else if (params.userOnly) {
-        // Read tasks visible to user
-        tasks = await taskService.readTasksFilteredForUser(userId);
-        message = `Found ${tasks.length} visible tasks`;
-      } else {
-        // Read all tasks
-        tasks = await taskService.readAllTask();
-        message = `Found ${tasks.length} total tasks`;
-      }
+	/**
+	 * Read tasks
+	 */
+	static async readTasks(params: any, userId: number) {
+		try {
+			let tasks;
+			let message = '';
 
-      return {
-        success: true,
-        data: tasks,
-        message,
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        message: 'Failed to read tasks',
-      };
-    }
-  }
+			if (params.taskId) {
+				// Read specific task
+				const task = await taskService.readTaskById(params.taskId);
+				tasks = task ? [task] : [];
+				message = task
+					? 'Task retrieved successfully'
+					: 'Task not found';
+			} else if (params.subscribedOnly) {
+				// Read subscribed tasks
+				tasks = await taskService.readTasksUserIsSubscribedTo(userId);
+				message = `Found ${tasks.length} subscribed tasks`;
+			} else if (params.userOnly) {
+				// Read tasks visible to user
+				tasks = await taskService.readTasksFilteredForUser(userId);
+				message = `Found ${tasks.length} visible tasks`;
+			} else {
+				// Read all tasks
+				tasks = await taskService.readAllTask();
+				message = `Found ${tasks.length} total tasks`;
+			}
 
-  /**
-   * Update a task
-   */
-  static async updateTask(params: any, userId: number) {
-    try {
-      const { taskId, ...updateData } = params;
+			return {
+				success: true,
+				data: tasks,
+				message,
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				error: error.message,
+				message: 'Failed to read tasks',
+			};
+		}
+	}
 
-      // Get existing task
-      const existingTask = await taskService.readTaskById(taskId);
-      if (!existingTask) {
-        return {
-          success: false,
-          message: 'Task not found',
-        };
-      }
+	/**
+	 * Update a task
+	 */
+	static async updateTask(params: any, userId: number) {
+		try {
+			const { taskId, ...updateData } = params;
 
-      // Ensure creator can always see the task
-      if (updateData.taskVisibleToUsers) {
-        updateData.taskVisibleToUsers.push(existingTask.createdByUserId);
-      } else {
-        updateData.taskVisibleToUsers = [existingTask.createdByUserId];
-      }
+			// Get existing task
+			const existingTask = await taskService.readTaskById(taskId);
+			if (!existingTask) {
+				return {
+					success: false,
+					message: 'Task not found',
+				};
+			}
 
-      // Remove creator from hidden users
-      if (updateData.taskHiddenFromUsers) {
-        updateData.taskHiddenFromUsers = updateData.taskHiddenFromUsers.filter(
-          (id: number) => id !== existingTask.createdByUserId
-        );
-      }
+			// Ensure creator can always see the task
+			if (updateData.taskVisibleToUsers) {
+				updateData.taskVisibleToUsers.push(
+					existingTask.createdByUserId
+				);
+			} else {
+				updateData.taskVisibleToUsers = [existingTask.createdByUserId];
+			}
 
-      // Update with transaction
-      const updatedTask = await prismaDb.$transaction(async (tx) => {
-        // Update visibility rules
-        await this.updateVisibilityRules(tx, updateData, existingTask);
+			// Remove creator from hidden users
+			if (updateData.taskHiddenFromUsers) {
+				updateData.taskHiddenFromUsers =
+					updateData.taskHiddenFromUsers.filter(
+						(id: number) => id !== existingTask.createdByUserId
+					);
+			}
 
-        // Remove visibility arrays from update data
-        delete updateData.taskVisibleToUsers;
-        delete updateData.taskHiddenFromUsers;
-        delete updateData.taskVisibleToTeams;
+			// Update with transaction
+			const updatedTask = await prismaDb.$transaction(async (tx) => {
+				// Update visibility rules
+				await this.updateVisibilityRules(tx, updateData, existingTask);
 
-        // Update task
-        return await taskService.updateTask(tx, taskId, updateData);
-      });
+				// Remove visibility arrays from update data
+				delete updateData.taskVisibleToUsers;
+				delete updateData.taskHiddenFromUsers;
+				delete updateData.taskVisibleToTeams;
 
-      return {
-        success: true,
-        data: updatedTask,
-        message: 'Task updated successfully',
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        message: 'Failed to update task',
-      };
-    }
-  }
+				// Update task
+				return await taskService.updateTask(tx, taskId, updateData);
+			});
 
-  /**
-   * Subscribe to task
-   */
-  static async subscribeTask(params: any, userId: number) {
-    try {
-      const { taskId } = params;
+			return {
+				success: true,
+				data: updatedTask,
+				message: 'Task updated successfully',
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				error: error.message,
+				message: 'Failed to update task',
+			};
+		}
+	}
 
-      // Check if already subscribed
-      const existingSubscription = await prismaDb.taskUserSubscribeTo.findUnique({
-        where: {
-          userId_taskId: { userId, taskId },
-        },
-      });
+	/**
+	 * Subscribe to task
+	 */
+	static async subscribeTask(params: any, userId: number) {
+		try {
+			const { taskId } = params;
 
-      if (existingSubscription) {
-        return {
-          success: false,
-          message: 'Already subscribed to this task',
-        };
-      }
+			// Check if already subscribed
+			const existingSubscription =
+				await prismaDb.taskUserSubscribeTo.findUnique({
+					where: {
+						userId_taskId: { userId, taskId },
+					},
+				});
 
-      await subscriptionService.subscribeToTask(userId, taskId);
+			if (existingSubscription) {
+				return {
+					success: false,
+					message: 'Already subscribed to this task',
+				};
+			}
 
-      return {
-        success: true,
-        message: 'Subscribed to task successfully',
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        message: 'Failed to subscribe to task',
-      };
-    }
-  }
+			await subscriptionService.subscribeToTask(userId, taskId);
 
-  /**
-   * Unsubscribe from task
-   */
-  static async unsubscribeTask(params: any, userId: number) {
-    try {
-      const { taskId } = params;
+			return {
+				success: true,
+				message: 'Subscribed to task successfully',
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				error: error.message,
+				message: 'Failed to subscribe to task',
+			};
+		}
+	}
 
-      await subscriptionService.unsubscribeFromTask(userId, taskId);
+	/**
+	 * Unsubscribe from task
+	 */
+	static async unsubscribeTask(params: any, userId: number) {
+		try {
+			const { taskId } = params;
 
-      return {
-        success: true,
-        message: 'Unsubscribed from task successfully',
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        message: 'Failed to unsubscribe from task',
-      };
-    }
-  }
+			await subscriptionService.unsubscribeFromTask(userId, taskId);
 
-  /**
-   * Helper: Update visibility rules (similar to updateTaskVisiblityRules)
-   */
-  private static async updateVisibilityRules(tx: any, data: any, existingTask: any) {
-    const taskId = existingTask.id;
+			return {
+				success: true,
+				message: 'Unsubscribed from task successfully',
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				error: error.message,
+				message: 'Failed to unsubscribe from task',
+			};
+		}
+	}
 
-    // Update visible teams
-    if (data.taskVisibleToTeams) {
-      const database = existingTask.taskVisibleToTeams.map((el: any) => el.teamId);
-      const updated = data.taskVisibleToTeams;
-      const removedValues = database.filter((el: number) => !updated.includes(el));
-      const valuesCreated = updated.filter((el: number) => !database.includes(el));
+	/**
+	 * Helper: Update visibility rules (similar to updateTaskVisiblityRules)
+	 */
+	private static async updateVisibilityRules(
+		tx: any,
+		data: any,
+		existingTask: any
+	) {
+		const taskId = existingTask.id;
 
-      await visibilityService.updateTaskVisibleToTeamsRelations(
-        tx,
-        removedValues,
-        valuesCreated,
-        taskId
-      );
-    }
+		// Update visible teams
+		if (data.taskVisibleToTeams) {
+			const database = existingTask.taskVisibleToTeams.map(
+				(el: any) => el.teamId
+			);
+			const updated = data.taskVisibleToTeams;
+			const removedValues = database.filter(
+				(el: number) => !updated.includes(el)
+			);
+			const valuesCreated = updated.filter(
+				(el: number) => !database.includes(el)
+			);
 
-    // Update visible users
-    if (data.taskVisibleToUsers) {
-      const database = existingTask.taskVisibleToUsers.map((el: any) => el.userId);
-      const updated = data.taskVisibleToUsers;
-      const removedValues = database.filter((el: number) => !updated.includes(el));
-      const valuesCreated = updated.filter((el: number) => !database.includes(el));
+			await visibilityService.updateTaskVisibleToTeamsRelations(
+				tx,
+				removedValues,
+				valuesCreated,
+				taskId
+			);
+		}
 
-      await visibilityService.updateTaskVisibleToUsersRelations(
-        tx,
-        removedValues,
-        valuesCreated,
-        taskId
-      );
-    }
+		// Update visible users
+		if (data.taskVisibleToUsers) {
+			const database = existingTask.taskVisibleToUsers.map(
+				(el: any) => el.userId
+			);
+			const updated = data.taskVisibleToUsers;
+			const removedValues = database.filter(
+				(el: number) => !updated.includes(el)
+			);
+			const valuesCreated = updated.filter(
+				(el: number) => !database.includes(el)
+			);
 
-    // Update hidden users
-    if (data.taskHiddenFromUsers) {
-      const database = existingTask.taskHiddenFromUsers.map((el: any) => el.userId);
-      const updated = data.taskHiddenFromUsers;
-      const removedValues = database.filter((el: number) => !updated.includes(el));
-      const valuesCreated = updated.filter((el: number) => !database.includes(el));
+			await visibilityService.updateTaskVisibleToUsersRelations(
+				tx,
+				removedValues,
+				valuesCreated,
+				taskId
+			);
+		}
 
-      await visibilityService.updateTaskHiddenFromUsersRelations(
-        tx,
-        removedValues,
-        valuesCreated,
-        taskId
-      );
-    }
-  }
+		// Update hidden users
+		if (data.taskHiddenFromUsers) {
+			const database = existingTask.taskHiddenFromUsers.map(
+				(el: any) => el.userId
+			);
+			const updated = data.taskHiddenFromUsers;
+			const removedValues = database.filter(
+				(el: number) => !updated.includes(el)
+			);
+			const valuesCreated = updated.filter(
+				(el: number) => !database.includes(el)
+			);
+
+			await visibilityService.updateTaskHiddenFromUsersRelations(
+				tx,
+				removedValues,
+				valuesCreated,
+				taskId
+			);
+		}
+	}
 }

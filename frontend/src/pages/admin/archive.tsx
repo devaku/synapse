@@ -14,15 +14,15 @@ export default function AdminArchiveManagerPage() {
 	const [display, setDisplay] = useState('hidden');
 
 	const columns = [
-		{ 
-			name: 'ID', 
-			selector: (row) => row.id, 
+		{
+			name: 'ID',
+			selector: (row) => row.id,
 			sortable: true,
 			width: '50px',
 		},
 		{
-			name: 'Name', 
-			selector: (row) => row.name, 
+			name: 'Name',
+			selector: (row) => row.name,
 			sortable: true,
 		},
 		{
@@ -49,7 +49,7 @@ export default function AdminArchiveManagerPage() {
 	const deleteSelectedRows = (selectedRows) => {
 		const selectedIds = new Set(selectedRows.map((row) => row.id));
 		const newData = data.filter((item) => !selectedIds.has(item.id));
-		
+
 		setData(newData);
 		setFilteredData(newData);
 		setSelectedRows([]);

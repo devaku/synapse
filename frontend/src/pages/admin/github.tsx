@@ -2,7 +2,7 @@ import HeaderContainer from '../../components/container/header_container';
 
 import DataTable from '../../components/container/DataTableBase';
 import { useEffect, useState } from 'react';
-import SvgComponent from '../../components/ui/svg_component';
+// import SvgComponent from '../../components/ui/svg_component';
 import {
 	readRepoCollaboratorRequest,
 	addUserToRepo,
@@ -29,6 +29,11 @@ export default function AdminGithubManagerPage() {
 		{
 			name: 'User ID',
 			selector: (row) => row.userId,
+			sortable: true,
+		},
+		{
+			name: 'User',
+			selector: (row) => row.requesterName,
 			sortable: true,
 		},
 		{
@@ -95,21 +100,36 @@ export default function AdminGithubManagerPage() {
 		setError(null);
 		try {
 			// call service to add collaborator
-			await addUserToRepo(token!, row.repoId, row.githubUsername, row.permission || 'pull');
+			await addUserToRepo(
+				token!,
+				row.repoId,
+				row.githubUsername,
+				row.permission || 'pull'
+			);
 			// delete the request
 			await deleteRepoCollaboratorRequest(token!, row.id);
 			// refresh list
-			const requests = await readRepoCollaboratorRequest(token ?? undefined);
-			const reqArray = Array.isArray(requests) ? requests : requests ? [requests] : [];
-			setData(reqArray.map((r: any) => ({
-				id: r.id,
-				userId: r.userId,
-				repoId: r.repoId,
-				permission: r.permission,
-				createdAt: r.createdAt,
-				githubUsername: r.githubUsername,
-				requesterName: r.user?.username ?? `${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
-			})));
+			const requests = await readRepoCollaboratorRequest(
+				token ?? undefined
+			);
+			const reqArray = Array.isArray(requests)
+				? requests
+				: requests
+					? [requests]
+					: [];
+			setData(
+				reqArray.map((r: any) => ({
+					id: r.id,
+					userId: r.userId,
+					repoId: r.repoId,
+					permission: r.permission,
+					createdAt: r.createdAt,
+					githubUsername: r.githubUsername,
+					requesterName:
+						r.user?.username ??
+						`${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
+				}))
+			);
 		} catch (err: any) {
 			console.error('Approve error', err);
 			setError(err?.message || 'Failed to approve request');
@@ -123,17 +143,27 @@ export default function AdminGithubManagerPage() {
 		setError(null);
 		try {
 			await deleteRepoCollaboratorRequest(token!, row.id);
-			const requests = await readRepoCollaboratorRequest(token ?? undefined);
-			const reqArray = Array.isArray(requests) ? requests : requests ? [requests] : [];
-			setData(reqArray.map((r: any) => ({
-				id: r.id,
-				userId: r.userId,
-				repoId: r.repoId,
-				permission: r.permission,
-				createdAt: r.createdAt,
-				githubUsername: r.githubUsername,
-				requesterName: r.user?.username ?? `${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
-			})));
+			const requests = await readRepoCollaboratorRequest(
+				token ?? undefined
+			);
+			const reqArray = Array.isArray(requests)
+				? requests
+				: requests
+					? [requests]
+					: [];
+			setData(
+				reqArray.map((r: any) => ({
+					id: r.id,
+					userId: r.userId,
+					repoId: r.repoId,
+					permission: r.permission,
+					createdAt: r.createdAt,
+					githubUsername: r.githubUsername,
+					requesterName:
+						r.user?.username ??
+						`${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
+				}))
+			);
 		} catch (err: any) {
 			console.error('Deny error', err);
 			setError(err?.message || 'Failed to deny request');
@@ -146,7 +176,7 @@ export default function AdminGithubManagerPage() {
 		<pre className="w-full whitespace-pre-wrap break-all overflow-hidden text-xs leading-relaxed bg-gray-50 border border-gray-200 p-3">
 			<ul className="">
 				<li>ID: {data.id}</li>
-				<li>User ID: {data.userId}</li>
+				<li>User: {data.requesterName}</li>
 				<li>Repository ID: {data.repoId}</li>
 				<li>Permission: {data.permission}</li>
 				<li>Created At: {data.createdAt}</li>
@@ -194,9 +224,15 @@ export default function AdminGithubManagerPage() {
 			setLoading(true);
 			setError(null);
 			try {
-				const requests = await readRepoCollaboratorRequest(token ?? undefined);
+				const requests = await readRepoCollaboratorRequest(
+					token ?? undefined
+				);
 				if (!mounted) return;
-				const reqArray = Array.isArray(requests) ? requests : requests ? [requests] : [];
+				const reqArray = Array.isArray(requests)
+					? requests
+					: requests
+						? [requests]
+						: [];
 				const rows = reqArray.map((r: any) => ({
 					id: r.id,
 					userId: r.userId,
@@ -204,7 +240,9 @@ export default function AdminGithubManagerPage() {
 					permission: r.permission,
 					createdAt: r.createdAt,
 					githubUsername: r.githubUsername,
-					requesterName: r.user?.username ?? `${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
+					requesterName:
+						r.user?.username ??
+						`${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
 				}));
 				setData(rows);
 			} catch (err: any) {
@@ -223,7 +261,11 @@ export default function AdminGithubManagerPage() {
 
 	return (
 		<HeaderContainer pageTitle="GitHub Manager">
-			{loading && <div className="text-sm text-gray-600 mb-2">Loading repositories...</div>}
+			{loading && (
+				<div className="text-sm text-gray-600 mb-2">
+					Loading repositories...
+				</div>
+			)}
 			{error && <div className="text-sm text-red-600 mb-2">{error}</div>}
 			<div className="flex justify-between items-center">
 				<div className="">
