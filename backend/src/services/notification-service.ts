@@ -15,6 +15,6 @@ export const createNotificationService = (tx: PrismaClientOrTransaction) => {
 			const rows = await tx.notification.findMany({});
 
 			return rows;
-		}
+		},
 	};
 };
