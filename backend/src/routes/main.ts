@@ -7,6 +7,7 @@ import teamRouter from './teams';
 import githubRouter from './github';
 import userRouter from './users';
 import commentRouter from './comments';
+import notificationRouter from './notifications';
 import deletionRequestRouter from './deletion_request';
 
 const mainRouter = express.Router();
@@ -29,6 +30,7 @@ function setupApiRoutes(): express.Router {
 	apiRouter.use(commentRouter);
 	apiRouter.use(githubRouter);
 	apiRouter.use(userRouter);
+	apiRouter.use(notificationRouter);
 	apiRouter.use(deletionRequestRouter);
 
 	return apiRouter;

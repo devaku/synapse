@@ -10,5 +10,11 @@ export const createNotificationService = (tx: PrismaClientOrTransaction) => {
 			});
 			return rows;
 		},
+
+		readAllNotifications: async function readAllNotifications() {
+			const rows = await tx.notification.findMany({});
+
+			return rows;
+		}
 	};
 };
