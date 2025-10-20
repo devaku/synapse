@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { prismaDb } from '../lib/database';
+import { corsValues } from '../lib/cors';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import type { Server as HttpServer } from 'http';
 import { createSocketService } from '../services/socket-service';
@@ -14,7 +15,7 @@ const userService = createUserService(prismaDb);
 export function socketMiddleware(httpServer: HttpServer) {
 	const io = new SocketIOServer(httpServer, {
 		cors: {
-			origin: 'http://localhost:3000',
+			origin: corsValues,
 		},
 	});
 

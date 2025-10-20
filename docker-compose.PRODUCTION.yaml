@@ -1,9 +1,24 @@
 # FOR PRODUCTION
 
 services:
+  
+
+    frontend_service:
+      build: ./frontend
+      container_name: synapse_frontend
+      restart: unless-stopped  
+      env_file: 
+        - frontend.env
+
+      # HOST - CONTAINER
+      ports:
+          - '3000:3000'
+      networks:
+          - synapse_network
+
     backend_service:
-      image: devaku/synapse-backend
-      # build: ./backend/
+      # image: devaku/synapse-backend
+      build: ./backend/
       container_name: synapse_backend
       restart: unless-stopped  
       env_file: 

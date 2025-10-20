@@ -1,4 +1,4 @@
-export const userIcons = [
+module.exports.userIcons = [
 	{
 		imageUrl: 'http://localhost:8080/public/icons/usericon%20(1).jpg',
 		userId: 1,
@@ -201,7 +201,7 @@ export const userIcons = [
 	},
 ];
 
-export const taskImages = [
+module.exports.taskImages = [
 	{
 		imageUrl: 'http://localhost:8080/public/uploads/azul.jpg',
 		userId: 2,
