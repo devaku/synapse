@@ -47,7 +47,10 @@ export default function DataTableBase<T extends Row = Row>({
 			dense={rest.dense ?? dense}
 			theme={rest.theme ?? theme}
 			// keep a default border class but allow additional classNames
-			className={`border border-gray-200` + (rest.className ? ` ${rest.className}` : '')}
+			className={
+				`border border-gray-200` +
+				(rest.className ? ` ${rest.className}` : '')
+			}
 			{...rest}
 			// sensible defaults for usability and repeatability
 			fixedHeader

@@ -25,7 +25,11 @@ export async function createTeam(req: Request, res: Response) {
 
 		res.status(201).json(finalResponse);
 	} catch (error: any) {
-		let finalResponse = buildError(500, 'There was an error creating the team', error);
+		let finalResponse = buildError(
+			500,
+			'There was an error creating the team',
+			error
+		);
 		res.status(500).json(finalResponse);
 	}
 }
@@ -145,7 +149,11 @@ export async function updateTeam(req: Request, res: Response) {
 		);
 		res.status(200).json(finalResponse);
 	} catch (error) {
-		let finalResponse = buildError(500, 'There was an error updating the team', error);
+		let finalResponse = buildError(
+			500,
+			'There was an error updating the team',
+			error
+		);
 		res.status(500).json(finalResponse);
 	}
 }

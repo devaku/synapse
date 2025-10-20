@@ -5,18 +5,23 @@ import { getTeams } from '../../../lib/services/api/teams';
 import type { User } from '../../../lib/types/models';
 
 interface TeamData {
-  id: number;
-  name: string;
-  description?: string | null;
-  createdBy: number;
-  createdAt: Date;
-  isDeleted: number;
-  createdByUser?: { id: number; username: string; firstName?: string; lastName?: string };
-  teamsUsersBelongTo?: Array<{
-    userId: number;
-    teamId: number;
-    user: User;
-  }>;
+	id: number;
+	name: string;
+	description?: string | null;
+	createdBy: number;
+	createdAt: Date;
+	isDeleted: number;
+	createdByUser?: {
+		id: number;
+		username: string;
+		firstName?: string;
+		lastName?: string;
+	};
+	teamsUsersBelongTo?: Array<{
+		userId: number;
+		teamId: number;
+		user: User;
+	}>;
 }
 
 // Displays a modal with detailed information about a selected team.
@@ -31,9 +36,9 @@ export default function TeamsViewModal({
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [teamData, setTeamData] = useState<TeamData | null>(null);
 
-    // Used AI for this section (lines 37–69)
-    // Prompt: "Write a React useEffect that fetches a list of teams using a token, 
-    // finds the one matching a given teamId, handles errors, and updates state.""
+	// Used AI for this section (lines 37–69)
+	// Prompt: "Write a React useEffect that fetches a list of teams using a token,
+	// finds the one matching a given teamId, handles errors, and updates state.""
 	useEffect(() => {
 		async function loadTeam() {
 			if (!token || !teamId) {
@@ -47,11 +52,12 @@ export default function TeamsViewModal({
 				console.log('All teams:', teamsArray);
 				console.log('Looking for team with ID:', teamId);
 
-				const team = teamsArray.find(
-					(t: TeamData) => t.id === teamId
-				);
+				const team = teamsArray.find((t: TeamData) => t.id === teamId);
 				console.log('Found team:', team);
-				console.log('Team teamsUsersBelongTo:', team?.teamsUsersBelongTo);
+				console.log(
+					'Team teamsUsersBelongTo:',
+					team?.teamsUsersBelongTo
+				);
 				console.log('Team createdByUser:', team?.createdByUser);
 
 				if (team) {
@@ -107,9 +113,7 @@ export default function TeamsViewModal({
 										{teamData.teamsUsersBelongTo.map(
 											(membership) => (
 												<li
-													key={
-														membership.user.id
-													}
+													key={membership.user.id}
 													className="text-lg"
 												>
 													{membership.user.username}
