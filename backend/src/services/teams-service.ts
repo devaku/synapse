@@ -12,11 +12,14 @@ export async function createTeam(team: any) {
 	const teamRow = await prismaDb.team.create({
 		data: {
 			...teamData,
-			teamsUsersBelongTo: users && users.length > 0 ? {
-				create: users.map((userId: number) => ({
-					userId: userId,
-				})),
-			} : undefined,
+			teamsUsersBelongTo:
+				users && users.length > 0
+					? {
+							create: users.map((userId: number) => ({
+								userId: userId,
+							})),
+						}
+					: undefined,
 		},
 		include: {
 			createdByUser: {

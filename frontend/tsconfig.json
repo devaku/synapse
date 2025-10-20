@@ -1,20 +1,16 @@
 {
-    "compilerOptions": {
-        "ignoreDeprecations": "6.0",
-        "baseUrl": "/",
-        "paths": {
-            "@/*": [
-                "src/*"
-            ],
-            "@components/*": [
-                "src/components/*"
-            ]
-        }
-    },
-    "files": [],
-    "references": [
-        {
-            "path": "./tsconfig.app.json"
-        }
-    ]
+	"compilerOptions": {
+		"ignoreDeprecations": "6.0",
+		"baseUrl": "/",
+		"paths": {
+			"@/*": ["src/*"],
+			"@components/*": ["src/components/*"]
+		}
+	},
+	"files": [],
+	"references": [
+		{
+			"path": "./tsconfig.app.json"
+		}
+	]
 }

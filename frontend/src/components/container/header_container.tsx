@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { useState, useEffect, useRef, type RefObject } from 'react';
 import { useSocketContext } from '../../lib/contexts/SocketContext';
-import { useNotifications } from '../../lib/hooks/api/useNotifications'
+import { useNotifications } from '../../lib/hooks/api/useNotifications';
 
 /**
  * COMPONENTS
@@ -33,7 +33,7 @@ export default function HeaderContainer({
 
 	const { notifications } = useNotifications();
 
-	console.log(notifications)
+	console.log(notifications);
 
 	const testNotifications = [
 		{

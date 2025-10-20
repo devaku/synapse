@@ -17,7 +17,7 @@ export default function NotificationCard({
 	description,
 	sender,
 	payload,
-	setOpenState
+	setOpenState,
 }: typeNotificationCard) {
 	const navigate = useNavigate();
 
@@ -44,13 +44,9 @@ export default function NotificationCard({
 			<p className="text-sm text-ttg-black/75 line-clamp-2">
 				{description}
 			</p>
-			<div className='flex justify-between'>
-				<p className="text-xs text-ttg-black/60 mt-1">
-					ADMIN ADMIN
-				</p>
-				<p className='text-xs text-ttg-black/60 mt-1'>
-					DATE
-				</p>
+			<div className="flex justify-between">
+				<p className="text-xs text-ttg-black/60 mt-1">ADMIN ADMIN</p>
+				<p className="text-xs text-ttg-black/60 mt-1">DATE</p>
 			</div>
 		</div>
 	);

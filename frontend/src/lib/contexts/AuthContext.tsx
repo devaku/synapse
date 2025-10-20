@@ -44,6 +44,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 						// console.log(keycloak.token);
 						// storing access token after successful login
 						setToken(keycloak.token);
+
+						// TEMP DEBUG - REMOVE LATER
+						// THIS LOG IS FOR TESTING AUTH ONLY - REMOVE BEFORE COMMIT
+						console.log(
+							'DEBUG AUTH: token present?',
+							!!keycloak.token,
+							'token-subject:',
+							parseJWT(keycloak.token).sub
+						);
+
 						let jwtData = parseJWT(keycloak.token);
 						setUserData(jwtData);
 

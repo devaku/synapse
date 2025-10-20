@@ -137,31 +137,30 @@ export default function AdminNotificationsManagerPage() {
 		if (tableType === 'teams') {
 			result = data.teams.filter((item) => {
 				return (
-					item.id &&
-					item.id
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase()) ||
-					item.name
-						.toLowerCase()
-						.includes(filterText.toLowerCase())
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterText.toLowerCase())) ||
+					item.name.toLowerCase().includes(filterText.toLowerCase())
 				);
 			});
 			setTeamsData(result);
 		} else if (tableType === 'tasks') {
 			result = data.tasks.filter((item) => {
 				return (
-					item.id &&
-					item.id
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase()) ||
+					(item.id &&
+						item.id
+							.toString()
+							.toLowerCase()
+							.includes(filterText.toLowerCase())) ||
 					item.name
 						.toLowerCase()
 						.includes(filterText.toLowerCase()) ||
 					(item.associatedTeam &&
-						data.teams.find((team) => team.id === item.associatedTeam)?.name
-							.toLowerCase()
+						data.teams
+							.find((team) => team.id === item.associatedTeam)
+							?.name.toLowerCase()
 							.includes(filterText.toLowerCase()))
 				);
 			});
@@ -247,15 +246,15 @@ export default function AdminNotificationsManagerPage() {
 							tableType === 'teams'
 								? teamsData
 								: tableType === 'tasks'
-								? tasksData
-								: usersData
+									? tasksData
+									: usersData
 						}
 						columns={
 							tableType === 'teams'
 								? teamsColumns
 								: tableType === 'tasks'
-								? tasksColumns
-								: usersColumns
+									? tasksColumns
+									: usersColumns
 						}
 						fixedHeaderScrollHeight="400px"
 						selectableRows
