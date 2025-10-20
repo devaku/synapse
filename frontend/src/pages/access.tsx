@@ -12,9 +12,14 @@ import StatusPill from '../components/ui/status_pill';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import Button from '../components/ui/button';
 import * as _ from 'lodash';
-import { useState, useEffect } from 'react';
-import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
-import schema from '../assets/schemas/schema.json';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuthContext } from '../lib/contexts/AuthContext';
+import {
+	readRepoCollaboratorRequest,
+	createRepoCollaboratorRequest,
+	deleteRepoCollaboratorRequest,
+} from '../lib/services/api/github';
+import AccessCreationModal from '../components/modals/access/access_creation_model';
 
 // type tableData = {
 // 	columnName: string[];
@@ -104,26 +109,41 @@ export default function MyAccesssPage() {
 	const [modalAccessId, setModalAccessId] = useState<number>(0);
 	const [formState, setFormState] = useState<Record<string, any>>({});
 
-	// Handle form state updates from the dynamic modal
-	const handleFormStateChange = (newState: Record<string, any>) => {
-		setFormState(newState);
-	};
+	// Auth context
+	const { token, serverData } = useAuthContext();
+
+	// User's GitHub requests
+	const [myRequests, setMyRequests] = useState<any[]>([]);
+	const [requestsLoading, setRequestsLoading] = useState(false);
+	const [requestsError, setRequestsError] = useState<string | null>(null);
+
+	// (formState is no longer used; kept for compatibility with other UI parts)
 
 	/**
 	 * INTERNAL FUNCTIONS
 	 */
 
-	useEffect(() => {
-		async function start() {
-			await refreshTable();
+	// Load user requests when auth becomes available.
+	const loadMyRequests = useCallback(async () => {
+		if (!token || !serverData?.id) return;
+		setRequestsLoading(true);
+		setRequestsError(null);
+		try {
+			const data = await readRepoCollaboratorRequest(token, undefined, { userId: serverData.id });
+			const arr = Array.isArray(data) ? data : data ? [data] : [];
+			setMyRequests(arr);
+		} catch (err: any) {
+			console.error('Failed to load user requests', err);
+			setRequestsError(err?.message || 'Failed to load requests');
+		} finally {
+			setRequestsLoading(false);
 		}
-		start();
-	}, []);
+	}, [token, serverData?.id]);
 
-	async function refreshTable() {
-		// TODO: Fetch data from the backend
-		loadAccessTable(mockAccessAPIResponse);
-	}
+	useEffect(() => {
+		// Trigger load when token and serverData.id become available (e.g., after refresh/login)
+		loadMyRequests();
+	}, [loadMyRequests]);
 
 	/**
 	 * Extracts the values given by the API response
@@ -287,6 +307,8 @@ export default function MyAccesssPage() {
 		setShowModalCreateAccess(false);
 	}
 
+	// Submit flow is handled by AccessCreationModal directly
+
 	// TODO: There should be a listener function here that auto updates the tables
 	// for when there are new Accesss coming in from the socket
 
@@ -294,8 +316,8 @@ export default function MyAccesssPage() {
 		<main className="flex flex-row h-screen w-full">
 			<HeaderContainer pageTitle={'Access'}>
 				{/* TABLES */}
-				<div className="flex w-full gap-1">
-					{/* Access TABLE */}
+				{/* <div className="flex w-full gap-1">
+					Access TABLE
 					<div className="w-full">
 						<div className="flex justify-between items-center">
 							<div className="">
@@ -326,6 +348,47 @@ export default function MyAccesssPage() {
 						<div className="">
 							<DataTable columns={columns} data={filteredItems} />
 						</div>
+					</div>
+				</div> */}
+				{/* My GitHub Requests */}
+				<div className="w-full mt-6">
+					<div className="flex justify-between items-center">
+						<h3 className="text-lg font-semibold">Search Bar Here</h3>
+						<Button
+							buttonType="add"
+							buttonText="Request Access"
+							buttonOnClick={() => setShowModalCreateAccess(true)}
+						/>
+					</div>
+					<div className="mt-3">
+						{requestsLoading && <div>Loading requests...</div>}
+						{requestsError && <div className="text-red-600">{requestsError}</div>}
+						<DataTable
+							columns={[
+								{ name: 'ID', selector: (r) => r.id, sortable: true },
+								{ name: 'Repository ID', selector: (r) => r.repoId, sortable: true },
+								{ name: 'Permission', selector: (r) => r.permission, sortable: true },
+								{ name: 'GitHub Username', selector: (r) => r.githubUsername, sortable: true },
+								{ name: 'Status', selector: (r) => r.status ?? 'Pending', sortable: true },
+								{
+									name: 'Actions',
+									cell: (row) => (
+										<>
+											<button
+												className="text-red-600 mr-2"
+												onClick={async () => {
+													await deleteRepoCollaboratorRequest(token!, row.id);
+													await loadMyRequests();
+												}}
+											>
+												Cancel
+											</button>
+										</>
+									),
+								},
+							]}
+							data={myRequests}
+						/>
 					</div>
 				</div>
 			</HeaderContainer>
@@ -362,11 +425,10 @@ export default function MyAccesssPage() {
 				</div>
 			</SlideModalContainer>
 			<SlideModalContainer isOpen={showModalCreateAccess} noFade={false}>
-				<DynamicForm
-					metadata={schema['AccessRequest'] as FieldMetadata[]}
-					onStateChange={handleFormStateChange}
+				<AccessCreationModal
+					handleModalDisplay={handleModalAccessCreateDisplay}
+					onCreated={async () => await loadMyRequests()}
 				/>
-				<button onClick={handleModalAccessCreateDisplay}>Close</button>
 			</SlideModalContainer>
 		</main>
 	);
