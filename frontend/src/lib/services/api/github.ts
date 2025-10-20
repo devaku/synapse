@@ -25,7 +25,7 @@ export async function getGithubRepos(token?: string) {
 }
 
 export async function createRepoCollaboratorRequest(token: string, body: Record<string, any>) {
-    const response: jsonResponse | undefined = await fetch(`${url}/repo-requests`, {
+    const res = await fetch(`${url}/repo-requests`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -33,22 +33,32 @@ export async function createRepoCollaboratorRequest(token: string, body: Record<
         },
         credentials: 'include',
         body: JSON.stringify(body),
-    })
-        .then((res) => res.json())
-        .catch((error) => {
-            console.error('Fetch error:', error);
-            return undefined;
-        });
+    }).catch((error) => {
+        console.error('Fetch error:', error);
+        throw new Error('Network error while creating request');
+    });
 
-    // If the backend returns an error wrapper like { statusCode, message }, surface it as an exception
-    if (response && (response as any).statusCode && (response as any).statusCode >= 400) {
-        const msg = (response as any).message || 'Server returned an error';
+    // Try to parse JSON body if available, otherwise fallback to text
+    let parsed: any;
+    try {
+        parsed = await res.json();
+    } catch (err) {
+        try {
+            parsed = await res.text();
+        } catch (e) {
+            parsed = undefined;
+        }
+    }
+
+    if (!res.ok) {
+        const msg = parsed && typeof parsed === 'object' ? (parsed.message || JSON.stringify(parsed)) : parsed || res.statusText;
         throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
     }
 
-    if (response && (response as any).data) return (response as any).data;
-    // fallback: return raw response or empty array
-    return response || [];
+    if (parsed && parsed.data) return parsed.data;
+    // If backend returned a wrapper with statusCode/message but no data, return empty array
+    if (parsed && typeof parsed === 'object' && ('statusCode' in parsed || 'message' in parsed)) return [];
+    return parsed || [];
 }
 
 export async function readRepoCollaboratorRequest(token?: string, id?: number, query?: Record<string, string | number>) {
@@ -59,20 +69,33 @@ export async function readRepoCollaboratorRequest(token?: string, id?: number, q
         endpoint = `${endpoint}?${params}`;
     }
 
-    const response: jsonResponse | Record<string, any> | undefined = await fetch(endpoint, {
+    const res = await fetch(endpoint, {
         method: 'GET',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         credentials: 'include',
-    })
-        .then((res) => res.json())
-        .catch((error) => {
-            console.error('Fetch error:', error);
-            return undefined;
-        });
+    }).catch((error) => {
+        console.error('Fetch error:', error);
+        throw new Error('Network error while reading requests');
+    });
 
-    if (!response) return [];
-    if ((response as any).data) return (response as any).data;
-    return response;
+    let parsed: any;
+    try {
+        parsed = await res.json();
+    } catch (e) {
+        try {
+            parsed = await res.text();
+        } catch (e2) {
+            parsed = undefined;
+        }
+    }
+
+    if (!res.ok) {
+        const msg = parsed && typeof parsed === 'object' ? (parsed.message || JSON.stringify(parsed)) : parsed || res.statusText;
+        throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+
+    if (parsed && parsed.data) return parsed.data;
+    return parsed || [];
 }
 
 export async function addUserToRepo(token: string, repoId: number, githubUsername: string, permission: string) {

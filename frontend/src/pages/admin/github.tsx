@@ -55,21 +55,21 @@ export default function AdminGithubManagerPage() {
 			name: 'Actions',
 			cell: (row) => (
 				<>
-					<button
+					{/* implement this later as no time now and with open modal for approve and deny */}
+					{/* <button
 						className="cursor-pointer w-6 h-6 mr-2"
 						onClick={() => handleGitHubClickInfo(row)}
 						type="button"
-						title={`View details for ${row.name}`}
 					>
 						<SvgComponent iconName="INFO" className="" />
-					</button>
+					</button> */}
 					<button
 						className="cursor-pointer text-green-600 mr-2"
 						onClick={() => handleApprove(row)}
 						type="button"
 						title={`Approve request ${row.id}`}
 					>
-						Approve
+						A
 					</button>
 					<button
 						className="cursor-pointer text-red-600"
@@ -77,7 +77,7 @@ export default function AdminGithubManagerPage() {
 						type="button"
 						title={`Deny request ${row.id}`}
 					>
-						Deny
+						D
 					</button>
 				</>
 			),
@@ -243,6 +243,7 @@ export default function AdminGithubManagerPage() {
 				expandableRowsComponent={ExpandedComponent}
 				expandableRowsHideExpander
 				expandOnRowClicked
+				dense={true}
 				className="max-h-full border border-gray-200"
 			/>
 		</HeaderContainer>

@@ -26,6 +26,7 @@ export default function AccessCreationModal({
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     async function onSubmit(data: FormValues) {
         if (!token) {
@@ -45,6 +46,18 @@ export default function AccessCreationModal({
             githubUsername: data.githubUsername,
         };
 
+        // Client-side validation
+        setSubmitError(null);
+        if (!data.githubUsername || String(data.githubUsername).trim().length === 0) {
+            setSubmitError('GitHub username is required');
+            return;
+        }
+        const repoNum = Number(data.repoId);
+        if (!repoNum || isNaN(repoNum) || repoNum <= 0) {
+            setSubmitError('Repository ID must be a positive number');
+            return;
+        }
+
         try {
             setIsSubmitting(true);
             console.log('Creating repo collaborator request with body:', body);
@@ -56,11 +69,9 @@ export default function AccessCreationModal({
         } catch (err: unknown) {
             console.error('Failed to create repo request', err);
             let message = 'Failed to create request';
-            if (typeof err === 'object' && err !== null && 'message' in err) {
-                const e = err as { message?: unknown };
-                if (typeof e.message === 'string') message = e.message;
-            }
-            alert(message);
+            if (err instanceof Error) message = err.message;
+            // show inline error and console details
+            setSubmitError(message);
         } finally {
             setIsSubmitting(false);
         }
@@ -106,6 +117,9 @@ export default function AccessCreationModal({
                         Cancel
                     </button>
                 </div>
+                {submitError && (
+                    <div className="mt-2 text-sm text-red-600">{submitError}</div>
+                )}
             </form>
 
             {isSubmitting && (

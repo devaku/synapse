@@ -54,26 +54,34 @@ export default function MyAccesssPage() {
 	const [filterText, setFilterText] = useState('');
 
 	const columns = [
+		{ name: 'ID', selector: (r) => r.id, sortable: true },
+		{ name: 'Repository ID', selector: (r) => r.repoId, sortable: true },
+		{ name: 'Permission', selector: (r) => r.permission, sortable: true },
 		{
-			name: 'ID',
-			selector: (row) => row.id,
-			sortable: true,
-			grow: 0,
-		},
-		{
-			name: 'Repository Name',
-			selector: (row) => row.repo_name,
+			name: 'GitHub Username',
+			selector: (r) => r.githubUsername,
 			sortable: true,
 		},
 		{
-			name: 'Requesting User',
-			selector: (row) => row.requesting_user,
+			name: 'Status',
+			selector: (r) => r.status ?? 'Pending',
 			sortable: true,
 		},
 		{
-			name: 'Access Requested',
-			selector: (row) => row.access_requested,
-			sortable: true,
+			name: 'Actions',
+			cell: (row) => (
+				<>
+					<button
+						className="text-red-600 mr-2"
+						onClick={async () => {
+							await deleteRepoCollaboratorRequest(token!, row.id);
+							await loadMyRequests();
+						}}
+					>
+						Cancel
+					</button>
+				</>
+			),
 		},
 	];
 
@@ -125,11 +133,20 @@ export default function MyAccesssPage() {
 
 	// Load user requests when auth becomes available.
 	const loadMyRequests = useCallback(async () => {
+		console.log(
+			'loadMyRequests: token present?',
+			!!token,
+			'serverData.id',
+			serverData?.id
+		);
 		if (!token || !serverData?.id) return;
 		setRequestsLoading(true);
 		setRequestsError(null);
 		try {
-			const data = await readRepoCollaboratorRequest(token, undefined, { userId: serverData.id });
+			const data = await readRepoCollaboratorRequest(token, undefined, {
+				userId: serverData.id,
+			});
+			console.log('readRepoCollaboratorRequest returned:', data);
 			const arr = Array.isArray(data) ? data : data ? [data] : [];
 			setMyRequests(arr);
 		} catch (err: any) {
@@ -353,7 +370,9 @@ export default function MyAccesssPage() {
 				{/* My GitHub Requests */}
 				<div className="w-full mt-6">
 					<div className="flex justify-between items-center">
-						<h3 className="text-lg font-semibold">Search Bar Here</h3>
+						<h3 className="text-lg font-semibold">
+							Search Bar Here
+						</h3>
 						<Button
 							buttonType="add"
 							buttonText="Request Access"
@@ -361,34 +380,10 @@ export default function MyAccesssPage() {
 						/>
 					</div>
 					<div className="mt-3">
-						{requestsLoading && <div>Loading requests...</div>}
-						{requestsError && <div className="text-red-600">{requestsError}</div>}
-						<DataTable
-							columns={[
-								{ name: 'ID', selector: (r) => r.id, sortable: true },
-								{ name: 'Repository ID', selector: (r) => r.repoId, sortable: true },
-								{ name: 'Permission', selector: (r) => r.permission, sortable: true },
-								{ name: 'GitHub Username', selector: (r) => r.githubUsername, sortable: true },
-								{ name: 'Status', selector: (r) => r.status ?? 'Pending', sortable: true },
-								{
-									name: 'Actions',
-									cell: (row) => (
-										<>
-											<button
-												className="text-red-600 mr-2"
-												onClick={async () => {
-													await deleteRepoCollaboratorRequest(token!, row.id);
-													await loadMyRequests();
-												}}
-											>
-												Cancel
-											</button>
-										</>
-									),
-								},
-							]}
-							data={myRequests}
-						/>
+						{requestsError && (
+							<div className="text-red-600">{requestsError}</div>
+						)}
+						<DataTable columns={columns} data={myRequests} />
 					</div>
 				</div>
 			</HeaderContainer>

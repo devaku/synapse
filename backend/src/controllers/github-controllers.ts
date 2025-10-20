@@ -286,11 +286,9 @@ export async function createRepoCollaboratorRequest(
 
 		res.status(201).json(finalResponse);
 	} catch (error: any) {
-		let finalResponse = buildError(
-			500,
-			'There was an error creating the request',
-			error
-		);
+		console.error('CREATE REPO REQUEST ERROR:', error && error.stack ? error.stack : error);
+		const message = error?.message || 'There was an error creating the request';
+		let finalResponse = buildError(500, message, { error: message });
 		res.status(500).json(finalResponse);
 	}
 }
