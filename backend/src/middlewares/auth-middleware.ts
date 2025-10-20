@@ -2,9 +2,11 @@ import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import 'express-session';
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../../database/generated/prisma';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
+import { prismaDb } from '../lib/database';
+import { createUserService } from '../services/user-service';
 
-import { buildResponse, buildError } from '../lib/response-helper';
-import { upsertUser } from '../services/user-service';
+const userService = createUserService(prismaDb);
 
 // Concept of declaration merging
 // provided by Chatgpt
@@ -81,7 +83,7 @@ async function loadIntoSession(decoded: any) {
 		isDeleted: 0,
 	};
 
-	let userRow = await upsertUser(userData);
+	let userRow = await userService.upsertUser(userData);
 
 	// console.log(decoded);
 

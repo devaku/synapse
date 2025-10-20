@@ -1,11 +1,9 @@
-import TTGLogo from '../../../assets/images/ttglogo/TTG_Profile.png';
-
 /**
  * COMPONENTS
  */
 
 import Button from '../../ui/button';
-import CommentCard from '../../container/comment_card';
+import CommentComponent from '../task/comment_component';
 
 /**
  * HOOKS
@@ -13,6 +11,7 @@ import CommentCard from '../../container/comment_card';
 
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
+import { useSocketContext } from '../../../lib/contexts/SocketContext';
 
 /**
  * SERVICES / HELPERS
@@ -20,6 +19,7 @@ import { useAuthContext } from '../../../lib/contexts/AuthContext';
 
 import { archiveTask, readTask } from '../../../lib/services/api/task';
 import { type Comment, type Task } from '../../../lib/types/models';
+import * as socketEvents from '../../../lib/helpers/socket-events';
 
 type myTaskReadModalProps = {
 	handleModalDisplay: () => void;
@@ -31,6 +31,7 @@ export default function MyTaskReadModal({
 	taskId,
 }: myTaskReadModalProps) {
 	const { token, userData } = useAuthContext();
+	const { socket } = useSocketContext();
 	const [comments, setComments] = useState<Comment[] | null>(null);
 	const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
@@ -44,6 +45,20 @@ export default function MyTaskReadModal({
 		}
 		start();
 	}, [taskId]);
+
+	// SOCKET SUBSCRIPTION
+
+	useEffect(() => {
+		async function start() {
+			await fetchTaskInfo(taskId);
+		}
+		start();
+
+		socket?.on(socketEvents.TASK.COMMENTS_SECTION, start);
+		return () => {
+			socket?.off(socketEvents.TASK.COMMENTS_SECTION, start);
+		};
+	}, [socket]);
 
 	async function fetchTaskInfo(taskId: number) {
 		const taskRow = await readTask(token!, taskId);
@@ -60,25 +75,11 @@ export default function MyTaskReadModal({
 			return el.user?.keycloakId;
 		});
 
-		if (ids?.includes(userData.sub)) {
+		if (ids?.includes(userData.sub!)) {
 			setIsSubscribed(true);
 		} else {
 			setIsSubscribed(false);
 		}
-	}
-
-	function loadComments() {
-		return comments?.map((el, index) => {
-			return (
-				<CommentCard
-					key={index}
-					profile_picture_url={''}
-					comment={el.message}
-					name={el.user?.email!}
-					timestamp={new Date().toString()}
-				></CommentCard>
-			);
-		});
 	}
 
 	/**
@@ -95,16 +96,6 @@ export default function MyTaskReadModal({
 		} catch (error) {
 			console.log(error);
 		}
-	}
-
-	/**
-	 * MODAL HANDLERS
-	 */
-
-	function handleModalClose() {}
-
-	function handleModalTaskDeleteDisplay() {
-		handleModalDisplay();
 	}
 
 	return (
@@ -144,44 +135,19 @@ export default function MyTaskReadModal({
 			</div>
 			{/* COMMENTS SECTION*/}
 			<div>
-				<p className="my-2">
-					{comments && comments.length > 0
-						? 'Comments:'
-						: 'There are currently no comments.'}
-				</p>
-
-				{/* INPUT */}
-				{/* Input is only displayed if they are subscribed */}
-				{isSubscribed ? (
-					<div className="p-2 mb-2 rounded-lg shadow-md">
-						{/* Profile */}
-						<div className="flex items-center gap-2">
-							<div className="w-10 h-10">
-								<img src={TTGLogo} alt="" srcSet="" />
-							</div>
-							<p>{userData.email}</p>
-						</div>
-						<textarea
-							className="w-full"
-							name=""
-							id=""
-							rows={5}
-							placeholder="Enter a comment..."
-						></textarea>
-						<div className="mt-2">
-							<Button
-								buttonType="add"
-								buttonText="Comment"
-								buttonOnClick={() => handleModalClose()}
-							/>
-						</div>
-					</div>
-				) : (
-					''
-				)}
-
-				{/* COMMENTS */}
-				<div>{loadComments()}</div>
+				<CommentComponent
+					taskId={taskId}
+					comments={comments}
+					isSubscribed={isSubscribed}
+				>
+					{/* <div className="mt-2">
+						<Button
+							buttonType="add"
+							buttonText="Comment"
+							buttonOnClick={() => handleModalClose()}
+						/>
+					</div> */}
+				</CommentComponent>
 			</div>
 		</div>
 	);

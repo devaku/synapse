@@ -1,6 +1,7 @@
 # Miscellaneous
 notes.txt
 misc
+*.env
 
 # Apply to both
 */**/.env
@@ -10,6 +11,7 @@ misc
 
 # Backend
 backend/.env
+backend/src/public/uploads/*
 backend/scratch.ts
 backend/database/generated/prisma
 backend/api/github.http

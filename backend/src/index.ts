@@ -5,17 +5,28 @@ import favicon from 'serve-favicon';
 import path from 'path';
 
 import { setupServerMiddleware } from './middlewares/initial-middleware';
-import { Server } from 'socket.io';
 import { socketMiddleware } from './middlewares/socket-middleware';
 
-const app = express();
-const PORT = process.env.PORT;
+globalThis.ROOT_DIR = __dirname;
+const ENV_PATH = path.join(__dirname, '..', '.env');
 
 // Load the ENV settings
-dotenv.config();
+dotenv.config({ path: ENV_PATH });
+
+const app = express();
+
+const PORT = process.env.PORT;
 
 // Setup favicon. Have to be at the very start. lol
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+app.get('/docker', (req: Request, res: Response, next: NextFunction) => {
+	res.json({
+		status: 'success',
+		message: 'Image is working correctly!',
+	});
+	return;
+});
 
 // Setup middlewares
 setupServerMiddleware(app);

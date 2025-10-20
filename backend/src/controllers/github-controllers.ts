@@ -1,13 +1,15 @@
-import express from "express";
+import express from 'express';
 import { Request, Response } from 'express';
-import { createGithubAppJwt, getInstallationAccessToken } from "../lib/github-app-auth";
-import { addUserToRepo as addUserToRepoService } from "../services/github-services";
-import * as githubService from "../services/github-services";
-import { buildResponse, buildError } from '../lib/response-helper';
-import axios from "axios";
+import {
+	createGithubAppJwt,
+	getInstallationAccessToken,
+} from '../lib/github-app-auth';
+import { addUserToRepo as addUserToRepoService } from '../services/github-services';
+import * as githubService from '../services/github-services';
+import { buildResponse, buildError } from '../lib/helpers/response-helper';
+import axios from 'axios';
 
 const app = express();
-
 
 /**
  * Controller to get gihub repositories information from the organization  
@@ -134,326 +136,415 @@ const app = express();
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
 export async function getGithubRepos(req: Request, res: Response) {
-    try {
-        const token = await getInstallationAccessToken();
-        
-        const response = await axios.get("https://api.github.com/installation/repositories", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/vnd.github+json",
-            },
-        });
+	try {
+		const token = await getInstallationAccessToken();
 
-        res.json(response.data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Failed to fetch GitHub repositories");
-    }
+		const response = await axios.get(
+			'https://api.github.com/installation/repositories',
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					Accept: 'application/vnd.github+json',
+				},
+			}
+		);
+
+		res.json(response.data);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Failed to fetch GitHub repositories');
+	}
 }
 
 export async function addUserToRepo(req: Request, res: Response) {
-    console.log('Request Body:', req.body);
-    try {
-        // Validation: check if body exists and has required fields
-        if (!req.body) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Request body is required', null));
-        }
+	console.log('Request Body:', req.body);
+	try {
+		// Validation: check if body exists and has required fields
+		if (!req.body) {
+			return res
+				.status(400)
+				.json(buildError(400, 'Request body is required', null));
+		}
 
-        const { githubUsername, permission } = req.body;
-        const repoId = parseInt(req.params.repoId);
-        console.log('test', { repoId, githubUsername, permission });
-        // Validation: required fields
-        if (!githubUsername || !permission) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Missing required fields: githubUsername, permission', null));
-        }
+		const { githubUsername, permission } = req.body;
+		const repoId = parseInt(req.params.repoId);
+		console.log('test', { repoId, githubUsername, permission });
+		// Validation: required fields
+		if (!githubUsername || !permission) {
+			return res
+				.status(400)
+				.json(
+					buildError(
+						400,
+						'Missing required fields: githubUsername, permission',
+						null
+					)
+				);
+		}
 
-        // Validation: valid repoId
-        if (isNaN(repoId)) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Invalid repository ID', null));
-        }
+		// Validation: valid repoId
+		if (isNaN(repoId)) {
+			return res
+				.status(400)
+				.json(buildError(400, 'Invalid repository ID', null));
+		}
 
-        const result = await addUserToRepoService(repoId, githubUsername, permission);
-        
-        let finalResponse = buildResponse(
-            200,
-            'User added to repository successfully!',
-            result
-        );
-        res.status(200).json(finalResponse);
+		const result = await addUserToRepoService(
+			repoId,
+			githubUsername,
+			permission
+		);
 
-    } catch (error: any) {
-        console.error('ADD USER TO REPO ERROR:', error);
-        
-        // Create a safe error object to pass to buildError
-        let safeErrorDetails = null;
-        let errorMessage = 'Failed to add user to repository';
-        
-        if (error) {
-            if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
-                safeErrorDetails = { errorMessage: error.response.data.message };
-            } else if (error.message) {
-                errorMessage = error.message;
-                safeErrorDetails = { errorMessage: error.message };
-            } else if (typeof error === 'string') {
-                errorMessage = error;
-                safeErrorDetails = { errorMessage: error };
-            } else {
-                safeErrorDetails = { errorMessage: 'Unknown error occurred' };
-            }
-        } else {
-            safeErrorDetails = { errorMessage: 'Unknown error occurred' };
-        }
-        
-        let finalResponse = buildError(500, errorMessage, safeErrorDetails);
-        res.status(500).json(finalResponse);
-    }
+		let finalResponse = buildResponse(
+			200,
+			'User added to repository successfully!',
+			result
+		);
+		res.status(200).json(finalResponse);
+	} catch (error: any) {
+		console.error('ADD USER TO REPO ERROR:', error);
+
+		// Create a safe error object to pass to buildError
+		let safeErrorDetails = null;
+		let errorMessage = 'Failed to add user to repository';
+
+		if (error) {
+			if (error.response?.data?.message) {
+				errorMessage = error.response.data.message;
+				safeErrorDetails = {
+					errorMessage: error.response.data.message,
+				};
+			} else if (error.message) {
+				errorMessage = error.message;
+				safeErrorDetails = { errorMessage: error.message };
+			} else if (typeof error === 'string') {
+				errorMessage = error;
+				safeErrorDetails = { errorMessage: error };
+			} else {
+				safeErrorDetails = { errorMessage: 'Unknown error occurred' };
+			}
+		} else {
+			safeErrorDetails = { errorMessage: 'Unknown error occurred' };
+		}
+
+		let finalResponse = buildError(500, errorMessage, safeErrorDetails);
+		res.status(500).json(finalResponse);
+	}
 }
 
 /**
- * Controller to create a repository collaborator request in the database 
- *    
+ * Controller to create a repository collaborator request in the database
+ *
  * @param req - Request object containing userId, repoId, permission, and githubUsername
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 201 message 
+ * @returns A JSON response with the HTTP 201 message
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-export async function createRepoCollaboratorRequest(req: Request, res: Response) {
-    console.log('Request Body:', req.body);
+export async function createRepoCollaboratorRequest(
+	req: Request,
+	res: Response
+) {
+	console.log('Request Body:', req.body);
 
-    try {
-        // Validation: check if body exists
-        if (!req.body) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Request body is required', null));
-        }
+	try {
+		// Validation: check if body exists
+		if (!req.body) {
+			return res
+				.status(400)
+				.json(buildError(400, 'Request body is required', null));
+		}
 
-        const { userId, repoId, permission, githubUsername } = req.body;
+		const { userId, repoId, permission, githubUsername } = req.body;
 
-        // Validation: required fields
-        if (!userId || !repoId || !permission || !githubUsername) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Missing required fields: userId, repoId, permission, githubUsername', null));
-        }
+		// Validation: required fields
+		if (!userId || !repoId || !permission || !githubUsername) {
+			return res
+				.status(400)
+				.json(
+					buildError(
+						400,
+						'Missing required fields: userId, repoId, permission, githubUsername',
+						null
+					)
+				);
+		}
 
-        const request = await githubService.createRepoCollaboratorRequest(userId, repoId, permission, githubUsername);
+		const request = await githubService.createRepoCollaboratorRequest(
+			userId,
+			repoId,
+			permission,
+			githubUsername
+		);
 
-        let finalResponse = buildResponse(
-            201,
-            'Repository collaborator request created successfully!',
-            request
-        );
+		let finalResponse = buildResponse(
+			201,
+			'Repository collaborator request created successfully!',
+			request
+		);
 
-        res.status(201).json(finalResponse);
-
-    } catch (error: any) {
-        let finalResponse = buildError(500, 'There was an error creating the request', error);
-        res.status(500).json(finalResponse);
-    }
+		res.status(201).json(finalResponse);
+	} catch (error: any) {
+		let finalResponse = buildError(
+			500,
+			'There was an error creating the request',
+			error
+		);
+		res.status(500).json(finalResponse);
+	}
 }
 
 /**
  * Controller to read repository collaborator requests from the database
- *    
+ *
  * @param req - Request object with optional id parameter and query parameters
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 200 message 
+ * @returns A JSON response with the HTTP 200 message
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
 export async function readRepoCollaboratorRequest(req: Request, res: Response) {
-    try {
-        const { id } = req.params;
-        const { userId, repoId } = req.query;
+	try {
+		const { id } = req.params;
+		const { userId, repoId } = req.query;
 
-        let requests;
-        let message = '';
+		let requests;
+		let message = '';
 
-        if (id) {
-            // Read a specific request by ID
-            const requestId = parseInt(id);
-            if (isNaN(requestId)) {
-                return res
-                    .status(400)
-                    .json(buildError(400, 'Invalid request ID', null));
-            }
+		if (id) {
+			// Read a specific request by ID
+			const requestId = parseInt(id);
+			if (isNaN(requestId)) {
+				return res
+					.status(400)
+					.json(buildError(400, 'Invalid request ID', null));
+			}
 
-            requests = await githubService.readRepoCollaboratorRequestById(requestId);
-            if (!requests) {
-                return res
-                    .status(404)
-                    .json(buildError(404, 'Repository collaborator request not found', null));
-            }
+			requests = await githubService.readRepoCollaboratorRequestById(
+				requestId
+			);
+			if (!requests) {
+				return res
+					.status(404)
+					.json(
+						buildError(
+							404,
+							'Repository collaborator request not found',
+							null
+						)
+					);
+			}
 
-            message = 'Repository collaborator request retrieved successfully.';
-        } else if (userId) {
-            // Read requests by user ID
-            const userIdNum = parseInt(userId as string);
-            if (isNaN(userIdNum)) {
-                return res
-                    .status(400)
-                    .json(buildError(400, 'Invalid user ID', null));
-            }
+			message = 'Repository collaborator request retrieved successfully.';
+		} else if (userId) {
+			// Read requests by user ID
+			const userIdNum = parseInt(userId as string);
+			if (isNaN(userIdNum)) {
+				return res
+					.status(400)
+					.json(buildError(400, 'Invalid user ID', null));
+			}
 
-            requests = await githubService.readRepoCollaboratorRequestsByUserId(userIdNum);
-            message = requests.length > 0 
-                ? 'User repository collaborator requests retrieved successfully.' 
-                : 'No requests found for this user.';
-        } else if (repoId) {
-            // Read requests by repo ID
-            const repoIdNum = parseInt(repoId as string);
-            if (isNaN(repoIdNum)) {
-                return res
-                    .status(400)
-                    .json(buildError(400, 'Invalid repo ID', null));
-            }
+			requests = await githubService.readRepoCollaboratorRequestsByUserId(
+				userIdNum
+			);
+			message =
+				requests.length > 0
+					? 'User repository collaborator requests retrieved successfully.'
+					: 'No requests found for this user.';
+		} else if (repoId) {
+			// Read requests by repo ID
+			const repoIdNum = parseInt(repoId as string);
+			if (isNaN(repoIdNum)) {
+				return res
+					.status(400)
+					.json(buildError(400, 'Invalid repo ID', null));
+			}
 
-            requests = await githubService.readRepoCollaboratorRequestsByRepoId(repoIdNum);
-            message = requests.length > 0 
-                ? 'Repository collaborator requests retrieved successfully.' 
-                : 'No requests found for this repository.';
-        } else {
-            // Read all requests
-            requests = await githubService.readAllRepoCollaboratorRequests();
-            message = requests.length > 0 
-                ? 'Repository collaborator requests retrieved successfully.' 
-                : 'No repository collaborator requests found.';
-        }
+			requests = await githubService.readRepoCollaboratorRequestsByRepoId(
+				repoIdNum
+			);
+			message =
+				requests.length > 0
+					? 'Repository collaborator requests retrieved successfully.'
+					: 'No requests found for this repository.';
+		} else {
+			// Read all requests
+			requests = await githubService.readAllRepoCollaboratorRequests();
+			message =
+				requests.length > 0
+					? 'Repository collaborator requests retrieved successfully.'
+					: 'No repository collaborator requests found.';
+		}
 
-        let finalResponse = buildResponse(200, message, requests);
-        res.status(200).json(finalResponse);
-
-    } catch (error: any) {
-        let finalResponse = buildError(500, 'There was an error retrieving requests', error);
-        res.status(500).json(finalResponse);
-    }
+		let finalResponse = buildResponse(200, message, requests);
+		res.status(200).json(finalResponse);
+	} catch (error: any) {
+		let finalResponse = buildError(
+			500,
+			'There was an error retrieving requests',
+			error
+		);
+		res.status(500).json(finalResponse);
+	}
 }
 
 /**
  * Controller to update a repository collaborator request in the database
- *    
+ *
  * @param req - Request object containing id parameter and update data in body
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 200 message 
+ * @returns A JSON response with the HTTP 200 message
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-export async function updateRepoCollaboratorRequest(req: Request, res: Response) {
-    try {
-        const { id } = req.params;
-        const data = req.body;
+export async function updateRepoCollaboratorRequest(
+	req: Request,
+	res: Response
+) {
+	try {
+		const { id } = req.params;
+		const data = req.body;
 
-        if (!id) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Request ID is required', null));
-        }
+		if (!id) {
+			return res
+				.status(400)
+				.json(buildError(400, 'Request ID is required', null));
+		}
 
-        const requestId = parseInt(id);
-        if (isNaN(requestId)) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Invalid request ID', null));
-        }
+		const requestId = parseInt(id);
+		if (isNaN(requestId)) {
+			return res
+				.status(400)
+				.json(buildError(400, 'Invalid request ID', null));
+		}
 
-        if (!data || Object.keys(data).length === 0) {
-            return res
-                .status(400)
-                .json(buildError(400, 'Request body cannot be empty', null));
-        }
+		if (!data || Object.keys(data).length === 0) {
+			return res
+				.status(400)
+				.json(buildError(400, 'Request body cannot be empty', null));
+		}
 
-        const existingRequest = await githubService.readRepoCollaboratorRequestById(requestId);
-        if (!existingRequest) {
-            return res
-                .status(404)
-                .json(buildError(404, 'Repository collaborator request not found', null));
-        }
+		const existingRequest =
+			await githubService.readRepoCollaboratorRequestById(requestId);
+		if (!existingRequest) {
+			return res
+				.status(404)
+				.json(
+					buildError(
+						404,
+						'Repository collaborator request not found',
+						null
+					)
+				);
+		}
 
-        const updatedRequest = await githubService.updateRepoCollaboratorRequest(requestId, data);
+		const updatedRequest =
+			await githubService.updateRepoCollaboratorRequest(requestId, data);
 
-        let finalResponse = buildResponse(
-            200,
-            'Repository collaborator request updated successfully!',
-            updatedRequest
-        );
-        res.status(200).json(finalResponse);
-
-    } catch (error: any) {
-        let finalResponse = buildError(500, 'There was an error updating the request', error);
-        res.status(500).json(finalResponse);
-    }
+		let finalResponse = buildResponse(
+			200,
+			'Repository collaborator request updated successfully!',
+			updatedRequest
+		);
+		res.status(200).json(finalResponse);
+	} catch (error: any) {
+		let finalResponse = buildError(
+			500,
+			'There was an error updating the request',
+			error
+		);
+		res.status(500).json(finalResponse);
+	}
 }
 
 /**
  * Controller to delete repository collaborator requests from the database
- *    
+ *
  * @param req - Request object containing id parameter or requestIdArray in body
  * @param res - Response Object
  *
- * @returns A JSON response with the HTTP 200 message 
+ * @returns A JSON response with the HTTP 200 message
  *
  * @throws Responds with a 500 status code and error details if an exception occurs.
  */
-export async function deleteRepoCollaboratorRequest(req: Request, res: Response) {
-    try {
-        const { id } = req.params;
-        const requestIdArray = req.body?.requestIdArray;
+export async function deleteRepoCollaboratorRequest(
+	req: Request,
+	res: Response
+) {
+	try {
+		const { id } = req.params;
+		const requestIdArray = req.body?.requestIdArray;
 
-        const deletedRequests = [];
-        let message = '';
+		const deletedRequests = [];
+		let message = '';
 
-        if (id) {
-            // Delete single request
-            const requestId = parseInt(id);
-            if (isNaN(requestId)) {
-                return res
-                    .status(400)
-                    .json(buildError(400, 'Invalid request ID', null));
-            }
+		if (id) {
+			// Delete single request
+			const requestId = parseInt(id);
+			if (isNaN(requestId)) {
+				return res
+					.status(400)
+					.json(buildError(400, 'Invalid request ID', null));
+			}
 
-            const deletedRequest = await githubService.deleteRepoCollaboratorRequest(requestId);
-            deletedRequests.push(deletedRequest);
-            message = 'Repository collaborator request deleted successfully.';
-        } else if (requestIdArray && Array.isArray(requestIdArray) && requestIdArray.length > 0) {
-            // Delete multiple requests
-            for (const requestIdString of requestIdArray) {
-                const requestId = parseInt(requestIdString);
-                if (!isNaN(requestId)) {
-                    const request = await githubService.deleteRepoCollaboratorRequest(requestId);
-                    if (request) deletedRequests.push(request);
-                }
-            }
+			const deletedRequest =
+				await githubService.deleteRepoCollaboratorRequest(requestId);
+			deletedRequests.push(deletedRequest);
+			message = 'Repository collaborator request deleted successfully.';
+		} else if (
+			requestIdArray &&
+			Array.isArray(requestIdArray) &&
+			requestIdArray.length > 0
+		) {
+			// Delete multiple requests
+			for (const requestIdString of requestIdArray) {
+				const requestId = parseInt(requestIdString);
+				if (!isNaN(requestId)) {
+					const request =
+						await githubService.deleteRepoCollaboratorRequest(
+							requestId
+						);
+					if (request) deletedRequests.push(request);
+				}
+			}
 
-            if (deletedRequests.length === 0) {
-                return res
-                    .status(400)
-                    .json(buildError(400, 'No requests were deleted. Check if request IDs are valid.', null));
-            }
+			if (deletedRequests.length === 0) {
+				return res
+					.status(400)
+					.json(
+						buildError(
+							400,
+							'No requests were deleted. Check if request IDs are valid.',
+							null
+						)
+					);
+			}
 
-            message = `${deletedRequests.length} repository collaborator request(s) deleted successfully.`;
-        } else {
-            return res
-                .status(400)
-                .json(buildError(400, 'Provide request ID in URL or requestIdArray in body', null));
-        }
+			message = `${deletedRequests.length} repository collaborator request(s) deleted successfully.`;
+		} else {
+			return res
+				.status(400)
+				.json(
+					buildError(
+						400,
+						'Provide request ID in URL or requestIdArray in body',
+						null
+					)
+				);
+		}
 
-        let finalResponse = buildResponse(200, message, deletedRequests);
-        res.status(200).json(finalResponse);
-
-    } catch (error: any) {
-        let finalResponse = buildError(500, 'There was an error deleting request(s)', error);
-        res.status(500).json(finalResponse);
-    }
+		let finalResponse = buildResponse(200, message, deletedRequests);
+		res.status(200).json(finalResponse);
+	} catch (error: any) {
+		let finalResponse = buildError(
+			500,
+			'There was an error deleting request(s)',
+			error
+		);
+		res.status(500).json(finalResponse);
+	}
 }

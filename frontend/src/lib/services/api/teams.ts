@@ -24,7 +24,7 @@ export async function getTeams(token: string) {
 		return data;
 	} catch (error) {
 		console.error('Fetch error:', error);
-		throw error; // Re-throw to let the hook handle it
+		throw error;
 	}
 }
 
@@ -33,10 +33,9 @@ export async function getTeams(token: string) {
  */
 export async function createTeam(
 	token: string,
-	data: { name: string; description?: string }
+	data: { name: string; description?: string; users?: number[] }
 ) {
 	try {
-		// Build request body with createdBy field REPLACE LATER
 		const requestBody = {
 			...data,
 			createdBy: 1,
@@ -62,7 +61,7 @@ export async function createTeam(
 		return result;
 	} catch (error) {
 		console.error('Fetch error:', error);
-		throw error; // Re-throw to let the hook handle it
+		throw error;
 	}
 }
 
@@ -87,15 +86,20 @@ export async function softDeleteTeam(token: string, teamIdArray: number[]) {
 		return await res.json();
 	} catch (error) {
 		console.error('Fetch error:', error);
+		throw error;
 	}
 }
 
+/**
+ * Edit an existing team
+ */
 export async function editTeam(
 	token: string,
 	data: {
 		id: number;
 		name: string;
 		description?: string;
+		users?: number[];
 	}
 ) {
 	try {
@@ -115,14 +119,13 @@ export async function editTeam(
 		}
 
 		const result = await res.json();
-		console.log('createTeam API response:', result);
+		console.log('editTeam API response:', result);
 		return result;
 	} catch (error) {
 		console.error('Fetch error:', error);
-		throw error; // Re-throw to let the hook handle it
+		throw error;
 	}
 }
-
 // Mock
 // let mockTeams = [
 //   { id: 1, name: 'Mock Team 1', description: 'This is a mock team' },

@@ -4,22 +4,36 @@ import {
 	readTask,
 	updateTask,
 	deleteTask,
+	readSubscribedTasks,
 } from '../controllers/tasks-controller';
 import {
 	subscribe,
 	unsubscribe,
-	listSubscribedTasks,
-} from '../controllers/task-subscription-controller';
+} from '../controllers/task-subscriptions-controller';
+import { uploadMiddleware } from '../middlewares/upload-middleware';
 
 const taskRouter = express.Router();
 
+/**
+ * HARD ROUTES
+ */
+
 // CREATE
-taskRouter.post('/tasks', express.json(), createTask);
+taskRouter.post('/tasks', uploadMiddleware.array('pictures'), createTask);
 
 // READ all or one
 //  - GET /tasks        → all tasks
 //  - GET /tasks?useronly=1 (boolean) → tasks only visible to that user
 taskRouter.get('/tasks', readTask);
+
+// Get all tasks the user is SUBSCRIBED too
+taskRouter.get('/tasks/subscribed', readSubscribedTasks);
+
+taskRouter.delete('/tasks', express.json(), deleteTask);
+
+/**
+ * ROUTES WITH PARAMS
+ */
 
 // Archive a task
 taskRouter.put(
@@ -38,16 +52,12 @@ taskRouter.put(
 taskRouter.get('/tasks/:id', readTask);
 
 // UPDATE
-taskRouter.put('/tasks/:id', express.json(), updateTask);
+taskRouter.put('/tasks/:id', uploadMiddleware.array('pictures'), updateTask);
 
 // DELETE
 //  - DELETE /tasks/:id → delete one
 //  - DELETE /tasks     → delete multiple via { "taskIdArray": [1,2,3] }
 taskRouter.delete('/tasks/:id', deleteTask);
-taskRouter.delete('/tasks', express.json(), deleteTask);
-
-// Get all tasks the user is SUBSCRIBED too
-taskRouter.get('/tasks/subscribed', listSubscribedTasks);
 
 // SUBSCRIPTION routes
 taskRouter.post('/tasks/:id/subscribe', express.json(), subscribe);
