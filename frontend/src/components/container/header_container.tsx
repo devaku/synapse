@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { useState, useEffect, useRef, type RefObject } from 'react';
 import { useSocketContext } from '../../lib/contexts/SocketContext';
+import { useNotifications } from '../../lib/hooks/api/useNotifications'
 
 /**
  * COMPONENTS
@@ -30,6 +31,10 @@ export default function HeaderContainer({
 	const [notifOpen, setNotifOpen] = useState(false);
 	const divRef = useRef(null);
 
+	const { notifications } = useNotifications();
+
+	console.log(notifications)
+
 	const testNotifications = [
 		{
 			id: 1,
@@ -44,7 +49,7 @@ export default function HeaderContainer({
 				taskId: 1,
 				action: 'TASK:VIEW',
 			},
-			createdAt: new Date(),
+			createdAt: Date.now(),
 		},
 		{
 			id: 1,
@@ -59,7 +64,7 @@ export default function HeaderContainer({
 				taskId: 2,
 				action: 'TASK:VIEW',
 			},
-			createdAt: new Date(),
+			createdAt: Date.now(),
 		},
 		{
 			id: 1,
@@ -74,7 +79,7 @@ export default function HeaderContainer({
 				taskId: 3,
 				action: 'TASK:VIEW',
 			},
-			createdAt: new Date(),
+			createdAt: Date.now(),
 		},
 	];
 
@@ -131,7 +136,7 @@ export default function HeaderContainer({
 						<SvgComponent iconName="Bell" />
 						{notifOpen && (
 							<NotificationTable
-								data={testNotifications}
+								data={notifications}
 								ref={
 									divRef as unknown as RefObject<HTMLDivElement>
 								}
