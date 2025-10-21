@@ -34,6 +34,7 @@ export default function MyTaskReadModal({
 	const { socket } = useSocketContext();
 	const [comments, setComments] = useState<Comment[] | null>(null);
 	const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+	const [isArchived, setIsArchived] = useState<boolean>(false);
 
 	/**
 	 * INTERNAL FUNCTIONS
@@ -52,11 +53,17 @@ export default function MyTaskReadModal({
 		async function start() {
 			await fetchTaskInfo(taskId);
 		}
+
+		async function archiver() {
+			setIsArchived(true);
+		}
 		start();
 
 		socket?.on(socketEvents.TASK.COMMENTS_SECTION, start);
+		socket?.on(socketEvents.TASK.TASK_ARCHIVED, archiver);
 		return () => {
 			socket?.off(socketEvents.TASK.COMMENTS_SECTION, start);
+			socket?.off(socketEvents.TASK.TASK_ARCHIVED, archiver);
 		};
 	}, [socket]);
 
@@ -100,55 +107,72 @@ export default function MyTaskReadModal({
 
 	return (
 		<div className="">
-			{/* BUTTONS */}
-			<div className="flex justify-evenly">
-				{isSubscribed ? (
-					<>
+			{isArchived ? (
+				<div>
+					<h2>This task has been archived.</h2>
+					<div className="flex justify-evenly">
 						<Button
 							buttonType="add"
-							buttonText="Complete"
-							buttonOnClick={() => handleButtonCompleteClick()}
+							buttonText="Back"
+							buttonOnClick={() => handleModalDisplay()}
 						/>
-						<Button
-							buttonType="add"
-							buttonText="Unsubscribe"
-							buttonOnClick={() => {
-								console.log('Unsub');
-							}}
-						/>
-					</>
-				) : (
-					<Button
-						buttonType="add"
-						buttonText="Subscribe"
-						buttonOnClick={() => {
-							console.log('Sub');
-						}}
-					/>
-				)}
+					</div>
+				</div>
+			) : (
+				<div>
+					{/* BUTTONS */}
+					<div className="flex justify-evenly">
+						{isSubscribed ? (
+							<>
+								<Button
+									buttonType="add"
+									buttonText="Complete"
+									buttonOnClick={() =>
+										handleButtonCompleteClick()
+									}
+								/>
+								<Button
+									buttonType="add"
+									buttonText="Unsubscribe"
+									buttonOnClick={() => {
+										console.log('Unsub');
+									}}
+								/>
+							</>
+						) : (
+							<Button
+								buttonType="add"
+								buttonText="Subscribe"
+								buttonOnClick={() => {
+									console.log('Sub');
+								}}
+							/>
+						)}
 
-				<Button
-					buttonType="add"
-					buttonText="Back"
-					buttonOnClick={() => handleModalDisplay()}
-				/>
-			</div>
-			{/* COMMENTS SECTION*/}
-			<div>
-				<CommentComponent
-					taskId={taskId}
-					comments={comments}
-					isSubscribed={isSubscribed}
-				>
-					{/* <div className="mt-2">
+						<Button
+							buttonType="add"
+							buttonText="Back"
+							buttonOnClick={() => handleModalDisplay()}
+						/>
+					</div>
+					{/* COMMENTS SECTION*/}
+					<div>
+						<CommentComponent
+							taskId={taskId}
+							comments={comments}
+							isSubscribed={isSubscribed}
+						>
+							{/* <div className="mt-2">
 						<Button
 							buttonType="add"
 							buttonText="Comment"
 							buttonOnClick={() => handleModalClose()}
 						/>
 					</div> */}
-				</CommentComponent>
-			</div>
+						</CommentComponent>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
