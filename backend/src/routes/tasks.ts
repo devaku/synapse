@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import {
 	createTask,
 	readTask,
+	archiveTask,
 	updateTask,
 	deleteTask,
 	readSubscribedTasks,
@@ -36,16 +37,7 @@ taskRouter.delete('/tasks', express.json(), deleteTask);
  */
 
 // Archive a task
-taskRouter.put(
-	'/tasks/archive/:id',
-	express.json(),
-	(req: Request, res: Response, next: NextFunction) => {
-		// Just attach the user id of who is archiving it. lol
-		req.body.archivedByUserId = req.session.userData?.user.id;
-		next();
-	},
-	updateTask
-);
+taskRouter.put('/tasks/archive/:id', express.json(), archiveTask);
 
 // Routes that have route parameters need to be further down
 //  - GET /tasks/:id    → single task

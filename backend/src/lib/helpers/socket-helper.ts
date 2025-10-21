@@ -45,3 +45,24 @@ export function pingUsersOfNewCommentOnTask(
 		});
 	}
 }
+
+export function pingUsersOfTaskBeingArchived(
+	io: SocketIOServer,
+	usersSubscribedToTask: number[],
+	payload: any
+) {
+	if (usersSubscribedToTask && usersSubscribedToTask.length > 0) {
+		// Convert task view to be in archived
+		usersSubscribedToTask.map((el) => {
+			io.to(`USER-${Number(el)}`).emit(SocketEvents.TASK.TASK_ARCHIVED);
+		});
+
+		// Trigger the bell
+		usersSubscribedToTask.map((el) => {
+			io.to(`USER-${Number(el)}`).emit(
+				SocketEvents.NOTIFICATION.NOTIFICATION,
+				payload
+			);
+		});
+	}
+}

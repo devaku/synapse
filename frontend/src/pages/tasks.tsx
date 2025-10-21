@@ -158,9 +158,11 @@ export default function TasksPage() {
 
 		// Subscribe to sockets
 		socket?.on(SocketEvents.TASK.MAIN_TABLE, start);
+		socket?.on(SocketEvents.TASK.TASK_ARCHIVED, start);
 
 		return () => {
 			socket?.off(SocketEvents.TASK.MAIN_TABLE, start);
+			socket?.off(SocketEvents.TASK.TASK_ARCHIVED, start);
 		};
 	}, [socket]);
 
@@ -220,11 +222,6 @@ export default function TasksPage() {
 	function handleTaskClickInfo(row: Task) {
 		setModalTaskInfoId(row.id);
 		modalTaskInfo.open();
-	}
-
-	function handleTaskClickCreate(row: Task) {
-		setmodalTaskCreateId(row.id);
-		modalTaskCreate.open();
 	}
 
 	function handleTaskClickUpdate(row: Task) {
