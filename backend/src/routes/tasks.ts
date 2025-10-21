@@ -52,7 +52,7 @@ taskRouter.put('/tasks/:id', uploadMiddleware.array('pictures'), updateTask);
 taskRouter.delete('/tasks/:id', deleteTask);
 
 // SUBSCRIPTION routes
-taskRouter.post('/tasks/:id/subscribe', express.json(), subscribe);
-taskRouter.delete('/tasks/:id/unsubscribe', express.json(), unsubscribe);
+taskRouter.post('/tasks/subscribe/:id', express.json(), subscribe);
+taskRouter.delete('/tasks/unsubscribe/:id/', express.json(), unsubscribe);
 
 export default taskRouter;

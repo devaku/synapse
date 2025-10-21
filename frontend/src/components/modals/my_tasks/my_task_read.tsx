@@ -17,7 +17,12 @@ import { useSocketContext } from '../../../lib/contexts/SocketContext';
  * SERVICES / HELPERS
  */
 
-import { archiveTask, readTask } from '../../../lib/services/api/task';
+import {
+	archiveTask,
+	readTask,
+	subscribeToTask,
+	unsubscribeToTask,
+} from '../../../lib/services/api/task';
 import { type Comment, type Task } from '../../../lib/types/models';
 import * as socketEvents from '../../../lib/helpers/socket-events';
 
@@ -93,6 +98,30 @@ export default function MyTaskReadModal({
 	 * Handlers
 	 */
 
+	async function handleSubscribeClick() {
+		// TODO: Add proper displaying in case there's an error
+		try {
+			await subscribeToTask(token!, taskId);
+			setIsSubscribed(true);
+
+			// Close modal
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function handleUnsubscribeClick() {
+		// TODO: Add proper displaying in case there's an error
+		try {
+			await unsubscribeToTask(token!, taskId);
+			setIsSubscribed(false);
+
+			// Close modal
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	async function handleButtonCompleteClick() {
 		// TODO: Add proper displaying in case there's an error
 		try {
@@ -135,7 +164,7 @@ export default function MyTaskReadModal({
 									buttonType="add"
 									buttonText="Unsubscribe"
 									buttonOnClick={() => {
-										console.log('Unsub');
+										handleUnsubscribeClick();
 									}}
 								/>
 							</>
@@ -144,7 +173,7 @@ export default function MyTaskReadModal({
 								buttonType="add"
 								buttonText="Subscribe"
 								buttonOnClick={() => {
-									console.log('Sub');
+									handleSubscribeClick();
 								}}
 							/>
 						)}
