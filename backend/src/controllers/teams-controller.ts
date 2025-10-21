@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
-import * as teamsService from '../services/teams-service';
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
+import { createTeamsService } from '../services/teams-service';
+import { prismaDb } from '../lib/database';
+
+const teamsService = createTeamsService(prismaDb);
 
 /**
  * Controller to create a team in the database

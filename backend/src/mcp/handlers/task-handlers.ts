@@ -1,7 +1,15 @@
-import * as taskService from '../../services/task-service';
-import * as subscriptionService from '../../services/task-subscription-service';
-import * as visibilityService from '../../services/visibility-service';
+// import * as taskService from '../../services/task-service';
+// import * as subscriptionService from '../../services/task-subscription-service';
+// import * as visibilityService from '../../services/visibility-service';
 import { prismaDb } from '../../lib/database';
+
+import { createTaskService } from '../../services/task-service';
+import { createTaskSubscriptionService } from '../../services/task-subscription-service';
+import { createVisibilityService } from '../../services/visibility-service';
+
+const taskService = createTaskService(prismaDb);
+const subscriptionService = createTaskSubscriptionService(prismaDb);
+const visibilityService = createVisibilityService(prismaDb);
 
 export class TaskHandlers {
 	/**
@@ -153,7 +161,7 @@ export class TaskHandlers {
 				delete updateData.taskVisibleToTeams;
 
 				// Update task
-				return await taskService.updateTask(tx, taskId, updateData);
+				return await taskService.updateTask(taskId, updateData);
 			});
 
 			return {
@@ -253,7 +261,6 @@ export class TaskHandlers {
 			);
 
 			await visibilityService.updateTaskVisibleToTeamsRelations(
-				tx,
 				removedValues,
 				valuesCreated,
 				taskId
@@ -274,7 +281,6 @@ export class TaskHandlers {
 			);
 
 			await visibilityService.updateTaskVisibleToUsersRelations(
-				tx,
 				removedValues,
 				valuesCreated,
 				taskId
@@ -295,7 +301,6 @@ export class TaskHandlers {
 			);
 
 			await visibilityService.updateTaskHiddenFromUsersRelations(
-				tx,
 				removedValues,
 				valuesCreated,
 				taskId

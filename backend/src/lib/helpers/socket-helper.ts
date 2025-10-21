@@ -3,6 +3,7 @@ import * as SocketEvents from '../socket-events';
 
 export function pingUsersBasedOnVisiblity(
 	io: SocketIOServer,
+	payload: any,
 	taskVisibleToTeams?: number[],
 	taskVisibleToUsers?: number[]
 ) {
@@ -16,8 +17,18 @@ export function pingUsersBasedOnVisiblity(
 
 	if (taskVisibleToUsers && taskVisibleToUsers.length > 0) {
 		taskVisibleToUsers.map((el) => {
+			// Refresh the tasks page
+			io.to(`USER-${Number(el)}`).emit(SocketEvents.TASK.MAIN_TABLE);
+
+			// Refresh the comments section
 			io.to(`USER-${Number(el)}`).emit(
 				SocketEvents.TASK.COMMENTS_SECTION
+			);
+
+			// Trigger the bell
+			io.to(`USER-${Number(el)}`).emit(
+				SocketEvents.NOTIFICATION.NOTIFICATION,
+				payload
 			);
 		});
 	}

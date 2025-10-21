@@ -13,13 +13,16 @@ import { Request, Response } from 'express';
 import { createTaskService } from '../services/task-service';
 import { createTaskSubscriptionService } from '../services/task-subscription-service';
 import { createVisibilityService } from '../services/visibility-service';
+import { createTeamsService } from '../services/teams-service';
 
 /**
  * HELPERS
  */
+
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
 import { removeImages, uploadImages } from '../lib/helpers/task-helper';
+import { readTeamMembers } from '../lib/helpers/team-helper';
 import {
 	pingUsersBasedOnVisiblity,
 	pingUsersOfTaskBeingArchived,
@@ -35,7 +38,15 @@ export async function createTask(req: Request, res: Response) {
 			try {
 				let data = req.body;
 				const userId = req.session.userData?.user.id;
-				const { taskVisibleToTeams, taskVisibleToUsers } = req.body;
+				let { taskVisibleToTeams, taskVisibleToUsers } = req.body;
+
+				if (!taskVisibleToUsers) {
+					taskVisibleToUsers = [];
+				}
+
+				taskVisibleToTeams = taskVisibleToTeams.map((el: number) =>
+					Number(el)
+				);
 
 				// Attach creator
 				data.createdByUserId = userId;
@@ -90,12 +101,50 @@ export async function createTask(req: Request, res: Response) {
 				// Retrieve the task again, this time with the images. lol
 				const taskRow = await taskService.readTaskById(task.id);
 
-				// Update EVERYONE who can see the new task that was created
-				pingUsersBasedOnVisiblity(
-					req.io,
-					taskVisibleToTeams,
-					taskVisibleToUsers
-				);
+				// Get all the userids that will be notified about this
+				let notificationUserIds: number[] = [];
+				if (taskVisibleToTeams.length > 0) {
+					let temp = await readTeamMembers(taskVisibleToTeams);
+
+					// Remove duplicates
+					if (temp && temp.length > 0) {
+						notificationUserIds = temp.concat(
+							taskVisibleToUsers.filter(
+								(el: number) => !temp.includes(el)
+							)
+						);
+						notificationUserIds.sort();
+					}
+				} else {
+					notificationUserIds = taskVisibleToUsers;
+				}
+
+				if (notificationUserIds.length > 0) {
+					// Create the notification
+					const payload = {
+						...taskRow,
+					};
+
+					const notificationBody = {
+						createdByUserId: req.session.userData?.user.id!,
+						description: `Task ${task.name} was created by ${req.session.userData?.user.firstName} ${req.session.userData?.user.lastName}`,
+						title: `Task ${task.name} was created!`,
+						payload,
+					};
+
+					await createNotification(
+						notificationBody,
+						notificationUserIds
+					);
+
+					// Update EVERYONE who can see the new task that was created
+					pingUsersBasedOnVisiblity(
+						req.io,
+						payload,
+						taskVisibleToTeams,
+						notificationUserIds
+					);
+				}
 
 				return res
 					.status(201)
