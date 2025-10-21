@@ -24,8 +24,6 @@ export function useNotifications() {
 			const data: Notification[] = await readAllNotifications(token!);
 			const notificationData: NotificationCard[] = [];
 
-			console.log(data);
-
 			for (const entry of data) {
 				const newNotif: Partial<NotificationCard> = {};
 				newNotif.title = entry.title;

@@ -27,7 +27,7 @@ export default function NotificationCard({
 	// console.log(sender);
 
 	function buildUrl() {
-		if (payload.action == PAYLOAD_ACTIONS.TASK_VIEW) {
+		if (payload.actions == PAYLOAD_ACTIONS.TASK_VIEW) {
 			const url = `/tasks?view=${payload.taskId}`;
 			return url;
 		} else {
