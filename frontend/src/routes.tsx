@@ -9,8 +9,6 @@ import { createBrowserRouter } from 'react-router';
  * CALLBACKS
  */
 
-import LoginCallback from './pages/auth/callback/login_callback';
-
 /**
  * LAYOUTS
  */
@@ -92,10 +90,6 @@ export const router = createBrowserRouter([
 					},
 				],
 			},
-
-			// Login to Keycloak
-			{ path: '/auth/callback/login', Component: LoginCallback },
-			{ path: '/auth/callback/logout', Component: LoginCallback },
 
 			{
 				index: true,

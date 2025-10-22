@@ -10,54 +10,58 @@ export default function PopupModalContainer({
 	isOpen,
 	children,
 }: ModalContainer) {
-	const [shouldRender, setShouldRender] = useState<boolean>();
-	const [playAnimation, setPlayAnimation] = useState<boolean>();
+	/**
+	 * isRender ensures whether the element is in the DOM
+	 */
+	const [isRender, setIsRender] = useState<boolean>(false);
+
+	/**
+	 * isVisible ensures to have a transitionary state to play the animation
+	 */
+	const [isVisible, setIsVisible] = useState<boolean>(false);
 
 	useEffect(() => {
-		// On open of the modal, display the HTML
 		if (isOpen) {
-			setShouldRender(true);
-
-			// Once HTML is in, give delay
-			// before animation plays.
+			setIsRender(isOpen);
 			setTimeout(() => {
-				setPlayAnimation(true);
+				setIsVisible(true);
 			}, 10);
 		} else {
-			// Fade out the overlay
-			setPlayAnimation(false);
-
-			// Wait for the animation
-			// of the animation to finish before
-			// closing the modal proper
-			setTimeout(() => {
-				setShouldRender(false);
-			}, 500);
+			setIsVisible(false);
 		}
 	}, [isOpen]);
 
-	if (shouldRender) {
+	function handleTransitionEnd() {
+		// If closing
+		if (!isOpen) {
+			setIsRender(false);
+		}
+	}
+
+	if (isRender) {
 		return createPortal(
 			<div
 				className={
-					'absolute z-10 top-0 h-screen flex items-center justify-center ' +
-					(playAnimation ? 'bg-black/50' : 'bg-black/0')
+					'absolute z-10 top-0 h-screen flex w-full items-center justify-center dim-background ' +
+					(isVisible ? 'bg-black/50' : 'bg-black/0')
 				}
+				onTransitionEnd={handleTransitionEnd}
 				onClick={(e) => {
 					e.stopPropagation();
 				}}
 			>
 				<div
 					className={
-						' ' + (playAnimation ? 'opacity-100' : 'opacity-0')
+						'h-5/12 bg-white w-xl fade ' +
+						(isVisible ? 'opacity-100' : 'opacity-0')
 					}
 				>
-					<div className="min-h-80 bg-white w-xl">{children}</div>
+					{children}
 				</div>
 			</div>,
 			document.body
 		);
 	} else {
-		return '';
+		return <></>;
 	}
 }
