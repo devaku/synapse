@@ -30,7 +30,7 @@ export default function HeaderContainer({
 	const { notifications } = useNotifications();
 
 	return (
-		<div className="w-full flex flex-col bg-ttg-white text-ttg-black max-h-screen">
+		<div className="flex flex-col bg-ttg-white text-ttg-black">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-ttg-black/5 items-center justify-between">
 				{/* Left Side */}
@@ -81,7 +81,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="overflow-y-auto overflow-x-auto max-h-screen p-10 mb-10 min-h-0 ma">
+			<div className="flex-1 flex flex-col p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>
