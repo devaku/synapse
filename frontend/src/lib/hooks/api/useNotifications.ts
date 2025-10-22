@@ -1,31 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { User } from '../../../lib/types/models';
+import { useState, useEffect } from 'react';
 import { readAllNotifications } from '../../services/api/notifications';
-
+import { useSocketContext } from '../../contexts/SocketContext';
 import { useAuthContext } from '../../contexts/AuthContext';
-
-interface Notification {
-	id: number;
-	title: string;
-	description: string;
-}
+import * as socketEvents from '../../../lib/helpers/socket-events';
+import { type Notification, type User } from '../../types/models';
 
 interface NotificationCard {
 	title: string;
 	description: string;
-	sender: {
-		firstName: string;
-		lastName: string;
-	};
+	sender: User;
 	payload: any;
+	createdAt: Date;
 	setOpenState: (state: boolean) => void;
 }
 
 export function useNotifications() {
-	const [notifications, setNotifications] = useState<NotificationCard[]>([]);
+	const { socket } = useSocketContext();
 	const { token } = useAuthContext();
+	const [notifications, setNotifications] = useState<NotificationCard[]>([]);
 
-	const refresh = useCallback(async () => {
+	async function fetchNotifications() {
 		try {
 			const data: Notification[] = await readAllNotifications(token!);
 			const notificationData: NotificationCard[] = [];
@@ -35,13 +29,12 @@ export function useNotifications() {
 				newNotif.title = entry.title;
 				newNotif.description = entry.description;
 				newNotif.sender = {
-					firstName: 'ADMIN',
-					lastName: 'ADMIN',
+					...entry.user,
+					firstName: entry.user.firstName!,
+					lastName: entry.user.lastName!,
 				};
-				newNotif.payload = {
-					taskId: 1,
-					action: 'TASK:VIEW',
-				};
+				newNotif.payload = { ...entry.payload };
+				newNotif.createdAt = entry.createdAt;
 
 				notificationData.push(newNotif as NotificationCard);
 			}
@@ -58,11 +51,40 @@ export function useNotifications() {
 				console.log(err.message || 'Error fetching teams');
 			}
 		}
+	}
+
+	/**
+	 * USE EFFECT
+	 */
+
+	// Fetch notifications on initial load
+	useEffect(() => {
+		async function start() {
+			await fetchNotifications();
+		}
+		start();
 	}, [token]);
 
+	// Subscribe to Socket
 	useEffect(() => {
-		refresh();
-	}, [refresh]);
+		async function start() {
+			// This should be put into its own thing
+			playSound();
+			await fetchNotifications();
+		}
+
+		socket?.on(socketEvents.NOTIFICATION.NOTIFICATION, start);
+		return () => {
+			socket?.off(socketEvents.NOTIFICATION.NOTIFICATION, start);
+		};
+	}, [token, socket]);
+
+	function playSound() {
+		const url = `${import.meta.env.VITE_FRONTEND_URL}/notification1.mp3`;
+
+		const audio = new Audio(url);
+		audio.play();
+	}
 
 	return {
 		notifications,

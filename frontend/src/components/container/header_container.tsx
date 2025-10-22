@@ -6,7 +6,6 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { useState, useEffect, useRef, type RefObject } from 'react';
-import { useSocketContext } from '../../lib/contexts/SocketContext';
 import { useNotifications } from '../../lib/hooks/api/useNotifications';
 
 /**
@@ -15,8 +14,6 @@ import { useNotifications } from '../../lib/hooks/api/useNotifications';
 import SvgComponent from '../ui/svg_component';
 import NotificationTable from '../ui/notification_table';
 
-import * as socketEvents from '../../lib/helpers/socket-events';
-
 export default function HeaderContainer({
 	children,
 	pageTitle,
@@ -24,7 +21,6 @@ export default function HeaderContainer({
 	children: React.ReactNode;
 	pageTitle: string;
 }) {
-	const { socket } = useSocketContext();
 	const { serverData } = useAuthContext();
 	const navigate = useNavigate();
 
@@ -33,83 +29,8 @@ export default function HeaderContainer({
 
 	const { notifications } = useNotifications();
 
-	console.log(notifications);
-
-	const testNotifications = [
-		{
-			id: 1,
-			title: 'DEBUG NOTIFICATION',
-			description: 'This is a notification that will bring you to Task 1',
-			createdByUserId: 1,
-			user: {
-				firstName: 'ADMIN',
-				lastName: 'ADMIN',
-			},
-			payload: {
-				taskId: 1,
-				action: 'TASK:VIEW',
-			},
-			createdAt: Date.now(),
-		},
-		{
-			id: 1,
-			title: 'DEBUG NOTIFICATION',
-			description: 'This is a notification that will bring you to Task 2',
-			createdByUserId: 1,
-			user: {
-				firstName: 'ADMIN',
-				lastName: 'ADMIN',
-			},
-			payload: {
-				taskId: 2,
-				action: 'TASK:VIEW',
-			},
-			createdAt: Date.now(),
-		},
-		{
-			id: 1,
-			title: 'DEBUG NOTIFICATION',
-			description: 'This is a notification that will bring you to Task 3',
-			createdByUserId: 1,
-			user: {
-				firstName: 'ADMIN',
-				lastName: 'ADMIN',
-			},
-			payload: {
-				taskId: 3,
-				action: 'TASK:VIEW',
-			},
-			createdAt: Date.now(),
-		},
-	];
-
-	useEffect(() => {
-		// Fetch all the unread notifications for the current user
-	}, []);
-
-	// Subscribe to Socket
-
-	useEffect(() => {
-		async function start() {
-			// This should be put into its own thing
-			playSound();
-		}
-
-		socket?.on(socketEvents.NOTIFICATION.NOTIFICATION, start);
-		return () => {
-			socket?.off(socketEvents.NOTIFICATION.NOTIFICATION, start);
-		};
-	}, [socket]);
-
-	function playSound() {
-		const url = `${import.meta.env.VITE_FRONTEND_URL}/notification1.mp3`;
-
-		const audio = new Audio(url);
-		audio.play();
-	}
-
 	return (
-		<div className="w-full flex flex-col bg-ttg-white text-ttg-black max-h-screen">
+		<div className="flex flex-col bg-ttg-white text-ttg-black">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-ttg-black/5 items-center justify-between">
 				{/* Left Side */}
@@ -160,7 +81,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="overflow-y-auto overflow-x-auto max-h-screen p-10 mb-10 min-h-0 ma">
+			<div className="flex-1 flex flex-col p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>

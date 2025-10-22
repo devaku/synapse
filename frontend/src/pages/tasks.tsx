@@ -63,13 +63,17 @@ export default function TasksPage() {
 	const modalTaskInfo = useModal();
 
 	// Used to fetch the data that would populate the opened modal
-	const [modalTaskInfoId, setModalTaskInfoId] = useState(0);
+	const [modalTaskInfoId, setModalTaskInfoId] = useState<number | null>(null);
 
 	const modalTaskCreate = useModal();
-	const [modalTaskCreateId, setmodalTaskCreateId] = useState(0);
+	const [modalTaskCreateId, setmodalTaskCreateId] = useState<number | null>(
+		null
+	);
 
 	const modalTaskUpdate = useModal();
-	const [modalTaskUpdateId, setModalTaskUpdateId] = useState(0);
+	const [modalTaskUpdateId, setModalTaskUpdateId] = useState<number | null>(
+		null
+	);
 
 	/**
 	 * HARD CODED COLUMNS FOR THE TABLES
@@ -158,9 +162,11 @@ export default function TasksPage() {
 
 		// Subscribe to sockets
 		socket?.on(SocketEvents.TASK.MAIN_TABLE, start);
+		socket?.on(SocketEvents.TASK.TASK_ARCHIVED, start);
 
 		return () => {
 			socket?.off(SocketEvents.TASK.MAIN_TABLE, start);
+			socket?.off(SocketEvents.TASK.TASK_ARCHIVED, start);
 		};
 	}, [socket]);
 
@@ -220,11 +226,6 @@ export default function TasksPage() {
 	function handleTaskClickInfo(row: Task) {
 		setModalTaskInfoId(row.id);
 		modalTaskInfo.open();
-	}
-
-	function handleTaskClickCreate(row: Task) {
-		setmodalTaskCreateId(row.id);
-		modalTaskCreate.open();
 	}
 
 	function handleTaskClickUpdate(row: Task) {
@@ -292,10 +293,10 @@ export default function TasksPage() {
 			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
-					taskId={modalTaskInfoId}
+					taskId={modalTaskInfoId!}
 				>
 					<MyTaskReadModal
-						taskId={modalTaskInfoId}
+						taskId={modalTaskInfoId!}
 						handleModalDisplay={modalTaskInfo.toggle}
 					></MyTaskReadModal>
 				</MyTaskModalHeader>
@@ -305,7 +306,7 @@ export default function TasksPage() {
 			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Update a Task'}
-					taskId={modalTaskUpdateId}
+					taskId={modalTaskUpdateId!}
 					handleModalDisplay={modalTaskUpdate.toggle}
 				></TaskCreateUpdateModal>
 			</SlideModalContainer>

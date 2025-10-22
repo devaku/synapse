@@ -27,7 +27,8 @@ export async function subscribe(req: Request, res: Response) {
 		} // Validation will be needed...
 
 		// Check if this user is already subscribed to this task
-		// AI helped me generate lines 26-39, prompt was: "check if a subscription already exists in prisma before creating a new one to avoid duplicate key errors"
+		// AI helped me generate lines 26-39, prompt was:
+		// "check if a subscription already exists in prisma before creating a new one to avoid duplicate key errors"
 		const existingSubscription =
 			await prismaDb.taskUserSubscribeTo.findUnique({
 				where: {
