@@ -25,7 +25,7 @@ export default function Sidebar() {
 	}, [userData]);
 
 	return (
-		<div className="h-full flex flex-col items-center md:w-50 max-md:w-20 bg-ttg-dark-blue px-3 pt-3">
+		<div className="h-screen flex flex-col items-center md:w-50 max-md:w-20 bg-ttg-dark-blue px-3 pt-3">
 			<img
 				src={TTGLogo}
 				alt="TTG Logo"

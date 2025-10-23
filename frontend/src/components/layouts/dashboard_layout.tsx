@@ -48,11 +48,11 @@ export default function DashboardLayout() {
 	return (
 		<>
 			{isAuthenticated ? (
-				<main className="flex h-screen flex-row">
+				<main className="flex flex-row h-screen">
 					<div className="">
 						<Sidebar />
 					</div>
-					<div className="flex-1 bg-ttg-white">
+					<div className="w-full bg-ttg-white">
 						<Outlet></Outlet>
 					</div>
 					<AuthWarningModal
