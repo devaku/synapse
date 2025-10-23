@@ -96,9 +96,9 @@ export default function MyTaskDeleteModal({
 				{/* BUTTONS */}
 				<div className="flex">
 					<Button
-						buttonType="add"
-						buttonText="Continue"
-						buttonOnClick={() => handleModalClose()}
+						type="Info"
+						text="Continue"
+						onClick={() => handleModalClose()}
 					/>
 				</div>
 			</>
@@ -137,9 +137,9 @@ export default function MyTaskDeleteModal({
 				{/* BUTTONS */}
 				<div className="flex mt-2">
 					<Button
-						buttonType="add"
-						buttonText="Continue"
-						buttonOnClick={() => handleModalClose()}
+						type="Info"
+						text="Continue"
+						onClick={() => handleModalClose()}
 					/>
 				</div>
 			</>
@@ -164,14 +164,14 @@ export default function MyTaskDeleteModal({
 				{/* BUTTONS */}
 				<div className="flex justify-evenly">
 					<Button
-						buttonType="add"
-						buttonText="Submit"
-						buttonOnClick={() => handleSubmitClick()}
+						type="Primary"
+						text="Submit"
+						onClick={() => handleSubmitClick()}
 					/>
 					<Button
-						buttonType="add"
-						buttonText="Back"
-						buttonOnClick={() => handleModalClose()}
+						type="Info"
+						text="Back"
+						onClick={() => handleModalClose()}
 					/>
 				</div>
 			</>

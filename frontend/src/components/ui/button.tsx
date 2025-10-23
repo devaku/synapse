@@ -1,33 +1,52 @@
+type buttonStyle =
+	| 'Primary'
+	| 'Secondary'
+	| 'Success'
+	| 'Danger'
+	| 'Warning'
+	| 'Info';
+
 type buttonProps = {
-	buttonType: string;
-	buttonText: string;
-	buttonOnClick: React.MouseEventHandler<HTMLButtonElement>;
+	type: buttonStyle;
+	text: string;
+	className?: string;
+	onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-export default function Button(props: buttonProps) {
-	let { buttonType, buttonText, buttonOnClick } = props;
-	let style = ``;
+export default function Button({
+	type,
+	text,
+	className,
+	onClick,
+}: buttonProps) {
+	let finalStyle = `cursor-pointer text-center text-black p-2 rounded-2xl`;
 
-	switch (buttonType) {
-		case 'green':
-			style = `cursor-pointer text-center text-black p-2 rounded-2xl bg-ttg-green `;
+	switch (type) {
+		case 'Primary':
+			finalStyle += ` text-ttg-white bg-ttg-green hover:bg-ttg-green/50`;
 			break;
-		case 'purple':
-			style = `cursor-pointer text-center text-black p-2 rounded-2xl bg-ttg-purple `;
+		case 'Secondary':
+			finalStyle += ` text-ttg-white bg-ttg-purple hover:bg-ttg-purple/50`;
 			break;
-		case 'edit':
-			style =
-				'cursor-pointer text-center bg-[#DCD7FF] h-7 w-29 border-[#333333]/16 border-1 hover:bg-purple-300';
+		case 'Success':
+			finalStyle += ` text-ttg-black bg-green-500 hover:bg-green-700`;
 			break;
-		case 'add':
-			style =
-				'cursor-pointer text-center bg-ttg-purple h-7 w-29 border-ttg-brown/16 border-1 hover:bg-purple-300';
+		case 'Info':
+			finalStyle += ` text-ttg-white bg-ttg-brown hover:bg-ttg-brown/50`;
+			break;
+		case 'Danger':
+			finalStyle += ` text-ttg-white bg-red-500 hover:bg-red-500/50`;
+			break;
+		case 'Warning':
+			finalStyle += ` text-ttg-black bg-yellow-500 hover:bg-yellow-500/50`;
 			break;
 	}
 
+	finalStyle += ` ${className}`;
+
 	return (
-		<button className={style} onClick={buttonOnClick}>
-			{buttonText}
+		<button className={finalStyle} onClick={onClick}>
+			{text}
 		</button>
 	);
 }

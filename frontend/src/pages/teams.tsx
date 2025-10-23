@@ -146,9 +146,9 @@ export default function TeamsPage() {
 		return (
 			<>
 				<Button
-					buttonType="add"
-					buttonText={`Delete Selected (${selectedRows.length})`}
-					buttonOnClick={() => {
+					type="Danger"
+					text={`Delete Selected (${selectedRows.length})`}
+					onClick={() => {
 						if (selectedRows.length > 0) {
 							console.log('Delete selected teams:', selectedRows);
 						}
@@ -165,9 +165,9 @@ export default function TeamsPage() {
 					<SearchBar />
 					<div className="flex flex-row gap-15">
 						<Button
-							buttonType="add"
-							buttonText="Create Team"
-							buttonOnClick={createTeamModal.open}
+							type="Success"
+							text="Create Team"
+							onClick={createTeamModal.open}
 						/>
 					</div>
 				</div>

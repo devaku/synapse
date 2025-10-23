@@ -371,9 +371,9 @@ export default function MyAccesssPage() {
 				<div className="flex justify-between items-center">
 					<h3 className="text-lg font-semibold">Search Bar Here</h3>
 					<Button
-						buttonType="add"
-						buttonText="Request Access"
-						buttonOnClick={() => setShowModalCreateAccess(true)}
+						type="Success"
+						text="Request Access"
+						onClick={() => setShowModalCreateAccess(true)}
 					/>
 				</div>
 				<div className="mt-3">
