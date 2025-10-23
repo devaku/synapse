@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTimer } from '../../../lib/hooks/ui/useTimer';
+import Button from '../../ui/button';
 import PopupModalContainer from '../../container/modal_containers/popup_modal_container';
 export function AuthWarningModal({
 	isOpen,
@@ -48,15 +49,16 @@ export function AuthWarningModal({
 			<div className="h-full flex flex-col items-center justify-center w-full gap-2">
 				<div>You have been idle for a while. Are you still there?</div>
 				<div>{countdownTime}</div>
-				<button
-					className="bg-green-500 w-3xs p-2 cursor-pointer rounded"
-					onClick={() => {
-						handleStopTimer();
-						handleModalToggle();
-					}}
-				>
-					Yes
-				</button>
+				<div className="w-20">
+					<Button
+						type="Success"
+						text="Yes"
+						onClick={() => {
+							handleStopTimer();
+							handleModalToggle();
+						}}
+					></Button>
+				</div>
 			</div>
 		</PopupModalContainer>
 	);

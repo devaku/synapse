@@ -150,7 +150,7 @@ export default function MyTaskReadModal({
 			) : (
 				<div>
 					{/* BUTTONS */}
-					<div className="flex justify-evenly">
+					<div className="flex justify-evenly gap-2">
 						{isSubscribed ? (
 							<>
 								<Button

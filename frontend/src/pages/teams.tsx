@@ -2,8 +2,6 @@ import * as _ from 'lodash';
 import Button from '../components/ui/button';
 import HeaderContainer from '../components/container/header_container';
 
-import SearchBar from '../components/ui/searchbar';
-
 import { useEffect, useState, useCallback } from 'react';
 import SvgComponent from '../components/ui/svg_component';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
@@ -162,7 +160,6 @@ export default function TeamsPage() {
 		<>
 			<HeaderContainer pageTitle={'Teams'}>
 				<div className="flex flex-row justify-between items-center p-2.5">
-					<SearchBar />
 					<div className="flex flex-row gap-15">
 						<Button
 							type="Success"
