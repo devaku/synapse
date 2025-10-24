@@ -51,9 +51,11 @@ export function useAudio({ audioUrl, volume }: audioProps) {
 				audioRef.current.pause();
 				// Reset to start
 				audioRef.current.currentTime = 0;
+
+				setIsPlaying(false);
 			}
 		}
 	}
 
-	return { stopSound, playSound };
+	return { stopSound, playSound, isPlaying };
 }

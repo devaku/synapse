@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTimer } from '../../../lib/hooks/ui/useTimer';
+import { useAuthContext } from '../../../lib/contexts/AuthContext';
+
 import Button from '../../ui/button';
 import PopupModalContainer from '../../container/modal_containers/popup_modal_container';
+
 export function AuthWarningModal({
 	isOpen,
 	futureTime,
@@ -11,6 +14,7 @@ export function AuthWarningModal({
 	futureTime: number;
 	handleModalToggle: () => void;
 }) {
+	const { keycloak, isTokenExpired } = useAuthContext();
 	const [countdownTime, setCountdownTime] = useState('');
 	const { isTimerRunning, startTimer, stopTimer } = useTimer(1000);
 
@@ -19,6 +23,14 @@ export function AuthWarningModal({
 			handleStopTimer();
 		}
 	}, []);
+
+	useEffect(() => {
+		if (isTokenExpired) {
+			keycloak.logout({
+				redirectUri: 'http://localhost:3000',
+			});
+		}
+	}, [isTokenExpired]);
 
 	useEffect(() => {
 		if (isOpen) {

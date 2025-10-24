@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNotifications } from '../lib/hooks/api/useNotifications';
+import { useAudio } from '../lib/hooks/ui/useAudio';
+
 import HeaderContainer from '../components/container/header_container';
 
 export default function HomePage() {
@@ -8,16 +10,6 @@ export default function HomePage() {
 	return (
 		<HeaderContainer pageTitle="Home">
 			This is the dashboard.
-			<div>
-				<button
-					onClick={() => {
-						debugPlayNotification();
-					}}
-					className="p-2 bg-sky-500 cursor-pointer"
-				>
-					PLAY
-				</button>
-			</div>
 		</HeaderContainer>
 	);
 }

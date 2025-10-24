@@ -13,6 +13,7 @@ import { AuthWarningModal } from '../modals/system/authwarning_modal';
  */
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { useModal } from '../../lib/hooks/ui/useModal';
+import { SoundProvider } from '../../lib/contexts/SoundContext';
 
 export default function DashboardLayout() {
 	const {
@@ -47,23 +48,25 @@ export default function DashboardLayout() {
 
 	return (
 		<>
-			{isAuthenticated ? (
-				<main className="flex flex-row h-screen">
-					<div className="">
-						<Sidebar />
-					</div>
-					<div className="w-full bg-ttg-white">
-						<Outlet></Outlet>
-					</div>
-					<AuthWarningModal
-						isOpen={authWatcherModal.isOpen}
-						futureTime={futureExpiration}
-						handleModalToggle={handleModalClose}
-					></AuthWarningModal>
-				</main>
-			) : (
-				<Spinner></Spinner>
-			)}
+			<SoundProvider>
+				{isAuthenticated ? (
+					<main className="flex flex-row h-screen">
+						<div className="">
+							<Sidebar />
+						</div>
+						<div className="w-full bg-ttg-white">
+							<Outlet></Outlet>
+						</div>
+						<AuthWarningModal
+							isOpen={authWatcherModal.isOpen}
+							futureTime={futureExpiration}
+							handleModalToggle={handleModalClose}
+						></AuthWarningModal>
+					</main>
+				) : (
+					<Spinner></Spinner>
+				)}
+			</SoundProvider>
 		</>
 	);
 }

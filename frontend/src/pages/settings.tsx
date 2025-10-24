@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react';
 import HeaderContainer from '../components/container/header_container';
-import TabGroup from '../components/ui/tab_group';
 
+import TabNotification from '../components/tabs/tab_notification';
+
+import TabGroup from '../components/ui/tab_group';
 import RadioGroup from '../components/ui/radio_group';
 
 export default function SettingsPage() {
@@ -79,27 +81,7 @@ export default function SettingsPage() {
 					},
 					{
 						name: 'Notifications',
-						content: (
-							<div>
-								<div className="flex flex-col gap-2 my-5">
-									<h2 className="text-3xl font-semibold">
-										Preference
-									</h2>
-									<p>Notify me for the following:</p>
-								</div>
-
-								<div className="bg-gray-300 w-full h-[2px]" />
-
-								<div className="flex flex-col gap-2 my-5">
-									<h2 className="text-3xl font-semibold">
-										Volume
-									</h2>
-									<p>How loud should a notification be?</p>
-								</div>
-
-								<div className="bg-gray-300 w-full h-[2px]" />
-							</div>
-						),
+						content: <TabNotification></TabNotification>,
 					},
 					{ name: 'Category', content: <div></div> },
 				]}
