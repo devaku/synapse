@@ -33,14 +33,9 @@ export async function getTeams(token: string) {
  */
 export async function createTeam(
 	token: string,
-	data: { name: string; description?: string; users?: number[] }
+	data: { name: string; description?: string; users?: number[]; createdBy: number }
 ) {
 	try {
-		const requestBody = {
-			...data,
-			createdBy: 1,
-		};
-
 		const res = await fetch(`${BASE_URL}/teams/`, {
 			method: 'POST',
 			headers: {
@@ -49,7 +44,7 @@ export async function createTeam(
 				'Content-Type': 'application/json',
 			},
 			credentials: 'same-origin',
-			body: JSON.stringify(requestBody),
+			body: JSON.stringify(data),
 		});
 
 		if (!res.ok) {
