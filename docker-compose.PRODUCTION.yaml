@@ -41,14 +41,14 @@ services:
         environment:
             POSTGRES_USER: myuser
             POSTGRES_PASSWORD: mypassword
-            POSTGRES_DB: synapse_db
+            # POSTGRES_DB: synapse_db
 
         # Bind the LOCAL 4001 to the 5432 port of the container.
         # Access 5432 container port via LOCAL 4001
         ports:
             - '4001:5432'
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
+        # volumes:
+        #     - postgres_data:/var/lib/postgresql/data
 
         networks:
             - synapse_network
