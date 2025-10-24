@@ -9,7 +9,7 @@ import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import MyTaskModalHeader from '../components/modals/my_tasks/my_task_header';
 import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
-
+import Button from '../components/ui/button';
 import { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
 
@@ -240,7 +240,7 @@ export default function TasksPage() {
 				<div className="flex flex-col">
 					<div>
 						{/* Search Bar */}
-						<div className="">
+						<div className="flex flex-row gap-2">
 							<input
 								type="text"
 								placeholder="Search My Tasks..."
@@ -250,20 +250,22 @@ export default function TasksPage() {
 									setFilterTextTasks(e.target.value)
 								}
 							/>
-							<button
-								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1 cursor-pointer"
-								onClick={() => {
-									setFilterTextTasks('');
-								}}
-							>
-								X
-							</button>
-							<button
-								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1 cursor-pointer"
-								onClick={() => modalTaskCreate.open()}
-							>
-								Create Task
-							</button>
+							<div className="w-10">
+								<Button
+									type="Info"
+									text="X"
+									onClick={() => {
+										setFilterTextTasks('');
+									}}
+								></Button>
+							</div>
+							<div className="w-fit">
+								<Button
+									type="Info"
+									text="Create Task"
+									onClick={() => modalTaskCreate.open()}
+								></Button>
+							</div>
 						</div>
 					</div>
 				</div>

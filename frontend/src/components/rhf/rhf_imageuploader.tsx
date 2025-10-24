@@ -8,6 +8,7 @@ import { useDropzone, type FileWithPath } from 'react-dropzone';
  * COMPONENTS
  */
 import GalleryDisplay from '../ui/gallery_display';
+import Button from '../ui/button';
 
 export default function RHFImageUploader({
 	value,
@@ -85,12 +86,12 @@ export default function RHFImageUploader({
 			<GalleryDisplay images={previews}></GalleryDisplay>
 			{previews && previews.length > 0 ? (
 				<div>
-					<button
+					<Button
+						type="Danger"
+						text="Clear Images"
+						className="select-none"
 						onClick={handleClearImagesClick}
-						className="select-none mt-2 py-2 w-full bg-[#153243] text-white border border-[#153243] rounded cursor-pointer"
-					>
-						Clear Images
-					</button>
+					></Button>
 				</div>
 			) : (
 				''

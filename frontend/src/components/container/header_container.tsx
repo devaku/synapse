@@ -30,7 +30,7 @@ export default function HeaderContainer({
 	const { notifications } = useNotifications();
 
 	return (
-		<div className="flex flex-col bg-ttg-white text-ttg-black">
+		<div className="w-full h-full flex flex-col bg-ttg-white text-ttg-black ">
 			{/* Header */}
 			<div className="flex flex-row h-15 bg-ttg-black/5 items-center justify-between">
 				{/* Left Side */}
@@ -38,7 +38,7 @@ export default function HeaderContainer({
 					{pageTitle}
 				</div>
 				{/* Right Side */}
-				<div className="flex flex-row items-center  gap-9 px-5">
+				<div className="flex flex-row items-center gap-9 px-5">
 					<button
 						className="text-ttg-black cursor-pointer"
 						onClick={() => {
@@ -81,7 +81,7 @@ export default function HeaderContainer({
 				</div>
 			</div>
 			{/* Page content */}
-			<div className="flex-1 flex flex-col p-10 mb-10 min-h-0 ma">
+			<div className="flex-1 overflow-y-auto p-10 mb-10 min-h-0 ma">
 				{children}
 			</div>
 		</div>

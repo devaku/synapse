@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
 // using native buttons in this modal
 import Spinner from '../../ui/spinner';
+import Button from '../../ui/button';
 import { createRepoCollaboratorRequest } from '../../../lib/services/api/github';
 
 type FormValues = {
@@ -123,19 +124,17 @@ export default function AccessCreationModal({
 				</div>
 
 				<div className="flex gap-2 mt-4">
-					<button
-						type="submit"
-						className="px-4 py-2 bg-blue-600 text-white rounded"
-					>
-						Submit
-					</button>
-					<button
-						type="button"
-						className="px-3 py-2 border rounded"
+					<Button
+						type="Success"
+						text="Submit"
+						onClick={() => {}}
+					></Button>
+
+					<Button
+						type="Info"
+						text="Cancel"
 						onClick={handleModalDisplay}
-					>
-						Cancel
-					</button>
+					></Button>
 				</div>
 				{submitError && (
 					<div className="mt-2 text-sm text-red-600">

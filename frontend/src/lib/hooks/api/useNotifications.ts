@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
-import { readAllNotifications } from '../../services/api/notifications';
+
+/**
+ * HOOKS
+ */
+
 import { useSocketContext } from '../../contexts/SocketContext';
+import { useSoundContext } from '../../contexts/SoundContext';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { useAudio } from '../ui/useAudio';
+
+/**
+ * SERVICES
+ */
+
+import { readAllNotifications } from '../../services/api/notifications';
 import * as socketEvents from '../../../lib/helpers/socket-events';
 import { type Notification, type User } from '../../types/models';
 
@@ -17,6 +29,9 @@ interface NotificationCard {
 export function useNotifications() {
 	const { socket } = useSocketContext();
 	const { token } = useAuthContext();
+
+	const { playSound, stopSound } = useSoundContext();
+
 	const [notifications, setNotifications] = useState<NotificationCard[]>([]);
 
 	async function fetchNotifications() {
@@ -68,7 +83,6 @@ export function useNotifications() {
 	// Subscribe to Socket
 	useEffect(() => {
 		async function start() {
-			// This should be put into its own thing
 			playSound();
 			await fetchNotifications();
 		}
@@ -79,14 +93,12 @@ export function useNotifications() {
 		};
 	}, [token, socket]);
 
-	function playSound() {
-		const url = `${import.meta.env.VITE_FRONTEND_URL}/notification1.mp3`;
-
-		const audio = new Audio(url);
-		audio.play();
+	function debugPlayNotification() {
+		playSound();
 	}
 
 	return {
 		notifications,
+		debugPlayNotification,
 	};
 }

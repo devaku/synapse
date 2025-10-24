@@ -141,47 +141,45 @@ export default function MyTaskReadModal({
 					<h2>This task has been archived.</h2>
 					<div className="flex justify-evenly">
 						<Button
-							buttonType="add"
-							buttonText="Back"
-							buttonOnClick={() => handleModalDisplay()}
+							type="Info"
+							text="Back"
+							onClick={() => handleModalDisplay()}
 						/>
 					</div>
 				</div>
 			) : (
 				<div>
 					{/* BUTTONS */}
-					<div className="flex justify-evenly">
+					<div className="flex justify-evenly gap-2">
 						{isSubscribed ? (
 							<>
 								<Button
-									buttonType="add"
-									buttonText="Complete"
-									buttonOnClick={() =>
-										handleButtonCompleteClick()
-									}
+									type="Success"
+									text="Complete"
+									onClick={() => handleButtonCompleteClick()}
 								/>
 								<Button
-									buttonType="add"
-									buttonText="Unsubscribe"
-									buttonOnClick={() => {
+									type="Danger"
+									text="Unsubscribe"
+									onClick={() => {
 										handleUnsubscribeClick();
 									}}
 								/>
 							</>
 						) : (
 							<Button
-								buttonType="add"
-								buttonText="Subscribe"
-								buttonOnClick={() => {
+								type="Success"
+								text="Subscribe"
+								onClick={() => {
 									handleSubscribeClick();
 								}}
 							/>
 						)}
 
 						<Button
-							buttonType="add"
-							buttonText="Back"
-							buttonOnClick={() => handleModalDisplay()}
+							type="Info"
+							text="Back"
+							onClick={() => handleModalDisplay()}
 						/>
 					</div>
 					{/* COMMENTS SECTION*/}
@@ -190,15 +188,7 @@ export default function MyTaskReadModal({
 							taskId={taskId}
 							comments={comments}
 							isSubscribed={isSubscribed}
-						>
-							{/* <div className="mt-2">
-						<Button
-							buttonType="add"
-							buttonText="Comment"
-							buttonOnClick={() => handleModalClose()}
-						/>
-					</div> */}
-						</CommentComponent>
+						></CommentComponent>
 					</div>
 				</div>
 			)}

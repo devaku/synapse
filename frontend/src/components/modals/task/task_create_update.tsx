@@ -511,17 +511,19 @@ export default function TaskCreateUpdateModal({
 							</div>
 
 							{/* SUBMIT */}
-							<input
-								className="select-none mt-2 py-2 w-full bg-[#153243] text-white border border-[#153243] rounded cursor-pointer"
-								type="submit"
-								value="SUBMIT"
-							/>
-							<input
-								onClick={() => handleModalDisplay()}
-								type="button"
-								className="select-none mt-2 text-center py-2 w-full bg-[#431815] text-white border border-[#153243] rounded cursor-pointer"
-								value="BACK"
-							/>
+							<div className="flex flex-col gap-2 mt-2">
+								<input
+									className="w-full cursor-pointer text-center p-2 rounded text-ttg-black bg-green-500 hover:bg-green-700"
+									type="submit"
+									value="SUBMIT"
+								/>
+								<input
+									onClick={() => handleModalDisplay()}
+									type="button"
+									className="w-full cursor-pointer text-center p-2 rounded text-ttg-white bg-ttg-brown/70 hover:bg-ttg-brown"
+									value="BACK"
+								/>
+							</div>
 						</form>
 					</div>
 				</div>

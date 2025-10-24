@@ -22,10 +22,6 @@ import DashboardLayout from './components/layouts/dashboard_layout';
  * PAGES
  */
 
-import RegisterPage from './pages/auth/register';
-import ForgotPasswordPage from './pages/auth/forgot_password';
-import LoggedOutPage from './pages/auth/logged_out';
-
 import LoginPage from './pages/auth/login';
 import DebugPage from './pages/debug';
 import HomePage from './pages/home';
@@ -98,10 +94,6 @@ export const router = createBrowserRouter([
 				},
 				Component: LoginPage,
 			},
-
-			{ path: 'register', Component: RegisterPage },
-			{ path: 'forgot_password', Component: ForgotPasswordPage },
-			{ path: 'logged_out', Component: LoggedOutPage },
 
 			/**
 			 * PROTECTED ROUTES
