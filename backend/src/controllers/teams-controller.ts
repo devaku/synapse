@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
-import * as teamsService from '../services/teams-service';
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
+import { createTeamsService } from '../services/teams-service';
+import { prismaDb } from '../lib/database';
+
+const teamsService = createTeamsService(prismaDb);
 
 /**
  * Controller to create a team in the database
@@ -25,7 +28,11 @@ export async function createTeam(req: Request, res: Response) {
 
 		res.status(201).json(finalResponse);
 	} catch (error: any) {
-		let finalResponse = buildError(500, 'There was an error creating the team', error);
+		let finalResponse = buildError(
+			500,
+			'There was an error creating the team',
+			error
+		);
 		res.status(500).json(finalResponse);
 	}
 }
@@ -145,7 +152,11 @@ export async function updateTeam(req: Request, res: Response) {
 		);
 		res.status(200).json(finalResponse);
 	} catch (error) {
-		let finalResponse = buildError(500, 'There was an error updating the team', error);
+		let finalResponse = buildError(
+			500,
+			'There was an error updating the team',
+			error
+		);
 		res.status(500).json(finalResponse);
 	}
 }

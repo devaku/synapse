@@ -212,7 +212,7 @@ export default function CommentComponent({
 
 							{/* SUBMIT */}
 							<input
-								className="select-none mt-2 py-2 w-full bg-[#153243] text-white border border-[#153243] rounded cursor-pointer"
+								className="w-full cursor-pointer text-center text-black p-2 rounded text-ttg-black bg-green-500 hover:bg-green-700"
 								type="submit"
 								value="Comment"
 							/>

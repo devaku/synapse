@@ -54,7 +54,6 @@
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/multer": "^2.0.0",
 		"@types/node": "^24.7.2",
-		"@types/node": "^24.7.2",
 		"@types/serve-favicon": "^2.5.7",
 		"@types/socket.io": "^3.0.2",
 		"@types/socket.io-client": "^3.0.0",

@@ -10,9 +10,11 @@ import INFO from '@/assets/images/svgs/info.svg';
 import LOCK from '@/assets/images/svgs/lock.svg';
 import LOGS from '@/assets/images/svgs/logs.svg';
 import MY_TASKS from '@/assets/images/svgs/my_tasks.svg';
+import PLAY from '@/assets/images/svgs/playbutton.svg';
 import PROFILE from '../../assets/images/svgs/profile.svg';
 import SEARCH from '@/assets/images/svgs/search.svg';
 import SORT from '@/assets/images/svgs/sort.svg';
+import STOP from '@/assets/images/svgs/stopbutton.svg';
 import TEAMS from '@/assets/images/svgs/teams.svg';
 import TRASHCAN from '@/assets/images/svgs/trashcan.svg';
 import WRENCH from '@/assets/images/svgs/wrench.svg';
@@ -40,6 +42,10 @@ export default function SvgComponent(props: svgProps) {
 	switch (iconName) {
 		case 'ACCESS':
 			html = <img className={classes} src={ACCESS} alt="" />;
+			break;
+
+		case 'BELL':
+			html = <img className={classes} src={BELL} alt="" />;
 			break;
 
 		case 'CHARTS':
@@ -86,6 +92,10 @@ export default function SvgComponent(props: svgProps) {
 			html = <img className={classes} src={MY_TASKS} alt="" />;
 			break;
 
+		case 'PLAY':
+			html = <img className={classes} src={PLAY} alt="" />;
+			break;
+
 		case 'PROFILE':
 			html = <img className={classes} src={PROFILE} alt="" />;
 			break;
@@ -96,6 +106,10 @@ export default function SvgComponent(props: svgProps) {
 
 		case 'SORT':
 			html = <img className={classes} src={SORT} alt="" />;
+			break;
+
+		case 'STOP':
+			html = <img className={classes} src={STOP} alt="" />;
 			break;
 
 		case 'TASKS':
@@ -112,10 +126,6 @@ export default function SvgComponent(props: svgProps) {
 
 		case 'WRENCH':
 			html = <img className={classes} src={WRENCH} alt="" />;
-			break;
-
-		case 'BELL':
-			html = <img className={classes} src={BELL} alt="" />;
 			break;
 	}
 

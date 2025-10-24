@@ -15,11 +15,10 @@ export default function SidebarButton({
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	// TODO: Add color change when in the current tab
 	if (location.pathname == routePath) {
 		return (
 			<button
-				className="flex flex-row items-center gap-2.5 min-h-7.5 text-white cursor-pointer"
+				className="flex flex-row items-center gap-2.5 min-h-7.5 text-ttg-green cursor-pointer"
 				onClick={() => {
 					navigate(routePath);
 				}}

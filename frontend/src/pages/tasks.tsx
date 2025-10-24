@@ -9,7 +9,7 @@ import HeaderContainer from '../components/container/header_container';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
 import MyTaskModalHeader from '../components/modals/my_tasks/my_task_header';
 import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
-
+import Button from '../components/ui/button';
 import { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
 
@@ -63,13 +63,17 @@ export default function TasksPage() {
 	const modalTaskInfo = useModal();
 
 	// Used to fetch the data that would populate the opened modal
-	const [modalTaskInfoId, setModalTaskInfoId] = useState(0);
+	const [modalTaskInfoId, setModalTaskInfoId] = useState<number | null>(null);
 
 	const modalTaskCreate = useModal();
-	const [modalTaskCreateId, setmodalTaskCreateId] = useState(0);
+	const [modalTaskCreateId, setmodalTaskCreateId] = useState<number | null>(
+		null
+	);
 
 	const modalTaskUpdate = useModal();
-	const [modalTaskUpdateId, setModalTaskUpdateId] = useState(0);
+	const [modalTaskUpdateId, setModalTaskUpdateId] = useState<number | null>(
+		null
+	);
 
 	/**
 	 * HARD CODED COLUMNS FOR THE TABLES
@@ -158,9 +162,11 @@ export default function TasksPage() {
 
 		// Subscribe to sockets
 		socket?.on(SocketEvents.TASK.MAIN_TABLE, start);
+		socket?.on(SocketEvents.TASK.TASK_ARCHIVED, start);
 
 		return () => {
 			socket?.off(SocketEvents.TASK.MAIN_TABLE, start);
+			socket?.off(SocketEvents.TASK.TASK_ARCHIVED, start);
 		};
 	}, [socket]);
 
@@ -222,11 +228,6 @@ export default function TasksPage() {
 		modalTaskInfo.open();
 	}
 
-	function handleTaskClickCreate(row: Task) {
-		setmodalTaskCreateId(row.id);
-		modalTaskCreate.open();
-	}
-
 	function handleTaskClickUpdate(row: Task) {
 		setModalTaskUpdateId(row.id);
 		modalTaskUpdate.open();
@@ -239,7 +240,7 @@ export default function TasksPage() {
 				<div className="flex flex-col">
 					<div>
 						{/* Search Bar */}
-						<div className="">
+						<div className="flex flex-row gap-2">
 							<input
 								type="text"
 								placeholder="Search My Tasks..."
@@ -249,20 +250,22 @@ export default function TasksPage() {
 									setFilterTextTasks(e.target.value)
 								}
 							/>
-							<button
-								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1 cursor-pointer"
-								onClick={() => {
-									setFilterTextTasks('');
-								}}
-							>
-								X
-							</button>
-							<button
-								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1 cursor-pointer"
-								onClick={() => modalTaskCreate.open()}
-							>
-								Create Task
-							</button>
+							<div className="w-10">
+								<Button
+									type="Info"
+									text="X"
+									onClick={() => {
+										setFilterTextTasks('');
+									}}
+								></Button>
+							</div>
+							<div className="w-fit">
+								<Button
+									type="Info"
+									text="Create Task"
+									onClick={() => modalTaskCreate.open()}
+								></Button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -292,10 +295,10 @@ export default function TasksPage() {
 			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
-					taskId={modalTaskInfoId}
+					taskId={modalTaskInfoId!}
 				>
 					<MyTaskReadModal
-						taskId={modalTaskInfoId}
+						taskId={modalTaskInfoId!}
 						handleModalDisplay={modalTaskInfo.toggle}
 					></MyTaskReadModal>
 				</MyTaskModalHeader>
@@ -305,7 +308,7 @@ export default function TasksPage() {
 			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Update a Task'}
-					taskId={modalTaskUpdateId}
+					taskId={modalTaskUpdateId!}
 					handleModalDisplay={modalTaskUpdate.toggle}
 				></TaskCreateUpdateModal>
 			</SlideModalContainer>
