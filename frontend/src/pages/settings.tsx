@@ -2,60 +2,9 @@ import { useState, useRef } from 'react';
 import HeaderContainer from '../components/container/header_container';
 import TabGroup from '../components/ui/tab_group';
 
+import RadioGroup from '../components/ui/radio_group';
+
 export default function SettingsPage() {
-	const theme = useRef(localStorage.getItem('theme') || 'light');
-
-	type Radio = {
-		name: string;
-		selected?: boolean;
-		onClick?: () => void;
-	};
-
-	function Radio({ name, selected = false, onClick }: Radio) {
-		return (
-			<div className="flex items-center gap-2 w-40">
-				<button
-					onClick={onClick}
-					className={`
-					flex items-center justify-center size-5 rounded-full border-ttg-black/40
-					hover:cursor-pointer hover:border-6
-					${selected == true ? 'border-6 border-ttg-dark-blue' : 'border-2'}
-				`}
-				></button>
-				<p>{name}</p>
-			</div>
-		);
-	}
-
-	function RadioGroup({ radios }: { radios: Array<Radio> }) {
-		let defaultRadio: Radio;
-		if (theme.current === 'dark') {
-			defaultRadio = radios[1];
-		} else {
-			defaultRadio = radios[0];
-		}
-
-		const [activeRadio, setActiveRadio] = useState(defaultRadio.name);
-
-		return (
-			<div className="flex my-5 ml-5">
-				{radios.map((radio) => (
-					<Radio
-						name={radio.name}
-						selected={radio.name === activeRadio}
-						onClick={() => {
-							setActiveRadio(radio.name);
-							if (radio.onClick === undefined) {
-								return;
-							}
-							radio.onClick();
-						}}
-					/>
-				))}
-			</div>
-		);
-	}
-
 	return (
 		<HeaderContainer pageTitle={'Settings'}>
 			<TabGroup
