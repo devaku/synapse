@@ -88,8 +88,8 @@ export default function TeamsPage() {
 				</div>
 			),
 			ignoreRowClick: true,
-			allowOverflow: true,
-			button: true,
+			// allowOverflow: true,
+			// button: true,
 			width: '150px',
 		},
 	];

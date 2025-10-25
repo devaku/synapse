@@ -49,7 +49,7 @@ export default function TeamsCreateUpdateModal({
 	teamId?: number;
 	handleModalDisplay: () => void;
 }) {
-	const { token } = useAuthContext();
+	const { token, serverData } = useAuthContext();
 	const {
 		register,
 		handleSubmit,
@@ -126,7 +126,7 @@ export default function TeamsCreateUpdateModal({
 	}
 
 	async function handleFormSubmit(data: FormValues) {
-		if (!token) return;
+		if (!token || !serverData?.id) return;
 
 		try {
 			setIsLoading(true);
@@ -148,6 +148,7 @@ export default function TeamsCreateUpdateModal({
 					name: payload.name,
 					description: payload.description,
 					users: payload.users,
+					createdBy: serverData.id,
 				});
 			}
 
