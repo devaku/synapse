@@ -7,6 +7,7 @@ type soundContextType = {
 	setNotificationVolume: (vol: number) => void;
 	playSound: () => void;
 	stopSound: () => void;
+	isPlaying: boolean;
 };
 
 const SoundContext = createContext<soundContextType>({
@@ -14,6 +15,7 @@ const SoundContext = createContext<soundContextType>({
 	setNotificationVolume: (vol: number) => {},
 	playSound: () => {},
 	stopSound: () => {},
+	isPlaying: false,
 });
 
 export function SoundProvider({ children }: { children: React.ReactNode }) {
@@ -22,7 +24,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
 	const [volume, setVolume] = useState<number>(1);
 
-	const { playSound, stopSound } = useAudio({
+	const { playSound, isPlaying, stopSound } = useAudio({
 		audioUrl: notificationSoundUrl,
 		volume,
 	});
@@ -64,6 +66,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 		setNotificationVolume,
 		playSound,
 		stopSound,
+		isPlaying,
 	};
 
 	return (
