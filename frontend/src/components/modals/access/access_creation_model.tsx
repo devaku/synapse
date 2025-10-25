@@ -4,7 +4,8 @@ import { useAuthContext } from '../../../lib/contexts/AuthContext';
 // using native buttons in this modal
 import Spinner from '../../ui/spinner';
 import Button from '../../ui/button';
-import { createRepoCollaboratorRequest } from '../../../lib/services/api/github';
+import { createRepoCollaboratorRequest, getGithubRepos } from '../../../lib/services/api/github';
+import DataTable from '../../container/DataTableBase'
 
 type FormValues = {
 	repoId: number | string;
@@ -20,7 +21,7 @@ export default function AccessCreationModal({
 	onCreated?: () => Promise<void> | void;
 }) {
 	const { token, serverData } = useAuthContext();
-	const { register, handleSubmit } = useForm<FormValues>({
+	const { register, handleSubmit, setValue } = useForm<FormValues>({
 		defaultValues: {
 			permission: 'pull',
 		},
@@ -28,6 +29,46 @@ export default function AccessCreationModal({
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
+	const [repos, setRepos] = useState<any[]>([]);
+	const [selectedRepoId, setSelectedRepoId] = useState<number | null>(null);
+	const [isLoadingRepos, setIsLoadingRepos] = useState<boolean>(false);
+	const [fetchError, setFetchError] = useState<string | null>(null);
+
+	React.useEffect(() => {
+		let mounted = true;
+		async function load() {
+			// If no token, don't attempt authenticated fetch; prompt user to login
+			if (!token) {
+				if (!mounted) return;
+				setRepos([]);
+				setFetchError('Please sign in to view repositories');
+				setIsLoadingRepos(false);
+				return;
+			}
+			setIsLoadingRepos(true);
+			setFetchError(null);
+			try {
+				const r = await getGithubRepos(token ?? undefined);
+				if (!mounted) return;
+				if (Array.isArray(r)) setRepos(r);
+				else {
+					setRepos([]);
+					setFetchError('No repositories returned from server');
+				}
+			} catch (e: any) {
+				console.error('Failed to load github repos', e);
+				if (!mounted) return;
+				setRepos([]);
+				setFetchError(e?.message || String(e));
+			} finally {
+				setIsLoadingRepos(false);
+			}
+		}
+		load();
+		return () => {
+			mounted = false;
+		};
+	}, [token]);
 
 	async function onSubmit(data: FormValues) {
 		if (!token) {
@@ -42,9 +83,10 @@ export default function AccessCreationModal({
 			return;
 		}
 
+		const repoToUse = selectedRepoId ?? Number(data.repoId);
 		const body = {
 			userId: serverData.id,
-			repoId: Number(data.repoId),
+			repoId: Number(repoToUse),
 			permission: data.permission,
 			githubUsername: data.githubUsername,
 		};
@@ -58,8 +100,8 @@ export default function AccessCreationModal({
 			setSubmitError('GitHub username is required');
 			return;
 		}
-		const repoNum = Number(data.repoId);
-		if (!repoNum || isNaN(repoNum) || repoNum <= 0) {
+		const repoNumToCheck = Number(repoToUse);
+		if (!repoNumToCheck || isNaN(repoNumToCheck) || repoNumToCheck <= 0) {
 			setSubmitError('Repository ID must be a positive number');
 			return;
 		}
@@ -83,9 +125,16 @@ export default function AccessCreationModal({
 		}
 	}
 
+	const columns = [
+		{ name: 'ID', selector: (row: any) => row.id, sortable: true, width: '120px' },
+		{ name: 'Name', selector: (row: any) => row.name, sortable: true },
+		{ name: 'Full name', selector: (row: any) => row.full_name, sortable: true },
+		{ name: 'Private', selector: (row: any) => (row.private ? 'Yes' : 'No'), sortable: true },
+	];
+
 	return (
-		<div className="p-4 min-w-[320px]">
-			<div className="mb-4">
+		<div className="p-4">
+			<div className="mb-4 w-fit">
 				<p className="text-2xl">Request GitHub Access</p>
 			</div>
 
@@ -94,12 +143,31 @@ export default function AccessCreationModal({
 				className="flex flex-col gap-3"
 			>
 				<div className="flex flex-col">
-					<label className="text-sm">Repository ID</label>
-					<input
-						{...register('repoId', { required: true })}
-						className="p-2 border rounded-md"
-						placeholder="Enter number repository ID"
-					/>
+						<div className="h-64">
+							<div className="mb-2 text-sm text-gray-600">
+								{isLoadingRepos ? 'Loading repositories...' : `Repositories: ${repos.length}`}
+								{fetchError && (
+									<div className="text-sm text-red-600">{fetchError}</div>
+								)}
+							</div>
+							<DataTable
+								columns={columns}
+								data={repos}
+								// allow clicking rows to select
+								onRowClicked={(row: any) => {
+									const id = Number(row.id);
+									setSelectedRepoId(id);
+									setValue('repoId', id);
+								}}
+								conditionalRowStyles={[
+									{
+										when: (row: any) => selectedRepoId === Number(row.id),
+										style: { backgroundColor: 'rgba(34,197,94,0.12)' },
+									},
+								]}
+								// enable pointer and hover via DataTable defaults
+							/>
+						</div>
 				</div>
 
 				<div className="flex flex-col">
@@ -117,8 +185,9 @@ export default function AccessCreationModal({
 						{...register('permission')}
 						className="p-2 border rounded-md"
 					>
-						<option value="pull">Read</option>
-						<option value="push">Write</option>
+						<option value="pull">Pull</option>
+						<option value="push">Push</option>
+						<option value="maintain">Maintain</option>
 						<option value="admin">Admin</option>
 					</select>
 				</div>
@@ -127,7 +196,7 @@ export default function AccessCreationModal({
 					<Button
 						type="Success"
 						text="Submit"
-						onClick={() => {}}
+						onClick={() => void handleSubmit(onSubmit)()}
 					></Button>
 
 					<Button

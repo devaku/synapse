@@ -331,50 +331,17 @@ export default function MyAccesssPage() {
 
 	return (
 		<HeaderContainer pageTitle={'Access'}>
-			{/* TABLES */}
-			{/* <div className="flex w-full gap-1">
-					Access TABLE
-					<div className="w-full">
-						<div className="flex justify-between items-center">
-							<div className="">
-								<input
-									type="text"
-									placeholder="Search logs..."
-									className="mb-4 p-2 border rounded border-gray-300 w-50"
-									value={filterText}
-									onChange={(e) =>
-										setFilterText(e.target.value)
-									}
-								/>
-								<button
-									className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-									onClick={() => {
-										setFilterText('');
-									}}
-								>
-									X
-								</button>
-							</div>
-							<Button
-								buttonType="add"
-								buttonText="Add Access"
-								buttonOnClick={handleClickCreateAccess}
-							/>
-						</div>
-						<div className="">
-							<DataTable columns={columns} data={filteredItems} />
-						</div>
-					</div>
-				</div> */}
 			{/* My GitHub Requests */}
 			<div className="w-full mt-6">
 				<div className="flex justify-between items-center">
 					<h3 className="text-lg font-semibold">Search Bar Here</h3>
-					<Button
+					<div className="w-fit">
+						<Button
 						type="Success"
 						text="Request Access"
 						onClick={() => setShowModalCreateAccess(true)}
 					/>
+					</div>
 				</div>
 				<div className="mt-3">
 					{requestsError && (
@@ -385,30 +352,6 @@ export default function MyAccesssPage() {
 			</div>
 			<SlideModalContainer isOpen={showModalAccessInfo} noFade={false}>
 				<div>
-					{/* <h1>
-						{
-							findTableEntryById(
-								modalAccessId,
-								mockAccessAPIResponse
-							)?.repo_name
-						}
-					</h1>
-					<p>
-						{
-							findTableEntryById(
-								modalAccessId,
-								mockAccessAPIResponse
-							)?.access_requested
-						}
-					</p>
-					<p>
-						{
-							findTableEntryById(
-								modalAccessId,
-								mockAccessAPIResponse
-							)?.requesting_user
-						}
-					</p> */}
 					<button onClick={handleModalAccessInfoDisplay}>
 						Close
 					</button>
