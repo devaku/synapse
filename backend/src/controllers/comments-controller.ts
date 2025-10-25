@@ -8,6 +8,7 @@ import { Server as SocketIOServer } from 'socket.io';
  */
 import { PrismaClientOrTransaction } from '../types';
 import { Notification, User } from '../../database/generated/prisma';
+import { PAYLOAD_ACTIONS } from '../lib/socket-events';
 
 /**
  * SERVICES
@@ -139,9 +140,16 @@ async function setupNotification(
 		// Build the details of the comment
 		const comment = commentRow.message;
 		const title = `${createdByUser.firstName} left a comment on task ${taskRow.name}`;
-		const description = `${createdByUser.firstName} commented: ${comment}`;
+		let description;
+		if (comment) {
+			description = `${createdByUser.firstName} commented: ${comment}`;
+		} else {
+			description = '';
+		}
+
 		const payload = {
 			taskId,
+			actions: PAYLOAD_ACTIONS.TASK_VIEW,
 		};
 		const notificationData = {
 			title,
@@ -151,8 +159,9 @@ async function setupNotification(
 		};
 
 		// Create the notification
-		const notificationRow =
-			await notificationService.createNotification(notificationData);
+		const notificationRow = await notificationService.createNotification(
+			notificationData
+		);
 
 		// Create the links
 		await notificationForUsersService.linkNotificationToUsers(

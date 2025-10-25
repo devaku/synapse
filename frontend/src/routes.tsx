@@ -9,8 +9,6 @@ import { createBrowserRouter } from 'react-router';
  * CALLBACKS
  */
 
-import LoginCallback from './pages/auth/callback/login_callback';
-
 /**
  * LAYOUTS
  */
@@ -23,10 +21,6 @@ import DashboardLayout from './components/layouts/dashboard_layout';
 /**
  * PAGES
  */
-
-import RegisterPage from './pages/auth/register';
-import ForgotPasswordPage from './pages/auth/forgot_password';
-import LoggedOutPage from './pages/auth/logged_out';
 
 import LoginPage from './pages/auth/login';
 import DebugPage from './pages/debug';
@@ -93,10 +87,6 @@ export const router = createBrowserRouter([
 				],
 			},
 
-			// Login to Keycloak
-			{ path: '/auth/callback/login', Component: LoginCallback },
-			{ path: '/auth/callback/logout', Component: LoginCallback },
-
 			{
 				index: true,
 				loader: () => {
@@ -104,10 +94,6 @@ export const router = createBrowserRouter([
 				},
 				Component: LoginPage,
 			},
-
-			{ path: 'register', Component: RegisterPage },
-			{ path: 'forgot_password', Component: ForgotPasswordPage },
-			{ path: 'logged_out', Component: LoggedOutPage },
 
 			/**
 			 * PROTECTED ROUTES

@@ -58,8 +58,9 @@ export default function TabGroup({
 	return (
 		<div>
 			<div className={styles[style].div}>
-				{tabs.map((tab) => (
+				{tabs.map((tab, index) => (
 					<Tab
+						key={index}
 						name={tab.name}
 						selected={tab.name === activeTab}
 						onClick={() => setActiveTab(tab.name)}

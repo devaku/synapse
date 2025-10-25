@@ -6,7 +6,7 @@ import HeaderContainer from '../components/container/header_container';
  */
 
 import NotificationTableData from '../../testing_jsons/notification_table_testing.json';
-// import DataTable, { type TableColumn } from 'react-data-table-component';
+import Button from '../components/ui/button';
 import DataTable from '../components/container/DataTableBase';
 import { type TableColumn } from 'react-data-table-component';
 import SvgComponent from '../components/ui/svg_component';
@@ -366,7 +366,7 @@ export default function MyTasksPage() {
 					{/* My Tasks Table */}
 					<div>
 						{/* Search Bar */}
-						<div className="">
+						<div className="flex flex-row gap-2">
 							<input
 								type="text"
 								placeholder="Search My Tasks..."
@@ -376,14 +376,16 @@ export default function MyTasksPage() {
 									setFilterTextMyTasks(e.target.value)
 								}
 							/>
-							<button
-								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-								onClick={() => {
-									setFilterTextMyTasks('');
-								}}
-							>
-								X
-							</button>
+							<div className="w-10">
+								<Button
+									type="Info"
+									text="X"
+									onClick={() => {
+										setFilterTextMyTasks('');
+									}}
+									className=""
+								></Button>
+							</div>
 						</div>
 						<div className="max-h-[400px]">
 							<DataTable
@@ -399,7 +401,7 @@ export default function MyTasksPage() {
 					{/* My Notifications Table */}
 					<div>
 						{/* Search Bar */}
-						<div className="">
+						<div className="flex flex-row gap-2">
 							<input
 								type="text"
 								placeholder="Search notifications..."
@@ -409,14 +411,15 @@ export default function MyTasksPage() {
 									setFilterTextNotifications(e.target.value)
 								}
 							/>
-							<button
-								className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-								onClick={() => {
-									setFilterTextNotifications('');
-								}}
-							>
-								X
-							</button>
+							<div className="w-10">
+								<Button
+									type="Info"
+									onClick={() => {
+										setFilterTextNotifications('');
+									}}
+									text="X"
+								></Button>
+							</div>
 						</div>
 						<div className="max-h-[400px]">
 							<DataTable

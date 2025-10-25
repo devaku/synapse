@@ -37,14 +37,14 @@ export default function LoginPage() {
 					{/* Buttons */}
 					<div className="flex flex-col gap-3 my-5">
 						<Button
-							buttonType="green"
-							buttonText="Login"
-							buttonOnClick={handleLoginClick}
+							type="Primary"
+							text="Login"
+							onClick={handleLoginClick}
 						></Button>
 						<Button
-							buttonType="purple"
-							buttonText="Register"
-							buttonOnClick={handleLoginClick}
+							type="Secondary"
+							text="Register"
+							onClick={handleLoginClick}
 						></Button>
 					</div>
 				</div>

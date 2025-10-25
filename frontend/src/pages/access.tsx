@@ -330,10 +330,9 @@ export default function MyAccesssPage() {
 	// for when there are new Accesss coming in from the socket
 
 	return (
-		<main className="flex flex-row h-screen w-full">
-			<HeaderContainer pageTitle={'Access'}>
-				{/* TABLES */}
-				{/* <div className="flex w-full gap-1">
+		<HeaderContainer pageTitle={'Access'}>
+			{/* TABLES */}
+			{/* <div className="flex w-full gap-1">
 					Access TABLE
 					<div className="w-full">
 						<div className="flex justify-between items-center">
@@ -367,27 +366,23 @@ export default function MyAccesssPage() {
 						</div>
 					</div>
 				</div> */}
-				{/* My GitHub Requests */}
-				<div className="w-full mt-6">
-					<div className="flex justify-between items-center">
-						<h3 className="text-lg font-semibold">
-							Search Bar Here
-						</h3>
-						<Button
-							buttonType="add"
-							buttonText="Request Access"
-							buttonOnClick={() => setShowModalCreateAccess(true)}
-						/>
-					</div>
-					<div className="mt-3">
-						{requestsError && (
-							<div className="text-red-600">{requestsError}</div>
-						)}
-						<DataTable columns={columns} data={myRequests} />
-					</div>
+			{/* My GitHub Requests */}
+			<div className="w-full mt-6">
+				<div className="flex justify-between items-center">
+					<h3 className="text-lg font-semibold">Search Bar Here</h3>
+					<Button
+						type="Success"
+						text="Request Access"
+						onClick={() => setShowModalCreateAccess(true)}
+					/>
 				</div>
-			</HeaderContainer>
-			{/* Access MODALS */}
+				<div className="mt-3">
+					{requestsError && (
+						<div className="text-red-600">{requestsError}</div>
+					)}
+					<DataTable columns={columns} data={myRequests} />
+				</div>
+			</div>
 			<SlideModalContainer isOpen={showModalAccessInfo} noFade={false}>
 				<div>
 					{/* <h1>
@@ -425,6 +420,6 @@ export default function MyAccesssPage() {
 					onCreated={async () => await loadMyRequests()}
 				/>
 			</SlideModalContainer>
-		</main>
+		</HeaderContainer>
 	);
 }

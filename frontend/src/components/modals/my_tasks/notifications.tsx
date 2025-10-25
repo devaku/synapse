@@ -68,9 +68,9 @@ export default function NotificationModal({
 			{/* BUTTONS */}
 			<div className="flex">
 				<Button
-					buttonType="add"
-					buttonText="Back"
-					buttonOnClick={() => handleModalClose()}
+					type="Info"
+					text="Back"
+					onClick={() => handleModalClose()}
 				/>
 			</div>
 		</div>

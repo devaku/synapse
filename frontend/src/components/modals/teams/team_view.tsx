@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Spinner from '../../ui/spinner';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
 import { getTeams } from '../../../lib/services/api/teams';
+import Button from '../../ui/button';
 import type { User } from '../../../lib/types/models';
 
 interface TeamData {
@@ -129,13 +130,11 @@ export default function TeamsViewModal({
 							</div>
 						</div>
 					)}
-
-					<button
+					<Button
+						type="Info"
+						text="Back"
 						onClick={() => handleModalDisplay()}
-						className="mt-4 py-2 w-full bg-[#153243] text-white rounded cursor-pointer"
-					>
-						BACK
-					</button>
+					></Button>
 				</div>
 			)}
 		</>
