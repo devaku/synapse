@@ -5,6 +5,7 @@ import React from 'react';
  */
 import { useNavigate } from 'react-router';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
+import { useSoundContext } from '../../lib/contexts/SoundContext';
 import { useState, useEffect, useRef, type RefObject } from 'react';
 import { useNotifications } from '../../lib/hooks/api/useNotifications';
 
@@ -21,13 +22,23 @@ export default function HeaderContainer({
 	children: React.ReactNode;
 	pageTitle: string;
 }) {
+	const { isPlaying } = useSoundContext();
 	const { serverData } = useAuthContext();
 	const navigate = useNavigate();
 
 	const [notifOpen, setNotifOpen] = useState(false);
+	const [notificationCount, setNotificationCount] = useState<number>(0);
+	const [readNotifications, setReadNotifications] = useState(true);
 	const divRef = useRef(null);
 
 	const { notifications } = useNotifications();
+
+	useEffect(() => {
+		if (notificationCount > notifications.length) {
+			setNotificationCount(notifications.length);
+			setReadNotifications(false);
+		}
+	}, [notifications]);
 
 	return (
 		<div className="w-full h-full flex flex-col bg-ttg-white text-ttg-black ">
@@ -51,10 +62,40 @@ export default function HeaderContainer({
 						className="cursor-pointer flex flex-col items-center"
 						onClick={() => {
 							setNotifOpen(!notifOpen);
+							setReadNotifications(true);
 						}}
 						ref={divRef}
 					>
-						<SvgComponent iconName="Bell" />
+						<div>
+							{isPlaying ? (
+								<div className="shake">
+									<SvgComponent
+										className="w-7"
+										iconName="Bell_ACTIVE"
+									/>
+								</div>
+							) : (
+								<>
+									{readNotifications ? (
+										<div className="">
+											<SvgComponent
+												className="w-7"
+												iconName="Bell"
+											/>
+										</div>
+									) : (
+										// There are unread notifications
+										<div className="">
+											<SvgComponent
+												className="w-7"
+												iconName="Bell_unread"
+											/>
+										</div>
+									)}
+								</>
+							)}
+						</div>
+
 						{notifOpen && (
 							<NotificationTable
 								data={notifications}
