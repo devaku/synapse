@@ -8,6 +8,9 @@ import {
 	addUserToRepo,
 	deleteRepoCollaboratorRequest,
 } from '../../lib/services/api/github';
+import AdminInfoSelectionModal from '../../components/modals/access/admin_infoselection_model';
+import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
+import SvgComponent from '../../components/ui/svg_component';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 
 export default function AdminGithubManagerPage() {
@@ -16,6 +19,8 @@ export default function AdminGithubManagerPage() {
 	const [filterText, setFilterText] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
+	const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
 	const { token } = useAuthContext();
 
@@ -60,29 +65,16 @@ export default function AdminGithubManagerPage() {
 			name: 'Actions',
 			cell: (row) => (
 				<>
-					{/* implement this later as no time now and with open modal for approve and deny */}
-					{/* <button
-						className="cursor-pointer w-6 h-6 mr-2"
-						onClick={() => handleGitHubClickInfo(row)}
-						type="button"
-					>
-						<SvgComponent iconName="INFO" className="" />
-					</button> */}
 					<button
-						className="cursor-pointer text-green-600 mr-2"
-						onClick={() => handleApprove(row)}
+						className="cursor-pointer w-6 h-6 mr-2 flex items-center justify-center"
 						type="button"
-						title={`Approve request ${row.id}`}
+						title={`View request ${row.id}`}
+						onClick={() => {
+							setSelectedRow(row);
+							setModalOpen(true);
+						}}
 					>
-						A
-					</button>
-					<button
-						className="cursor-pointer text-red-600"
-						onClick={() => handleDeny(row)}
-						type="button"
-						title={`Deny request ${row.id}`}
-					>
-						D
+						<SvgComponent iconName="INFO" className="w-4 h-4" />
 					</button>
 				</>
 			),
@@ -218,42 +210,38 @@ export default function AdminGithubManagerPage() {
 		setFilteredData(result);
 	}, [filterText, data]);
 
+	async function refreshList() {
+		setLoading(true);
+		setError(null);
+		try {
+			const requests = await readRepoCollaboratorRequest(token ?? undefined);
+			const reqArray = Array.isArray(requests) ? requests : requests ? [requests] : [];
+			const rows = reqArray.map((r: any) => ({
+				id: r.id,
+				userId: r.userId,
+				repoId: r.repoId,
+				permission: r.permission,
+				createdAt: r.createdAt,
+				githubUsername: r.githubUsername,
+				requesterName:
+					r.user?.username ?? `${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
+			}));
+			setData(rows);
+		} catch (err: any) {
+			console.error('Error fetching repo requests', err);
+			setError(err?.message || 'Failed to load repository requests');
+		} finally {
+			setLoading(false);
+		}
+	}
+
 	useEffect(() => {
 		let mounted = true;
-		async function loadRequests() {
-			setLoading(true);
-			setError(null);
-			try {
-				const requests = await readRepoCollaboratorRequest(
-					token ?? undefined
-				);
-				if (!mounted) return;
-				const reqArray = Array.isArray(requests)
-					? requests
-					: requests
-						? [requests]
-						: [];
-				const rows = reqArray.map((r: any) => ({
-					id: r.id,
-					userId: r.userId,
-					repoId: r.repoId,
-					permission: r.permission,
-					createdAt: r.createdAt,
-					githubUsername: r.githubUsername,
-					requesterName:
-						r.user?.username ??
-						`${r.user?.firstName ?? ''} ${r.user?.lastName ?? ''}`,
-				}));
-				setData(rows);
-			} catch (err: any) {
-				console.error('Error fetching repo requests', err);
-				setError(err?.message || 'Failed to load repository requests');
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		loadRequests();
+		// call refreshList but guard with mounted flag
+		(async () => {
+			if (!mounted) return;
+			await refreshList();
+		})();
 		return () => {
 			mounted = false;
 		};
@@ -261,6 +249,24 @@ export default function AdminGithubManagerPage() {
 
 	return (
 		<HeaderContainer pageTitle="GitHub Manager">
+			<SlideModalContainer
+				isOpen={modalOpen}
+				noFade={false}
+				onRequestClose={() => {
+					setModalOpen(false);
+					setSelectedRow(null);
+				}}
+			>
+				<AdminInfoSelectionModal
+					isOpen={modalOpen}
+					request={selectedRow}
+					onClose={() => {
+						setModalOpen(false);
+						setSelectedRow(null);
+					}}
+					onActionComplete={async () => await refreshList()}
+				/>
+			</SlideModalContainer>
 			{loading && (
 				<div className="text-sm text-gray-600 mb-2">
 					Loading repositories...
