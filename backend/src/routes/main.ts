@@ -9,6 +9,7 @@ import userRouter from './users';
 import commentRouter from './comments';
 import notificationRouter from './notifications';
 import deletionRequestRouter from './deletion_request';
+import aiRouter from './ai-routes';
 
 const mainRouter = express.Router();
 
@@ -32,6 +33,7 @@ function setupApiRoutes(): express.Router {
 	apiRouter.use(userRouter);
 	apiRouter.use(notificationRouter);
 	apiRouter.use(deletionRequestRouter);
+	apiRouter.use('/ai', aiRouter);
 
 	return apiRouter;
 }

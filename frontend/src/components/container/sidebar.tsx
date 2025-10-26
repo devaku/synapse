@@ -72,6 +72,11 @@ export default function Sidebar() {
 						routePath="/access"
 						iconPath="Access"
 					/>
+					<SidebarButton
+						tabName="MCP"
+						routePath="/mcp"
+						iconPath="Tasks"
+					/>
 
 					{/* Admin Privileges for accessing logs and stuff unless not necessary */}
 					{isAdmin ? (
