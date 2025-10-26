@@ -41,11 +41,6 @@ export default function MyAccesssPage() {
 			grow: 0,
 		},
 		{
-			name: 'Repository Name',
-			selector: (r) => r.repo_name ,
-			sortable: true,
-		},
-		{
 			name: 'Repository ID',
 			selector: (r) => r.repoId,
 			sortable: true,
@@ -105,7 +100,6 @@ export default function MyAccesssPage() {
 		const result = (myRequests || []).filter((item: any) => {
 			const candidates = [
 				item?.id,
-				item?.repo_name,
 				item?.repoId,
 				item?.requesting_user,
 				item?.requestingUser,

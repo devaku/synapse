@@ -3,8 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
-import { createRepoCollaboratorRequest, getGithubRepos } from '../../../lib/services/api/github';
-import DataTable from '../../container/DataTableBase'
+import {
+	createRepoCollaboratorRequest,
+	getGithubRepos,
+} from '../../../lib/services/api/github';
+import DataTable from '../../container/DataTableBase';
+import { text } from 'stream/consumers';
 
 type FormValues = {
 	repoId: number | string;
@@ -125,10 +129,28 @@ export default function AccessCreationModal({
 	}
 
 	const columns = [
-		{ name: 'ID', selector: (row: any) => row.id, sortable: true, width: '120px' },
-		{ name: 'Name', selector: (row: any) => row.name, sortable: true },
-		{ name: 'Full name', selector: (row: any) => row.full_name, sortable: true },
-		{ name: 'Private', selector: (row: any) => (row.private ? 'Yes' : 'No'), sortable: true },
+		{
+			name: 'ID',
+			selector: (row: any) => row.id,
+			sortable: true,
+			width: '120px',
+		},
+		{ 
+			name: 'Name', 
+			selector: (row: any) => row.name, 
+			sortable: true,
+		},
+		// {
+		// 	name: 'Full name',
+		// 	selector: (row: any) => <span className='overflow-x-auto'>{row.full_name}</span>,
+		// 	sortable: true,
+		// },
+		{
+			name: 'Private',
+			selector: (row: any) => (row.private ? 'Yes' : 'No'),
+			sortable: true,
+			width: '80px',
+		},
 	];
 
 	return (
@@ -142,31 +164,36 @@ export default function AccessCreationModal({
 				className="flex flex-col gap-3"
 			>
 				<div className="flex flex-col">
-						<div className="h-64">
-							<div className="mb-2 text-sm text-gray-600">
-								{isLoadingRepos ? 'Loading repositories...' : `Repositories: ${repos.length}`}
-								{fetchError && (
-									<div className="text-sm text-red-600">{fetchError}</div>
-								)}
-							</div>
-							<DataTable
-								columns={columns}
-								data={repos}
-								// allow clicking rows to select
-								onRowClicked={(row: any) => {
-									const id = Number(row.id);
-									setSelectedRepoId(id);
-									setValue('repoId', id);
-								}}
-								conditionalRowStyles={[
-									{
-										when: (row: any) => selectedRepoId === Number(row.id),
-										style: { backgroundColor: 'rgba(34,197,94,0.12)' },
-									},
-								]}
-								// enable pointer and hover via DataTable defaults
-							/>
+					<div className="">
+						<div className="mb-2 text-sm text-gray-600">
+							{fetchError && (
+								<div className="text-sm text-red-600">
+									{fetchError}
+								</div>
+							)}
 						</div>
+						<DataTable
+							columns={columns}
+							data={repos}
+							// allow clicking rows to select
+							onRowClicked={(row: any) => {
+								const id = Number(row.id);
+								setSelectedRepoId(id);
+								setValue('repoId', id);
+							}}
+							conditionalRowStyles={[
+								{
+									when: (row: any) =>
+										selectedRepoId === Number(row.id),
+									style: {
+										backgroundColor: '#7bb863',
+									},
+								},
+							]}
+							fixedHeaderScrollHeight="300px"
+							fixedHeader={true}
+						/>
+					</div>
 				</div>
 
 				<div className="flex flex-col">

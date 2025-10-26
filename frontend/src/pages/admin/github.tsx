@@ -2,7 +2,6 @@ import HeaderContainer from '../../components/container/header_container';
 
 import DataTable from '../../components/container/DataTableBase';
 import { useEffect, useState } from 'react';
-// import SvgComponent from '../../components/ui/svg_component';
 import {
 	readRepoCollaboratorRequest,
 	addUserToRepo,
@@ -35,6 +34,7 @@ export default function AdminGithubManagerPage() {
 			name: 'User ID',
 			selector: (row) => row.userId,
 			sortable: true,
+			width: '100px',
 		},
 		{
 			name: 'User',
@@ -45,11 +45,13 @@ export default function AdminGithubManagerPage() {
 			name: 'Repository ID',
 			selector: (row) => row.repoId,
 			sortable: true,
+			width: '120px',
 		},
 		{
 			name: 'Permission',
 			selector: (row) => row.permission,
 			sortable: true,
+			width: '100px',
 		},
 		{
 			name: 'Created At',
@@ -66,7 +68,7 @@ export default function AdminGithubManagerPage() {
 			cell: (row) => (
 				<>
 					<button
-						className="cursor-pointer w-6 h-6 mr-2 flex items-center justify-center"
+						className="cursor-pointer w-6 h-6 items-center justify-center"
 						type="button"
 						title={`View request ${row.id}`}
 						onClick={() => {
@@ -74,7 +76,7 @@ export default function AdminGithubManagerPage() {
 							setModalOpen(true);
 						}}
 					>
-						<SvgComponent iconName="INFO" className="w-4 h-4" />
+						<SvgComponent iconName="INFO" className="" />
 					</button>
 				</>
 			),
