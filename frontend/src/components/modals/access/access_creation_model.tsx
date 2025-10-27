@@ -8,7 +8,6 @@ import {
 	getGithubRepos,
 } from '../../../lib/services/api/github';
 import DataTable from '../../container/DataTableBase';
-import { text } from 'stream/consumers';
 
 type FormValues = {
 	repoId: number | string;
