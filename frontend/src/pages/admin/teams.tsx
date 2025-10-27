@@ -5,7 +5,7 @@ import { useModal } from '../../lib/hooks/ui/useModal';
 import DataTable from '../../components/container/DataTableBase';
 import SvgComponent from '../../components/ui/svg_component';
 import { type TableColumn } from 'react-data-table-component';
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import TeamsCreateUpdateModal from '../../components/modals/teams/team_create_update';
 import TeamsViewModal from '../../components/modals/teams/team_view';
@@ -22,9 +22,7 @@ export default function AdminTeamsManagerPage() {
 		loading,
 		error,
 		refreshTeams,
-		addTeam,
 		softRemoveTeam,
-		editTeam,
 	} = useTeams();
 
 	const createTeamModal = useModal();
@@ -106,7 +104,7 @@ export default function AdminTeamsManagerPage() {
 		if (confirm(`Are you sure you want to delete "${team.name}"?`)) {
 			try {
 				console.log('Delete team:', team);
-				const deletedTeams = await softRemoveTeam([team.id]);
+				await softRemoveTeam([team.id]);
 				await refreshTeams();
 				createTeamModal.close();
 				setFormData({});
