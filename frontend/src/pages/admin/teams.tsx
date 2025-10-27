@@ -65,20 +65,24 @@ export default function AdminTeamsManagerPage() {
 					>
 						<SvgComponent iconName="INFO" />
 					</button>
-					<button
-						className="cursor-pointer w-6 h-6"
-						onClick={() => handleEditTeam(row.id)}
-						title="Edit Team"
-					>
-						<SvgComponent iconName="WRENCH" />
-					</button>
-					<button
-						className="cursor-pointer w-6 h-6"
-						onClick={() => handleDeleteTeam(row)}
-						title="Delete Team"
-					>
-						<SvgComponent iconName="TRASHCAN" />
-					</button>
+					{row.id != 1 && (
+						<>
+							<button
+								className="cursor-pointer w-6 h-6"
+								onClick={() => handleEditTeam(row.id)}
+								title="Edit Team"
+							>
+								<SvgComponent iconName="WRENCH" />
+							</button>
+							<button
+								className="cursor-pointer w-6 h-6"
+								onClick={() => handleDeleteTeam(row)}
+								title="Delete Team"
+							>
+								<SvgComponent iconName="TRASHCAN" />
+							</button>
+						</>
+					)}
 				</div>
 			),
 			ignoreRowClick: true,
