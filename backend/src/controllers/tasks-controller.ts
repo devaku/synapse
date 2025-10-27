@@ -11,15 +11,23 @@ import { Request, Response } from 'express';
  */
 
 import { createTaskService } from '../services/task-service';
+import { createTaskSubscriptionService } from '../services/task-subscription-service';
 import { createVisibilityService } from '../services/visibility-service';
+import { createTeamsService } from '../services/teams-service';
 
 /**
  * HELPERS
  */
+
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
 import { removeImages, uploadImages } from '../lib/helpers/task-helper';
-import { pingUsersBasedOnVisiblity } from '../lib/helpers/socket-helper';
+import { readTeamMembers } from '../lib/helpers/team-helper';
+import {
+	pingUsersBasedOnVisiblity,
+	pingUsersOfTaskBeingArchived,
+} from '../lib/helpers/socket-helper';
+import { createNotification } from '../lib/helpers/notification-helper';
 
 // CREATE - Create a new task
 export async function createTask(req: Request, res: Response) {
@@ -30,7 +38,15 @@ export async function createTask(req: Request, res: Response) {
 			try {
 				let data = req.body;
 				const userId = req.session.userData?.user.id;
-				const { taskVisibleToTeams, taskVisibleToUsers } = req.body;
+				let { taskVisibleToTeams, taskVisibleToUsers } = req.body;
+
+				if (!taskVisibleToUsers) {
+					taskVisibleToUsers = [];
+				}
+
+				taskVisibleToTeams = taskVisibleToTeams.map((el: number) =>
+					Number(el)
+				);
 
 				// Attach creator
 				data.createdByUserId = userId;
@@ -85,12 +101,50 @@ export async function createTask(req: Request, res: Response) {
 				// Retrieve the task again, this time with the images. lol
 				const taskRow = await taskService.readTaskById(task.id);
 
-				// Update EVERYONE who can see the new task that was created
-				pingUsersBasedOnVisiblity(
-					req.io,
-					taskVisibleToTeams,
-					taskVisibleToUsers
-				);
+				// Get all the userids that will be notified about this
+				let notificationUserIds: number[] = [];
+				if (taskVisibleToTeams.length > 0) {
+					let temp = await readTeamMembers(taskVisibleToTeams);
+
+					// Remove duplicates
+					if (temp && temp.length > 0) {
+						notificationUserIds = temp.concat(
+							taskVisibleToUsers.filter(
+								(el: number) => !temp.includes(el)
+							)
+						);
+						notificationUserIds.sort();
+					}
+				} else {
+					notificationUserIds = taskVisibleToUsers;
+				}
+
+				if (notificationUserIds.length > 0) {
+					// Create the notification
+					const payload = {
+						...taskRow,
+					};
+
+					const notificationBody = {
+						createdByUserId: req.session.userData?.user.id!,
+						description: `Task ${task.name} was created by ${req.session.userData?.user.firstName} ${req.session.userData?.user.lastName}`,
+						title: `Task ${task.name} was created!`,
+						payload,
+					};
+
+					await createNotification(
+						notificationBody,
+						notificationUserIds
+					);
+
+					// Update EVERYONE who can see the new task that was created
+					pingUsersBasedOnVisiblity(
+						req.io,
+						payload,
+						taskVisibleToTeams,
+						notificationUserIds
+					);
+				}
 
 				return res
 					.status(201)
@@ -313,6 +367,80 @@ export async function updateTask(req: Request, res: Response) {
 		return res
 			.status(500)
 			.json(buildError(500, 'Error updating task', error));
+	}
+}
+
+export async function archiveTask(req: Request, res: Response) {
+	try {
+		let { id } = req.params;
+		const userId = req.session.userData?.user.id;
+		let data = req.body;
+
+		// Just attach the user id of who is archiving it. lol
+		req.body.archivedByUserId = req.session.userData?.user.id;
+
+		// TODO: These validations need to be relegated to Zod in a future update
+		// #region Validation
+		if (!id)
+			return res
+				.status(400)
+				.json(buildError(400, 'Task ID is required', null));
+		const taskId = parseInt(id);
+		if (isNaN(taskId))
+			return res
+				.status(400)
+				.json(buildError(400, 'Invalid task ID', null));
+
+		//#endregion
+		const taskService = createTaskService(prismaDb);
+		const existingTask = await taskService.readTaskById(taskId);
+		if (!existingTask)
+			return res
+				.status(404)
+				.json(buildError(404, 'Task not found', null));
+
+		const updatedTask = await taskService.updateTask(taskId, data);
+
+		// Users who were subscribed to the task should be notified
+		// that the task has been updated
+		const taskSubscriptionService = createTaskSubscriptionService(prismaDb);
+
+		let usersSubscribedToTask =
+			await taskSubscriptionService.readAllUsersSubscribedToTask(taskId);
+
+		// Do not notify person who archived it. lol
+		usersSubscribedToTask = usersSubscribedToTask.filter(
+			(el) => el != userId
+		);
+
+		const payload = {
+			updatedTask,
+		};
+
+		// Create the notification
+		const notificationBody = {
+			createdByUserId: req.session.userData?.user.id!,
+			description: `Task ${existingTask.name} was archived by ${req.session.userData?.user.firstName} ${req.session.userData?.user.lastName}`,
+			title: `Task ${existingTask.name} was archived!`,
+			payload,
+		};
+		await createNotification(notificationBody, usersSubscribedToTask);
+
+		await pingUsersOfTaskBeingArchived(
+			req.io,
+			usersSubscribedToTask,
+			payload
+		);
+		return res
+			.status(200)
+			.json(
+				buildResponse(200, 'Task archived successfully!', updatedTask)
+			);
+	} catch (error: any) {
+		console.error('ARCHIVE TASK ERROR:', error);
+		return res
+			.status(500)
+			.json(buildError(500, 'Error archiving task', error));
 	}
 }
 

@@ -1,3 +1,9 @@
+export type radioType = {
+	name: string;
+	selected?: boolean;
+	onClick?: () => void;
+};
+
 export type jsonResponse = {
 	statusCode: number;
 	statusText: string;

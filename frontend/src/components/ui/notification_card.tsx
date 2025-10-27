@@ -1,6 +1,7 @@
 import type { User } from '../../lib/types/models';
 
 import { useNavigate } from 'react-router';
+import { formatDate } from '../../lib/helpers/datehelpers';
 
 import { PAYLOAD_ACTIONS } from '../../lib/helpers/socket-events';
 
@@ -8,6 +9,7 @@ type typeNotificationCard = {
 	title: string;
 	description: string;
 	sender: User;
+	sendDate: Date;
 	payload: any;
 	setOpenState: (state: boolean) => void;
 };
@@ -16,13 +18,16 @@ export default function NotificationCard({
 	title,
 	description,
 	sender,
+	sendDate,
 	payload,
 	setOpenState,
 }: typeNotificationCard) {
 	const navigate = useNavigate();
 
+	// console.log(sender);
+
 	function buildUrl() {
-		if (payload.action == PAYLOAD_ACTIONS.TASK_VIEW) {
+		if (payload.actions == PAYLOAD_ACTIONS.TASK_VIEW) {
 			const url = `/tasks?view=${payload.taskId}`;
 			return url;
 		} else {
@@ -45,8 +50,12 @@ export default function NotificationCard({
 				{description}
 			</p>
 			<div className="flex justify-between">
-				<p className="text-xs text-ttg-black/60 mt-1">ADMIN ADMIN</p>
-				<p className="text-xs text-ttg-black/60 mt-1">DATE</p>
+				<p className="text-xs text-ttg-black/60 mt-1">
+					{sender.firstName} {sender.lastName}
+				</p>
+				<p className="text-xs text-ttg-black/60 mt-1">
+					{formatDate(new Date(sendDate))}
+				</p>
 			</div>
 		</div>
 	);

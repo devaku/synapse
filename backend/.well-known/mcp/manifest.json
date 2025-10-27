@@ -1,0 +1,47 @@
+{
+  "$schema": "https://spec.modelcontextprotocol.io/manifest/v1",
+  "name": "synapse-task-manager",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for Synapse Task Manager",
+  "vendor": "Synapse",
+  "homepage": "http://localhost:3000",
+  "capabilities": {
+    "tools": true,
+    "resources": false,
+    "prompts": false
+  },
+  "endpoints": {
+    "tools": {
+      "url": "http://localhost:3000/api/v1/mcp/tools",
+      "method": "POST"
+    },
+    "call": {
+      "url": "http://localhost:3000/api/v1/mcp/call",
+      "method": "POST"
+    }
+  },
+  "auth": {
+    "type": "oauth2",
+    "discovery": {
+      "issuer": "http://localhost:8080/realms/synapse",
+      "authorization_endpoint": "http://localhost:8080/realms/synapse/protocol/openid-connect/auth",
+      "token_endpoint": "http://localhost:8080/realms/synapse/protocol/openid-connect/token",
+      "userinfo_endpoint": "http://localhost:8080/realms/synapse/protocol/openid-connect/userinfo"
+    },
+    "scopes": ["openid", "profile", "email"]
+  },
+  "transports": [
+    {
+      "type": "http",
+      "baseUrl": "http://localhost:3000/api/v1/mcp"
+    },
+    {
+      "type": "stdio",
+      "command": "npm",
+      "args": ["run", "mcp"],
+      "env": {
+        "MCP_USER_ID": "${userId}"
+      }
+    }
+  ]
+}

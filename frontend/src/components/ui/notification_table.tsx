@@ -1,12 +1,22 @@
 import { useEffect, type RefObject } from 'react';
 import NotificationCard from './notification_card';
+import type { User } from '../../lib/types/models';
+
+interface NotificationCard {
+	title: string;
+	description: string;
+	sender: User;
+	payload: any;
+	createdAt: Date;
+	setOpenState: (state: boolean) => void;
+}
 
 export default function NotificationTable({
 	data,
 	ref,
 	setOpenState,
 }: {
-	data: any[];
+	data: NotificationCard[];
 	ref: RefObject<HTMLDivElement>;
 	setOpenState: (state: boolean) => void;
 }) {
@@ -34,12 +44,14 @@ export default function NotificationTable({
 				Notifications
 			</h2>
 			<div className="pb-[33px]" />
+			{data.length == 0 && <div className='mx-auto mt-15'>No Notifications</div>}
 			{data.map((entry, index) => (
 				<NotificationCard
 					key={index}
 					title={entry.title}
 					description={entry.description}
-					sender={entry.user}
+					sender={entry.sender}
+					sendDate={entry.createdAt}
 					payload={entry.payload}
 					setOpenState={setOpenState}
 				/>

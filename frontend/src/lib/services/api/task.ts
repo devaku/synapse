@@ -186,6 +186,70 @@ export async function archiveTask(token: string, taskId: number) {
 	}
 }
 
+export async function subscribeToTask(token: string, taskId: number) {
+	let response: jsonResponse = await fetch(
+		`${url}/tasks/subscribe/${taskId}`,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
+			credentials: 'include',
+			body: JSON.stringify({}),
+		}
+	)
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
+
+export async function unsubscribeToTask(token: string, taskId: number) {
+	let response: jsonResponse = await fetch(
+		`${url}/tasks/unsubscribe/${taskId}`,
+		{
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
+			credentials: 'include',
+		}
+	)
+		.then((res) => res.json())
+		.catch((error) => {
+			console.error('Fetch error:', error);
+		});
+
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
+	} else {
+		return [];
+	}
+}
 /**
  * Get all tasks the given user
  * is subscribed to

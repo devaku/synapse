@@ -1,61 +1,12 @@
 import { useState, useRef } from 'react';
 import HeaderContainer from '../components/container/header_container';
+
+import TabNotification from '../components/tabs/tab_notification';
+
 import TabGroup from '../components/ui/tab_group';
+import RadioGroup from '../components/ui/radio_group';
 
 export default function SettingsPage() {
-	const theme = useRef(localStorage.getItem('theme') || 'light');
-
-	type Radio = {
-		name: string;
-		selected?: boolean;
-		onClick?: () => void;
-	};
-
-	function Radio({ name, selected = false, onClick }: Radio) {
-		return (
-			<div className="flex items-center gap-2 w-40">
-				<button
-					onClick={onClick}
-					className={`
-					flex items-center justify-center size-5 rounded-full border-ttg-black/40
-					hover:cursor-pointer hover:border-6
-					${selected == true ? 'border-6 border-ttg-dark-blue' : 'border-2'}
-				`}
-				></button>
-				<p>{name}</p>
-			</div>
-		);
-	}
-
-	function RadioGroup({ radios }: { radios: Array<Radio> }) {
-		let defaultRadio: Radio;
-		if (theme.current === 'dark') {
-			defaultRadio = radios[1];
-		} else {
-			defaultRadio = radios[0];
-		}
-
-		const [activeRadio, setActiveRadio] = useState(defaultRadio.name);
-
-		return (
-			<div className="flex my-5 ml-5">
-				{radios.map((radio) => (
-					<Radio
-						name={radio.name}
-						selected={radio.name === activeRadio}
-						onClick={() => {
-							setActiveRadio(radio.name);
-							if (radio.onClick === undefined) {
-								return;
-							}
-							radio.onClick();
-						}}
-					/>
-				))}
-			</div>
-		);
-	}
-
 	return (
 		<HeaderContainer pageTitle={'Settings'}>
 			<TabGroup
@@ -130,27 +81,7 @@ export default function SettingsPage() {
 					},
 					{
 						name: 'Notifications',
-						content: (
-							<div>
-								<div className="flex flex-col gap-2 my-5">
-									<h2 className="text-3xl font-semibold">
-										Preference
-									</h2>
-									<p>Notify me for the following:</p>
-								</div>
-
-								<div className="bg-gray-300 w-full h-[2px]" />
-
-								<div className="flex flex-col gap-2 my-5">
-									<h2 className="text-3xl font-semibold">
-										Volume
-									</h2>
-									<p>How loud should a notification be?</p>
-								</div>
-
-								<div className="bg-gray-300 w-full h-[2px]" />
-							</div>
-						),
+						content: <TabNotification></TabNotification>,
 					},
 					{ name: 'Category', content: <div></div> },
 				]}

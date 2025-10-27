@@ -2,8 +2,6 @@ import * as _ from 'lodash';
 import Button from '../components/ui/button';
 import HeaderContainer from '../components/container/header_container';
 
-import SearchBar from '../components/ui/searchbar';
-
 import { useEffect, useState, useCallback } from 'react';
 import SvgComponent from '../components/ui/svg_component';
 import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
@@ -73,25 +71,11 @@ export default function TeamsPage() {
 					>
 						<SvgComponent iconName="INFO" />
 					</button>
-					<button
-						className="cursor-pointer w-6 h-6"
-						onClick={() => handleEditTeam(row.id)}
-						title="Edit Team"
-					>
-						<SvgComponent iconName="WRENCH" />
-					</button>
-					<button
-						className="cursor-pointer w-6 h-6"
-						onClick={() => handleDeleteTeam(row)}
-						title="Delete Team"
-					>
-						<SvgComponent iconName="TRASHCAN" />
-					</button>
 				</div>
 			),
 			ignoreRowClick: true,
-			allowOverflow: true,
-			button: true,
+			// allowOverflow: true,
+			// button: true,
 			width: '150px',
 		},
 	];
@@ -123,32 +107,13 @@ export default function TeamsPage() {
 		readTeamModal.open();
 	};
 
-	const handleEditTeam = (teamId: number) => {
-		setCurrentTeam(teams.find((t) => t.id === teamId) || null);
-		updateTeamModal.open();
-	};
-
-	const handleDeleteTeam = async (team: Team) => {
-		if (confirm(`Are you sure you want to delete "${team.name}"?`)) {
-			try {
-				console.log('Delete team:', team);
-				const deletedTeams = await softRemoveTeam([team.id]);
-				await refreshTeams();
-				createTeamModal.close();
-				setFormData({});
-			} catch (error) {
-				console.error('Error deleting team:', error);
-			}
-		}
-	};
-
 	const tableDataActions = () => {
 		return (
 			<>
 				<Button
-					buttonType="add"
-					buttonText={`Delete Selected (${selectedRows.length})`}
-					buttonOnClick={() => {
+					type="Danger"
+					text={`Delete Selected (${selectedRows.length})`}
+					onClick={() => {
 						if (selectedRows.length > 0) {
 							console.log('Delete selected teams:', selectedRows);
 						}
@@ -161,16 +126,6 @@ export default function TeamsPage() {
 	return (
 		<>
 			<HeaderContainer pageTitle={'Teams'}>
-				<div className="flex flex-row justify-between items-center p-2.5">
-					<SearchBar />
-					<div className="flex flex-row gap-15">
-						<Button
-							buttonType="add"
-							buttonText="Create Team"
-							buttonOnClick={createTeamModal.open}
-						/>
-					</div>
-				</div>
 				<div className="min-h-0 flex flex-col">
 					{loading ? (
 						<div className="flex justify-center items-center p-8">
@@ -200,28 +155,11 @@ export default function TeamsPage() {
 				</div>
 			</HeaderContainer>
 
-			{/* Create Modal */}
-			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
-				<TeamsCreateUpdateModal
-					modalTitle="Create Team"
-					handleModalDisplay={createTeamModal.toggle}
-				/>
-			</SlideModalContainer>
-
 			{/* View Modal - Read Only */}
 			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}
-				/>
-			</SlideModalContainer>
-
-			{/* Update Modal */}
-			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
-				<TeamsCreateUpdateModal
-					modalTitle="Update Team"
-					teamId={currentTeam?.id}
-					handleModalDisplay={updateTeamModal.toggle}
 				/>
 			</SlideModalContainer>
 		</>
