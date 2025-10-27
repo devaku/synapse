@@ -44,10 +44,12 @@ export default function TeamsCreateUpdateModal({
 	modalTitle,
 	teamId,
 	handleModalDisplay,
+	refresh
 }: {
 	modalTitle: string;
 	teamId?: number;
 	handleModalDisplay: () => void;
+	refresh: () => void;
 }) {
 	const { token, serverData } = useAuthContext();
 	const {
@@ -152,6 +154,7 @@ export default function TeamsCreateUpdateModal({
 				});
 			}
 
+			refresh();
 			handleModalDisplay();
 		} catch (err) {
 			console.error(err);

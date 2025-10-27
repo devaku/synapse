@@ -108,25 +108,46 @@ export default function TeamsViewModal({
 
 							<div>
 								<p className="font-bold">Team Members:</p>
-								{teamData.teamsUsersBelongTo &&
-								teamData.teamsUsersBelongTo.length > 0 ? (
-									<ul className="list-disc list-inside mt-2">
-										{teamData.teamsUsersBelongTo.map(
-											(membership) => (
-												<li
-													key={membership.user.id}
-													className="text-lg"
-												>
-													{membership.user.username}
-												</li>
-											)
-										)}
-									</ul>
-								) : (
-									<p className="text-lg text-gray-500">
-										No members assigned
-									</p>
-								)}
+
+								{(() => {
+									if (teamData.id == 1) {
+										return (
+											<p className="text-lg text-gray-500">
+												This team contains everybody.
+											</p>
+										);
+									} else if (
+										teamData.teamsUsersBelongTo &&
+										teamData.teamsUsersBelongTo.length > 0
+									) {
+										return (
+											<ul className="list-disc list-inside mt-2">
+												{teamData.teamsUsersBelongTo.map(
+													(membership) => (
+														<li
+															key={
+																membership.user
+																	.id
+															}
+															className="text-lg"
+														>
+															{
+																membership.user
+																	.username
+															}
+														</li>
+													)
+												)}
+											</ul>
+										);
+									} else {
+										return (
+											<p className="text-lg text-gray-500">
+												No members assigned
+											</p>
+										);
+									}
+								})()}
 							</div>
 						</div>
 					)}
