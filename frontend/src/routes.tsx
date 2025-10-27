@@ -32,6 +32,7 @@ import AccessPage from './pages/access';
 import TasksPage from './pages/tasks';
 import TeamsPage from './pages/teams';
 import MyTasksPage from './pages/my_tasks';
+import MCPPage from './pages/mcp';
 
 // ADMIN
 import AdminTeamsPage from './pages/admin/teams';
@@ -53,6 +54,7 @@ const protectedRoutes = [
 			{ path: 'my_tasks', Component: MyTasksPage },
 			{ path: 'charts', Component: ChartsPage },
 			{ path: 'access', Component: AccessPage },
+			{ path: 'mcp', Component: MCPPage },
 
 			// ADMIN
 			{ path: 'admin/teams', Component: AdminTeamsPage },
