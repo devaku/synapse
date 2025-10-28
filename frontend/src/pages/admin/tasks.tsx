@@ -82,6 +82,18 @@ export default function AdminTaskManagerPage() {
 					</div>
 				</div>
 			</div>
+			<div className="min-h-0 flex flex-col">
+				<DataTable
+					title="All Tasks (Admin View)"
+					fixedHeader={true}
+					dense={true}
+					highlightOnHover={true}
+					columns={taskColumns}
+					data={filteredTasks}
+					defaultSortFieldId={1}
+					pagination
+				></DataTable>
+			</div>
 		</HeaderContainer>
 	);
 }
