@@ -43,7 +43,22 @@ export default function AdminTaskManagerPage() {
 	return (
 		<HeaderContainer pageTitle="Admin - Task Manager">
 			<div className="flex flex-col">
-				<p>Admin task management interface</p>
+				<div className="flex flex-row gap-2">
+					<input
+						type="text"
+						placeholder="Search All Tasks (ID, Name, Status)..."
+						className="mb-4 p-2 border rounded border-gray-300 w-50"
+						value={filterTextTasks}
+						onChange={(e) => setFilterTextTasks(e.target.value)}
+					/>
+					<div className="w-10">
+						<Button
+							type="Info"
+							text="X"
+							onClick={() => setFilterTextTasks('')}
+						></Button>
+					</div>
+				</div>
 			</div>
 		</HeaderContainer>
 	);
