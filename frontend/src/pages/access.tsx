@@ -194,8 +194,8 @@ export default function MyAccesssPage() {
 	 * @param {*} data
 	 */
 	function loadAccessTable(data: any) {
-		let formatted = prepareTableData(data);
-		setMyAccessTableData(formatted);
+		// let formatted = prepareTableData(data);
+		// setMyAccessTableData(formatted);
 	}
 
 	/**
@@ -203,63 +203,63 @@ export default function MyAccesssPage() {
 	 * the appropriate column and row data
 	 * @param {*} data
 	 */
-	function prepareTableData(data: any) {
-		let extractedValues = groupValuesByKey(data);
-		// Object { id: (1) […], name: (1) […], description: (1) […] }
+	// function prepareTableData(data: any) {
+	// 	let extractedValues = groupValuesByKey(data);
+	// 	// Object { id: (1) […], name: (1) […], description: (1) […] }
 
-		console.log(extractedValues);
+	// 	console.log(extractedValues);
 
-		let columns = [];
-		let finalRows = [];
+	// 	let columns = [];
+	// 	let finalRows = [];
 
-		// Get column names
-		for (
-			let index = 0;
-			index < Object.keys(extractedValues).length;
-			index++
-		) {
-			// Get the column name
-			columns.push(Object.keys(extractedValues)[index]);
-		}
+	// 	// Get column names
+	// 	for (
+	// 		let index = 0;
+	// 		index < Object.keys(extractedValues).length;
+	// 		index++
+	// 	) {
+	// 		// Get the column name
+	// 		columns.push(Object.keys(extractedValues)[index]);
+	// 	}
 
-		// Get row values
-		for (
-			let index = 0;
-			index < extractedValues[columns[0]].length;
-			index++
-		) {
-			let currentId = extractedValues[columns[0]][index];
-			let rows = [];
-			// Iterate through each key
-			for (const [key, value] of Object.entries(extractedValues)) {
-				// Status is skipped because it'll be a pill
-				if (key == 'status') {
-					continue;
-				}
+	// 	// Get row values
+	// 	for (
+	// 		let index = 0;
+	// 		index < extractedValues[columns[0]].length;
+	// 		index++
+	// 	) {
+	// 		let currentId = extractedValues[columns[0]][index];
+	// 		let rows = [];
+	// 		// Iterate through each key
+	// 		for (const [key, value] of Object.entries(extractedValues)) {
+	// 			// Status is skipped because it'll be a pill
+	// 			if (key == 'status') {
+	// 				continue;
+	// 			}
 
-				rows.push(value[index]);
-			}
+	// 			rows.push(value[index]);
+	// 		}
 
-			let currentData = findTableEntryById(currentId, data);
+	// 		let currentData = findTableEntryById(currentId, data);
 
-			// Add status
-			let statusData = loadTableStatusPill(currentData);
+	// 		// Add status
+	// 		let statusData = loadTableStatusPill(currentData);
 
-			rows.push(statusData);
+	// 		rows.push(statusData);
 
-			// Add the actions at the very end
-			let actionData = loadTableActions(currentData);
+	// 		// Add the actions at the very end
+	// 		let actionData = loadTableActions(currentData);
 
-			rows.push(actionData);
+	// 		rows.push(actionData);
 
-			finalRows.push(rows);
-		}
+	// 		finalRows.push(rows);
+	// 	}
 
-		return {
-			columnName: columns,
-			rowData: finalRows,
-		};
-	}
+	// 	return {
+	// 		columnName: columns,
+	// 		rowData: finalRows,
+	// 	};
+	// }
 
 	/**
 	 * Create the pills for the statuses

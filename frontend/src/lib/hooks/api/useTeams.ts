@@ -14,6 +14,13 @@ export interface Team {
 	description?: string;
 }
 
+type createTeamData = {
+	name: string;
+	description?: string;
+	users?: number[];
+	createdBy: number;
+};
+
 export function useTeams() {
 	const [teams, setTeams] = useState<Team[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +59,7 @@ export function useTeams() {
 		}
 	}
 
-	async function addTeam(newTeam: { name: string; description?: string }) {
+	async function addTeam(newTeam: Partial<createTeamData>) {
 		try {
 			const created = await createTeam(token!, newTeam);
 

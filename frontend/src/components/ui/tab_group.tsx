@@ -7,11 +7,7 @@ type Tab = {
 	content?: JSX.Element;
 };
 
-export enum TabGroupStyle {
-	Default,
-	Title,
-}
-
+export type TabGroupStyle = 'Default' | 'Title';
 const styles = [
 	{
 		// Default
@@ -31,7 +27,7 @@ const styles = [
 
 export default function TabGroup({
 	tabs,
-	style = TabGroupStyle.Default,
+	style = 'Default',
 }: {
 	tabs: Array<Tab>;
 	style?: TabGroupStyle;
