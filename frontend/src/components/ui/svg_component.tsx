@@ -19,6 +19,8 @@ import TEAMS from '@/assets/images/svgs/teams.svg';
 import TRASHCAN from '@/assets/images/svgs/trashcan.svg';
 import WRENCH from '@/assets/images/svgs/wrench.svg';
 import BELL from '@/assets/images/svgs/bell.svg';
+import BELL_ACTIVE from '@/assets/images/svgs/bell_active.svg';
+import BELL_UNREAD from '@/assets/images/svgs/bell_unread.svg';
 
 type svgProps = {
 	iconName: string;
@@ -46,6 +48,13 @@ export default function SvgComponent(props: svgProps) {
 
 		case 'BELL':
 			html = <img className={classes} src={BELL} alt="" />;
+			break;
+
+		case 'BELL_ACTIVE':
+			html = <img className={classes} src={BELL_ACTIVE} alt="" />;
+			break;
+		case 'BELL_UNREAD':
+			html = <img className={classes} src={BELL_UNREAD} alt="" />;
 			break;
 
 		case 'CHARTS':

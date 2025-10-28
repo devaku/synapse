@@ -2,27 +2,65 @@ import type { jsonResponse } from '../../types/custom';
 const url = import.meta.env.VITE_API_URL;
 
 export async function getGithubRepos(token?: string) {
-	const response: jsonResponse | Record<string, any> | undefined =
-		await fetch(`${url}/github-repos`, {
+	const endpoint = `${url}/github-repos`;
+
+	let res: Response;
+	try {
+		res = await fetch(endpoint, {
 			method: 'GET',
 			headers: token ? { Authorization: `Bearer ${token}` } : {},
 			credentials: 'include',
-		})
-			.then((res) => res.json())
-			.catch((error) => {
-				console.error('Fetch error:', error);
-				return undefined;
-			});
+		});
+	} catch (error) {
+		console.error('Network fetch error:', error);
+		// network error
+		throw new Error('Network error while fetching GitHub repositories');
+	}
 
-	if (!response) return [];
+	const contentType = (res.headers.get('content-type') || '').toLowerCase();
 
-	// If backend forwarded the raw GitHub payload
-	if ((response as any).repositories) return (response as any).repositories;
+	// If non-OK status, attempt to read body (json or text) and throw clear error
+	if (!res.ok) {
+		let bodyText: string | undefined;
+		try {
+			if (contentType.includes('application/json')) {
+				const parsed = await res.json();
+				bodyText = parsed && typeof parsed === 'object' ? parsed.message || JSON.stringify(parsed) : String(parsed);
+			} else {
+				bodyText = await res.text();
+			}
+		} catch (e) {
+			bodyText = `HTTP ${res.status} ${res.statusText}`;
+		}
+		console.error('API error fetching repos:', res.status, bodyText);
+		throw new Error(bodyText || `HTTP ${res.status}`);
+	}
 
-	// If backend uses wrapper { statusCode, data }
-	if ((response as any).data) return (response as any).data;
+	// OK response: only parse JSON when content-type indicates JSON
+	if (contentType.includes('application/json')) {
+		let parsed: any;
+		try {
+			parsed = await res.json();
+		} catch (e) {
+			console.error('Failed to parse JSON response for github-repos:', e);
+			throw new Error('Invalid JSON returned from server');
+		}
 
-	return response;
+		if (!parsed) return [];
+		if (Array.isArray(parsed)) return parsed;
+		if (parsed.repositories) return parsed.repositories;
+		if (parsed.data) return parsed.data;
+		return parsed;
+	}
+
+	// If server returned non-JSON but 200 OK (unlikely), read text for debugging
+	try {
+		const text = await res.text();
+		console.warn('Received non-JSON response for github-repos:', text);
+	} catch (e) {
+		/* ignore */
+	}
+	return [];
 }
 
 export async function createRepoCollaboratorRequest(

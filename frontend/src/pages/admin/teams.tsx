@@ -1,19 +1,200 @@
 import HeaderContainer from '../../components/container/header_container';
+import Button from '../../components/ui/button';
+import { useTeams, type Team } from '../../lib/hooks/api/useTeams';
+import { useModal } from '../../lib/hooks/ui/useModal';
+import DataTable from '../../components/container/DataTableBase';
+import SvgComponent from '../../components/ui/svg_component';
+import { type TableColumn } from 'react-data-table-component';
+import { useState } from 'react';
+import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
+import TeamsCreateUpdateModal from '../../components/modals/teams/team_create_update';
+import TeamsViewModal from '../../components/modals/teams/team_view';
 
 export default function AdminTeamsManagerPage() {
+	const [selectedRows, setSelectedRows] = useState<Team[]>([]);
+	const [toggleClearRows, setToggleClearRows] = useState(false);
+
+	const [formData, setFormData] = useState<any>({});
+	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+
+	const {
+		teams,
+		loading,
+		error,
+		refreshTeams,
+		softRemoveTeam,
+	} = useTeams();
+
+	const createTeamModal = useModal();
+	const readTeamModal = useModal();
+	const updateTeamModal = useModal();
+
+	const handleSelectedRowsChange = (state: any) => {
+		setSelectedRows(state.selectedRows);
+	};
+
+	const columns: TableColumn<Team>[] = [
+		{
+			name: 'ID',
+			selector: (row: Team) => row.id,
+			sortable: true,
+			width: '80px',
+		},
+		{
+			name: 'Team Name',
+			selector: (row: Team) => row.name,
+			sortable: true,
+			grow: 2,
+		},
+		{
+			name: 'Description',
+			selector: (row: Team) => row.description || 'No description',
+			sortable: true,
+			grow: 3,
+		},
+		{
+			name: 'Actions',
+			cell: (row: Team) => (
+				<div className="flex gap-2">
+					<button
+						className="cursor-pointer w-6 h-6"
+						onClick={() => handleViewTeam(row)}
+						title="View Team"
+					>
+						<SvgComponent iconName="INFO" />
+					</button>
+					{row.id != 1 && (
+						<>
+							<button
+								className="cursor-pointer w-6 h-6"
+								onClick={() => handleEditTeam(row.id)}
+								title="Edit Team"
+							>
+								<SvgComponent iconName="WRENCH" />
+							</button>
+							<button
+								className="cursor-pointer w-6 h-6"
+								onClick={() => handleDeleteTeam(row)}
+								title="Delete Team"
+							>
+								<SvgComponent iconName="TRASHCAN" />
+							</button>
+						</>
+					)}
+				</div>
+			),
+			ignoreRowClick: true,
+			// allowOverflow: true,
+			// button: true,
+			width: '150px',
+		},
+	];
+
+	const handleViewTeam = (team: Team) => {
+		setCurrentTeam(team);
+		readTeamModal.open();
+	};
+
+	const handleEditTeam = (teamId: number) => {
+		setCurrentTeam(teams.find((t) => t.id === teamId) || null);
+		updateTeamModal.open();
+	};
+
+	const handleDeleteTeam = async (team: Team) => {
+		if (confirm(`Are you sure you want to delete "${team.name}"?`)) {
+			try {
+				console.log('Delete team:', team);
+				await softRemoveTeam([team.id]);
+				await refreshTeams();
+				createTeamModal.close();
+				setFormData({});
+			} catch (error) {
+				console.error('Error deleting team:', error);
+			}
+		}
+	};
+
+	const tableDataActions = () => {
+		return (
+			<>
+				<Button
+					type="Danger"
+					text={`Delete Selected (${selectedRows.length})`}
+					onClick={() => {
+						if (selectedRows.length > 0) {
+							console.log('Delete selected teams:', selectedRows);
+						}
+					}}
+				/>
+			</>
+		);
+	};
+
 	return (
-		<HeaderContainer pageTitle="Admin - Teams Manager">
-			<div>Admin Teams Manager Page</div>
-			<div>More to come...</div>
-			<div>
-				This table should just like, display all the teams for everyone
-			</div>
-			<div>And have the ability to edit/delete/create teams</div>
-			<div>
-				Basically everything the normal team page does, but for all
-				users
-			</div>
-			<div>And with more admin controls</div>
-		</HeaderContainer>
+		<>
+			<HeaderContainer pageTitle="Admin - Teams Manager">
+				<div className="flex flex-row justify-between items-center p-2.5">
+					<div className="flex flex-row gap-15">
+						<Button
+							type="Success"
+							text="Create Team"
+							onClick={createTeamModal.open}
+						/>
+					</div>
+				</div>
+				<div className="min-h-0 flex flex-col">
+					{loading ? (
+						<div className="flex justify-center items-center p-8">
+							<div>Loading teams...</div>
+						</div>
+					) : error ? (
+						<div className="flex justify-center items-center p-8">
+							<div className="text-red-500">Error: {error}</div>
+						</div>
+					) : (
+						<DataTable
+							title="Teams"
+							columns={columns}
+							data={Array.isArray(teams) ? teams : []}
+							selectableRows
+							onSelectedRowsChange={handleSelectedRowsChange}
+							clearSelectedRows={toggleClearRows}
+							contextActions={tableDataActions()}
+							defaultSortFieldId={1}
+							progressPending={loading}
+							progressComponent={<div>Loading teams...</div>}
+							noDataComponent={
+								<div className="p-8">No teams found!</div>
+							}
+						/>
+					)}
+				</div>
+			</HeaderContainer>
+
+			{/* Create Modal */}
+			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
+				<TeamsCreateUpdateModal
+					modalTitle="Create Team"
+					handleModalDisplay={createTeamModal.toggle}
+					refresh={refreshTeams}
+				/>
+			</SlideModalContainer>
+			{/* View Modal - Read Only */}
+			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
+				<TeamsViewModal
+					teamId={currentTeam?.id || 0}
+					handleModalDisplay={readTeamModal.toggle}
+				/>
+			</SlideModalContainer>
+			{/* Update Modal */}
+			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
+				<TeamsCreateUpdateModal
+					modalTitle="Update Team"
+					teamId={currentTeam?.id}
+					handleModalDisplay={updateTeamModal.toggle}
+					refresh={refreshTeams}
+				/>
+			</SlideModalContainer>
+		</>
 	);
 }

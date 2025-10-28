@@ -1,0 +1,615 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Synapse Task Manager MCP Tools",
+  "description": "Complete tool definitions with JSON Schema validation for the Synapse Task Manager MCP server",
+  "tools": [
+    {
+      "name": "create_task",
+      "description": "Create a new task in the task management system. Automatically subscribes the creator and handles visibility rules.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Task name/title",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed task description",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
+            "default": "MEDIUM",
+            "description": "Task priority level"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Task start date in ISO 8601 format (e.g., 2025-10-26T10:00:00Z)"
+          },
+          "completeDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Task completion/due date in ISO 8601 format"
+          },
+          "taskVisibleToUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of user IDs who can see this task. Creator is automatically included.",
+            "uniqueItems": true
+          },
+          "taskVisibleToTeams": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of team IDs who can see this task",
+            "uniqueItems": true
+          },
+          "taskHiddenFromUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of user IDs who cannot see this task (overrides team visibility)",
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable status message"
+          },
+          "data": {
+            "type": "object",
+            "description": "The created task object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Unique task identifier"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
+              },
+              "createdByUserId": {
+                "type": "integer"
+              },
+              "startDate": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+              "completeDate": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "isArchived": {
+                "type": "integer"
+              },
+              "isDeleted": {
+                "type": "integer"
+              }
+            }
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_tasks",
+      "description": "Retrieve tasks with various filtering options. Can get all tasks, specific task by ID, user-visible tasks, or subscribed tasks.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Specific task ID to retrieve"
+          },
+          "userOnly": {
+            "type": "boolean",
+            "description": "Only return tasks visible to current user (respects visibility rules)"
+          },
+          "subscribedOnly": {
+            "type": "boolean",
+            "description": "Only return tasks user is subscribed to"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived", "all"],
+            "default": "active",
+            "description": "Filter by task status"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "createdByUserId": {
+                  "type": "integer"
+                },
+                "startDate": {
+                  "type": ["string", "null"]
+                },
+                "completeDate": {
+                  "type": ["string", "null"]
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "isArchived": {
+                  "type": "integer"
+                },
+                "taskVisibleToUsers": {
+                  "type": "array"
+                },
+                "taskVisibleToTeams": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_task",
+      "description": "Update an existing task. Can modify task details and visibility rules. Creator always remains visible.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to update"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Updated task name/title"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Updated task description"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
+            "description": "Updated task priority"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Updated task start date (ISO 8601 format)"
+          },
+          "completeDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Updated task completion date (ISO 8601 format)"
+          },
+          "taskVisibleToUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Updated array of user IDs who can see this task",
+            "uniqueItems": true
+          },
+          "taskVisibleToTeams": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Updated array of team IDs who can see this task",
+            "uniqueItems": true
+          },
+          "taskHiddenFromUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Updated array of user IDs who cannot see this task",
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "description": "The updated task object with same structure as create_task output"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "archive_task",
+      "description": "Archive a task. Archived tasks are hidden from default views but not deleted.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to archive"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "isArchived": {
+                "type": "integer",
+                "enum": [1]
+              },
+              "archivedByUserId": {
+                "type": "integer"
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "subscribe_task",
+      "description": "Subscribe the current user to a task to receive updates and notifications.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to subscribe to"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "unsubscribe_task",
+      "description": "Unsubscribe the current user from a task to stop receiving updates.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to unsubscribe from"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_team",
+      "description": "Create a new team with optional initial members. The creator is automatically added to the team.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Team name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Team description"
+          },
+          "memberIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of user IDs to add as team members. Creator is automatically included.",
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "createdBy": {
+                "type": "integer"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "teamsUsersBelongTo": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_teams",
+      "description": "Retrieve all teams in the system with their members.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "includeMembers": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include team member details"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "createdBy": {
+                  "type": "integer"
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "teamsUsersBelongTo": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_comment",
+      "description": "Add a comment to a task. Useful for discussions and updates.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId", "message"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of the task to comment on"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Comment text"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "integer"
+              },
+              "taskId": {
+                "type": "integer"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

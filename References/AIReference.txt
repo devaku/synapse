@@ -1312,3 +1312,2688 @@ export async function deleteRepoCollaboratorRequest(req: Request, res: Response)
         res.status(500).json(finalResponse);
     }
 }
+
+prompt: how do I Generate a JWT for your GitHub App
+answer: 
+import fs from "fs";
+import jwt from "jsonwebtoken";
+
+export function generateGitHubAppJWT(): string {
+  const appId = process.env.GITHUB_APP_ID!;
+  const privateKey = fs.readFileSync(process.env.GITHUB_PRIVATE_KEY_PATH!, "utf8");
+
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
+
+  const payload = {
+    iat: now - 60,          // issued at time (1 min back to allow clock drift)
+    exp: now + (10 * 60),   // expiration time (10 minutes max)
+    iss: appId              // GitHub App ID
+  };
+
+  return jwt.sign(payload, privateKey, { algorithm: "RS256" });
+}
+
+prompt: make a function that function that takes your JWT and automatically exchanges it for an installation access token
+answer: 
+export async function getInstallationAccessToken(jwt: string, installationId: string): Promise<string> {
+  const url = `https://api.github.com/app/installations/${installationId}/access_tokens`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Failed to get installation token: ${response.status} ${response.statusText} - ${errorBody}`);
+  }
+
+  const data = (await response.json()) as { token: string; expires_at: string };
+  return data.token;
+}
+
+prompt:I want to make a function that takes the repo id, a user github username and the level of access they want and uses my app to add that user to the repo with the requested level of access
+answer: 
+export async function addUserToRepo(
+  repoId: number,
+  username: string,
+  permission: "pull" | "triage" | "push" | "maintain" | "admin"
+) {
+  const token = await getInstallationAccessToken();
+
+  // Get repo owner/name from repoId
+  const repoInfo = await axios.get(`https://api.github.com/repositories/${repoId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  const { full_name } = repoInfo.data; // "owner/repo"
+  const [owner, repo] = full_name.split("/");
+
+  // Invite the collaborator
+  const res = await axios.put(
+    `https://api.github.com/repos/${owner}/${repo}/collaborators/${username}`,
+    { permission },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    }
+  );
+
+  return res.data;
+}
+
+prompt: Make the CRUD functions for this model
+model RepoColaboratorRequest {
+id                int      @id @default(autoincrement())
+userId            int
+user              User     @relation(fields: [userId], references: [id])
+repoId            int
+permission        String   @db.VarChar(255)
+}
+
+in my github services
+answer:
+/**
+ * CREATE - Create a new repository collaborator request
+ */
+export async function createRepoCollaboratorRequest(
+  userId: number,
+  repoId: number,
+  permission: string
+) {
+  const requestRow = await prisma.repoColaboratorRequest.create({
+    data: {
+      userId,
+      repoId,
+      permission,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+  return requestRow;
+}
+
+/**
+ * READ ALL - Get all repository collaborator requests
+ */
+export async function readAllRepoCollaboratorRequests() {
+  return await prisma.repoColaboratorRequest.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY ID - Get repository collaborator request by ID
+ */
+export async function readRepoCollaboratorRequestById(id: number) {
+  return await prisma.repoColaboratorRequest.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY USER ID - Get repository collaborator requests by user ID
+ */
+export async function readRepoCollaboratorRequestsByUserId(userId: number) {
+  return await prisma.repoColaboratorRequest.findMany({
+    where: { userId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * READ BY REPO ID - Get repository collaborator requests by repo ID
+ */
+export async function readRepoCollaboratorRequestsByRepoId(repoId: number) {
+  return await prisma.repoColaboratorRequest.findMany({
+    where: { repoId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * UPDATE - Update repository collaborator request
+ */
+export async function updateRepoCollaboratorRequest(
+  id: number,
+  data: {
+    repoId?: number;
+    permission?: string;
+  }
+) {
+  return await prisma.repoColaboratorRequest.update({
+    where: { id },
+    data,
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * DELETE - Delete repository collaborator request
+ */
+export async function deleteRepoCollaboratorRequest(id: number) {
+  return await prisma.repoColaboratorRequest.delete({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * DELETE BY USER ID - Delete all repository collaborator requests for a user
+ */
+export async function deleteRepoCollaboratorRequestsByUserId(userId: number) {
+  return await prisma.repoColaboratorRequest.deleteMany({
+    where: { userId },
+  });
+}
+
+/**
+ * DELETE BY REPO ID - Delete all repository collaborator requests for a repo
+ */
+export async function deleteRepoCollaboratorRequestsByRepoId(repoId: number) {
+  return await prisma.repoColaboratorRequest.deleteMany({
+    where: { repoId },
+  });
+}
+
+Prompt:
+Create the repoColaboratorRequest controlers for my CRUD operations in the gihub controller. follow the teams and task standard
+answer:
+/**
+ * Controller to create a repository collaborator request in the database 
+ *    
+ * @param req - Request object containing userId, repoId, permission, and githubUsername
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 201 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function createRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { userId, repoId, permission, githubUsername } = req.body;
+
+        // Validation: required fields
+        if (!userId || !repoId || !permission || !githubUsername) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Missing required fields: userId, repoId, permission, githubUsername', null));
+        }
+
+        const request = await githubService.createRepoCollaboratorRequest(userId, repoId, permission, githubUsername);
+
+        let finalResponse = buildResponse(
+            201,
+            'Repository collaborator request created successfully!',
+            request
+        );
+
+        res.status(201).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error creating the request', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to read repository collaborator requests from the database
+ *    
+ * @param req - Request object with optional id parameter and query parameters
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function readRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const { userId, repoId } = req.query;
+
+        let requests;
+        let message = '';
+
+        if (id) {
+            // Read a specific request by ID
+            const requestId = parseInt(id);
+            if (isNaN(requestId)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid request ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestById(requestId);
+            if (!requests) {
+                return res
+                    .status(404)
+                    .json(buildError(404, 'Repository collaborator request not found', null));
+            }
+
+            message = 'Repository collaborator request retrieved successfully.';
+        } else if (userId) {
+            // Read requests by user ID
+            const userIdNum = parseInt(userId as string);
+            if (isNaN(userIdNum)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid user ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestsByUserId(userIdNum);
+            message = requests.length > 0 
+                ? 'User repository collaborator requests retrieved successfully.' 
+                : 'No requests found for this user.';
+        } else if (repoId) {
+            // Read requests by repo ID
+            const repoIdNum = parseInt(repoId as string);
+            if (isNaN(repoIdNum)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid repo ID', null));
+            }
+
+            requests = await githubService.readRepoCollaboratorRequestsByRepoId(repoIdNum);
+            message = requests.length > 0 
+                ? 'Repository collaborator requests retrieved successfully.' 
+                : 'No requests found for this repository.';
+        } else {
+            // Read all requests
+            requests = await githubService.readAllRepoCollaboratorRequests();
+            message = requests.length > 0 
+                ? 'Repository collaborator requests retrieved successfully.' 
+                : 'No repository collaborator requests found.';
+        }
+
+        let finalResponse = buildResponse(200, message, requests);
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error retrieving requests', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to update a repository collaborator request in the database
+ *    
+ * @param req - Request object containing id parameter and update data in body
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function updateRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        if (!id) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Request ID is required', null));
+        }
+
+        const requestId = parseInt(id);
+        if (isNaN(requestId)) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Invalid request ID', null));
+        }
+
+        if (!data || Object.keys(data).length === 0) {
+            return res
+                .status(400)
+                .json(buildError(400, 'Request body cannot be empty', null));
+        }
+
+        const existingRequest = await githubService.readRepoCollaboratorRequestById(requestId);
+        if (!existingRequest) {
+            return res
+                .status(404)
+                .json(buildError(404, 'Repository collaborator request not found', null));
+        }
+
+        const updatedRequest = await githubService.updateRepoCollaboratorRequest(requestId, data);
+
+        let finalResponse = buildResponse(
+            200,
+            'Repository collaborator request updated successfully!',
+            updatedRequest
+        );
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error updating the request', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+/**
+ * Controller to delete repository collaborator requests from the database
+ *    
+ * @param req - Request object containing id parameter or requestIdArray in body
+ * @param res - Response Object
+ *
+ * @returns A JSON response with the HTTP 200 message 
+ *
+ * @throws Responds with a 500 status code and error details if an exception occurs.
+ */
+export async function deleteRepoCollaboratorRequest(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const requestIdArray = req.body?.requestIdArray;
+
+        const deletedRequests = [];
+        let message = '';
+
+        if (id) {
+            // Delete single request
+            const requestId = parseInt(id);
+            if (isNaN(requestId)) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'Invalid request ID', null));
+            }
+
+            const deletedRequest = await githubService.deleteRepoCollaboratorRequest(requestId);
+            deletedRequests.push(deletedRequest);
+            message = 'Repository collaborator request deleted successfully.';
+        } else if (requestIdArray && Array.isArray(requestIdArray) && requestIdArray.length > 0) {
+            // Delete multiple requests
+            for (const requestIdString of requestIdArray) {
+                const requestId = parseInt(requestIdString);
+                if (!isNaN(requestId)) {
+                    const request = await githubService.deleteRepoCollaboratorRequest(requestId);
+                    if (request) deletedRequests.push(request);
+                }
+            }
+
+            if (deletedRequests.length === 0) {
+                return res
+                    .status(400)
+                    .json(buildError(400, 'No requests were deleted. Check if request IDs are valid.', null));
+            }
+
+            message = `${deletedRequests.length} repository collaborator request(s) deleted successfully.`;
+        } else {
+            return res
+                .status(400)
+                .json(buildError(400, 'Provide request ID in URL or requestIdArray in body', null));
+        }
+
+        let finalResponse = buildResponse(200, message, deletedRequests);
+        res.status(200).json(finalResponse);
+
+    } catch (error: any) {
+        let finalResponse = buildError(500, 'There was an error deleting request(s)', error);
+        res.status(500).json(finalResponse);
+    }
+}
+
+Prompt: Create an mcp server with the tools based upon my CRUD operations for the tasks
+answer:
+#!/usr/bin/env node
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+import { TaskTools, TaskSchemas } from './tools/task-tools.js';
+import { TaskHandlers } from './handlers/task-handlers.js';
+
+// Default user ID - you can override with environment variable
+const DEFAULT_USER_ID = 1;
+
+class TaskMCPServer {
+  private server: Server;
+  private userId: number;
+
+  constructor(userId: number) {
+    this.userId = userId;
+    
+    this.server = new Server(
+      {
+        name: 'synapse-task-manager',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
+
+    this.setupHandlers();
+  }
+
+  private setupHandlers() {
+    // List available tools
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: Object.values(TaskTools).map((tool) => ({
+          name: tool.name,
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+        })),
+      };
+    });
+
+    // Handle tool calls
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      const { name, arguments: args } = request.params;
+
+      try {
+        // Validate input with Zod schemas
+        let validatedArgs;
+        switch (name) {
+          case 'create_task':
+            validatedArgs = TaskSchemas.createTask.parse(args);
+            break;
+          case 'read_tasks':
+            validatedArgs = TaskSchemas.readTasks.parse(args);
+            break;
+          case 'update_task':
+            validatedArgs = TaskSchemas.updateTask.parse(args);
+            break;
+          case 'subscribe_task':
+            validatedArgs = TaskSchemas.subscribeTask.parse(args);
+            break;
+          case 'unsubscribe_task':
+            validatedArgs = TaskSchemas.unsubscribeTask.parse(args);
+            break;
+          default:
+            throw new Error(`Unknown tool: ${name}`);
+        }
+
+        // Execute tool with validated arguments
+        let result;
+        switch (name) {
+          case 'create_task':
+            result = await TaskHandlers.createTask(validatedArgs, this.userId);
+            break;
+
+          case 'read_tasks':
+            result = await TaskHandlers.readTasks(validatedArgs, this.userId);
+            break;
+
+          case 'update_task':
+            result = await TaskHandlers.updateTask(validatedArgs, this.userId);
+            break;
+
+          case 'subscribe_task':
+            result = await TaskHandlers.subscribeTask(validatedArgs, this.userId);
+            break;
+
+          case 'unsubscribe_task':
+            result = await TaskHandlers.unsubscribeTask(validatedArgs, this.userId);
+            break;
+
+          default:
+            throw new Error(`Unknown tool: ${name}`);
+        }
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      } catch (error: any) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: false,
+                error: error.message,
+                stack: error.stack,
+              }, null, 2),
+            },
+          ],
+          isError: true,
+        };
+      }
+    });
+  }
+
+  async start() {
+    const transport = new StdioServerTransport();
+    await this.server.connect(transport);
+    
+    // Use stderr for logging so it doesn't interfere with stdio protocol
+    console.error('Synapse Task Manager MCP Server started');
+    console.error(`User ID: ${this.userId}`);
+  }
+}
+
+// Start server
+const userId = process.env.MCP_USER_ID 
+  ? parseInt(process.env.MCP_USER_ID) 
+  : DEFAULT_USER_ID;
+
+const server = new TaskMCPServer(userId);
+server.start().catch((error) => {
+  console.error('Failed to start MCP server:', error);
+  process.exit(1);
+});
+
+Prompt: Create the tools of tasks based on my tasks controlers and services
+answer:
+import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
+// Zod schemas for validation
+const createTaskSchema = z.object({
+  name: z.string().describe('Task name/title'),
+  description: z.string().describe('Detailed task description'),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).default('MEDIUM').describe('Task priority level'),
+  taskVisibleToUsers: z.array(z.number()).optional().describe('Array of user IDs who can see this task'),
+  taskVisibleToTeams: z.array(z.number()).optional().describe('Array of team IDs who can see this task'),
+  taskHiddenFromUsers: z.array(z.number()).optional().describe('Array of user IDs who cannot see this task'),
+  startDate: z.string().optional().describe('Task start date (ISO 8601 format)'),
+});
+
+const readTasksSchema = z.object({
+  taskId: z.number().optional().describe('Specific task ID to retrieve'),
+  userOnly: z.boolean().optional().describe('Only return tasks visible to current user'),
+  subscribedOnly: z.boolean().optional().describe('Only return tasks user is subscribed to'),
+});
+
+const updateTaskSchema = z.object({
+  taskId: z.number().describe('ID of task to update'),
+  name: z.string().optional().describe('Updated task name/title'),
+  description: z.string().optional().describe('Updated task description'),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional().describe('Updated task priority'),
+  taskVisibleToUsers: z.array(z.number()).optional().describe('Updated array of user IDs who can see this task'),
+  taskVisibleToTeams: z.array(z.number()).optional().describe('Updated array of team IDs who can see this task'),
+  taskHiddenFromUsers: z.array(z.number()).optional().describe('Updated array of user IDs who cannot see this task'),
+  startDate: z.string().optional().describe('Updated task start date (ISO 8601 format)'),
+});
+
+const subscribeTaskSchema = z.object({
+  taskId: z.number().describe('ID of task to subscribe to'),
+});
+
+const unsubscribeTaskSchema = z.object({
+  taskId: z.number().describe('ID of task to unsubscribe from'),
+});
+
+// Export Zod schemas for validation
+export const TaskSchemas = {
+  createTask: createTaskSchema,
+  readTasks: readTasksSchema,
+  updateTask: updateTaskSchema,
+  subscribeTask: subscribeTaskSchema,
+  unsubscribeTask: unsubscribeTaskSchema,
+};
+
+// Helper to get inline JSON Schema (without $ref)
+function getInlineSchema(zodSchema: z.ZodType<any>) {
+  const jsonSchema = zodToJsonSchema(zodSchema, { $refStrategy: 'none' });
+  return jsonSchema;
+}
+
+// Export tool definitions with JSON Schema for MCP
+export const TaskTools = {
+  create_task: {
+    name: 'create_task',
+    description: 'Create a new task in the task management system. Automatically subscribes the creator.',
+    inputSchema: getInlineSchema(createTaskSchema),
+  },
+
+  read_tasks: {
+    name: 'read_tasks',
+    description: 'Retrieve tasks. Can filter by ID, user visibility, or subscriptions.',
+    inputSchema: getInlineSchema(readTasksSchema),
+  },
+
+  update_task: {
+    name: 'update_task',
+    description: 'Update an existing task. Can modify task details and visibility rules.',
+    inputSchema: getInlineSchema(updateTaskSchema),
+  },
+
+  subscribe_task: {
+    name: 'subscribe_task',
+    description: 'Subscribe the current user to a task to receive updates.',
+    inputSchema: getInlineSchema(subscribeTaskSchema),
+  },
+
+  unsubscribe_task: {
+    name: 'unsubscribe_task',
+    description: 'Unsubscribe the current user from a task.',
+    inputSchema: getInlineSchema(unsubscribeTaskSchema),
+  },
+};
+Prompt: Create handler function to be used by my task tools using my api
+answer:
+import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
+// Zod schemas for validation
+const createTaskSchema = z.object({
+  name: z.string().describe('Task name/title'),
+  description: z.string().describe('Detailed task description'),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).default('MEDIUM').describe('Task priority level'),
+  taskVisibleToUsers: z.array(z.number()).optional().describe('Array of user IDs who can see this task'),
+  taskVisibleToTeams: z.array(z.number()).optional().describe('Array of team IDs who can see this task'),
+  taskHiddenFromUsers: z.array(z.number()).optional().describe('Array of user IDs who cannot see this task'),
+  startDate: z.string().optional().describe('Task start date (ISO 8601 format)'),
+});
+
+const readTasksSchema = z.object({
+  taskId: z.number().optional().describe('Specific task ID to retrieve'),
+  userOnly: z.boolean().optional().describe('Only return tasks visible to current user'),
+  subscribedOnly: z.boolean().optional().describe('Only return tasks user is subscribed to'),
+});
+
+const updateTaskSchema = z.object({
+  taskId: z.number().describe('ID of task to update'),
+  name: z.string().optional().describe('Updated task name/title'),
+  description: z.string().optional().describe('Updated task description'),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional().describe('Updated task priority'),
+  taskVisibleToUsers: z.array(z.number()).optional().describe('Updated array of user IDs who can see this task'),
+  taskVisibleToTeams: z.array(z.number()).optional().describe('Updated array of team IDs who can see this task'),
+  taskHiddenFromUsers: z.array(z.number()).optional().describe('Updated array of user IDs who cannot see this task'),
+  startDate: z.string().optional().describe('Updated task start date (ISO 8601 format)'),
+});
+
+const subscribeTaskSchema = z.object({
+  taskId: z.number().describe('ID of task to subscribe to'),
+});
+
+const unsubscribeTaskSchema = z.object({
+  taskId: z.number().describe('ID of task to unsubscribe from'),
+});
+
+// Export Zod schemas for validation
+export const TaskSchemas = {
+  createTask: createTaskSchema,
+  readTasks: readTasksSchema,
+  updateTask: updateTaskSchema,
+  subscribeTask: subscribeTaskSchema,
+  unsubscribeTask: unsubscribeTaskSchema,
+};
+
+// Helper to get inline JSON Schema (without $ref)
+function getInlineSchema(zodSchema: z.ZodType<any>) {
+  const jsonSchema = zodToJsonSchema(zodSchema, { $refStrategy: 'none' });
+  return jsonSchema;
+}
+
+// Export tool definitions with JSON Schema for MCP
+export const TaskTools = {
+  create_task: {
+    name: 'create_task',
+    description: 'Create a new task in the task management system. Automatically subscribes the creator.',
+    inputSchema: getInlineSchema(createTaskSchema),
+  },
+
+  read_tasks: {
+    name: 'read_tasks',
+    description: 'Retrieve tasks. Can filter by ID, user visibility, or subscriptions.',
+    inputSchema: getInlineSchema(readTasksSchema),
+  },
+
+  update_task: {
+    name: 'update_task',
+    description: 'Update an existing task. Can modify task details and visibility rules.',
+    inputSchema: getInlineSchema(updateTaskSchema),
+  },
+
+  subscribe_task: {
+    name: 'subscribe_task',
+    description: 'Subscribe the current user to a task to receive updates.',
+    inputSchema: getInlineSchema(subscribeTaskSchema),
+  },
+
+  unsubscribe_task: {
+    name: 'unsubscribe_task',
+    description: 'Unsubscribe the current user from a task.',
+    inputSchema: getInlineSchema(unsubscribeTaskSchema),
+  },
+};
+
+Prompt: create a AIchat page using tailwind 
+
+code: 
+import { useState, useRef, useEffect } from 'react';
+import HeaderContainer from '../components/container/header_container';
+import Button from '../components/ui/button';
+import SvgComponent from '../components/ui/svg_component';
+import SlideModalContainer from '../components/container/modal_containers/slide_modal_container';
+import { useModal } from '../lib/hooks/ui/useModal';
+import { useAuthContext } from '../lib/contexts/AuthContext';
+import { sendToAI, executeTool } from '../lib/services/api/mcp';
+
+/**
+ * TYPES
+ */
+
+interface Message {
+	id: string;
+	role: 'user' | 'assistant' | 'system';
+	content: string;
+	timestamp: Date;
+	toolCalls?: ToolCall[];
+	isStreaming?: boolean; // For streaming messages
+}
+
+interface ToolCall {
+	id: string;
+	tool: string;
+	parameters: Record<string, any>;
+	requiresConfirmation: boolean;
+	status: 'pending' | 'approved' | 'rejected' | 'executed';
+	result?: any;
+}
+
+interface MCPTool {
+	name: string;
+	description: string;
+	requiresConfirmation: boolean;
+	inputSchema: any;
+}
+
+// Progress stages for better UX
+type AIProgressStage = 
+	| 'idle'
+	| 'sending'      // Sending request to server
+	| 'thinking'     // AI is processing
+	| 'generating'   // AI is generating response
+	| 'parsing'      // Parsing tool calls
+	| 'complete';    // Done
+
+export default function MCPChatPage() {
+	const { token, serverData } = useAuthContext();
+	const [messages, setMessages] = useState<Message[]>([
+		{
+			id: '1',
+			role: 'system',
+			content:
+				'Welcome! I can help you manage tasks and teams. Try asking me to create a task, list your tasks, or create a team.',
+			timestamp: new Date(),
+		},
+	]);
+	const [input, setInput] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [aiProgress, setAIProgress] = useState<AIProgressStage>('idle');
+	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
+	const [availableTools, setAvailableTools] = useState<MCPTool[]>([]);
+	const [pendingToolCall, setPendingToolCall] = useState<ToolCall | null>(null);
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+
+	// Modal for tool confirmation
+	const confirmationModal = useModal();
+
+	// Auto-scroll to bottom when new messages arrive
+	useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+	}, [messages]);
+
+	// Fetch available MCP tools on component mount
+	useEffect(() => {
+		fetchAvailableTools();
+	}, []);
+
+	/**
+	 * MCP INTEGRATION FUNCTIONS - PLACEHOLDERS
+	 * These will be implemented to communicate with the MCP server
+	 */
+
+	// Fetch list of available tools from MCP server
+	const fetchAvailableTools = async () => {
+		try {
+			// Not needed anymore - AI knows all tools internally
+			// Keeping this as a placeholder for future enhancements
+			setAvailableTools([]);
+		} catch (error) {
+			console.error('Failed to fetch MCP tools:', error);
+		}
+	};
+
+	// Send message to LLM and get response with potential tool calls
+	const sendMessageToLLM = async (userMessage: string) => {
+		try {
+			setIsLoading(true);
+			setAIProgress('sending');
+
+			// Build conversation history
+			const conversationHistory = messages
+				.filter((m) => m.role !== 'system' || m.content.startsWith('✅') || m.content.startsWith('❌'))
+				.map((m) => ({
+					role: m.role,
+					content: m.content,
+				}));
+
+			// Add user message
+			conversationHistory.push({
+				role: 'user',
+				content: userMessage,
+			});
+
+			setAIProgress('thinking');
+
+			// Create a streaming message placeholder
+			const streamingMessageId = crypto.randomUUID();
+			setStreamingMessageId(streamingMessageId);
+			
+			const streamingMessage: Message = {
+				id: streamingMessageId,
+				role: 'assistant',
+				content: '',
+				timestamp: new Date(),
+				isStreaming: true,
+			};
+			
+			setMessages((prev) => [...prev, streamingMessage]);
+			setAIProgress('generating');
+
+			// Call AI endpoint (non-streaming for now, but shows progress)
+			const result = await sendToAI(token!, conversationHistory as any);
+
+			setAIProgress('parsing');
+
+			// Update the streaming message with final content
+			setMessages((prev) =>
+				prev.map((msg) =>
+					msg.id === streamingMessageId
+						? { ...msg, content: result.response, isStreaming: false }
+						: msg
+				)
+			);
+
+			// Check if AI wants to call a tool
+			if (result.toolCall) {
+				const toolCall: ToolCall = {
+					id: result.toolCall.id,
+					tool: result.toolCall.tool,
+					parameters: result.toolCall.parameters,
+					requiresConfirmation: result.toolCall.requiresConfirmation,
+					status: result.toolCall.requiresConfirmation ? 'pending' : 'approved',
+				};
+
+				// Add tool call to the message
+				setMessages((prev) =>
+					prev.map((msg) =>
+						msg.id === streamingMessageId
+							? { ...msg, toolCalls: [toolCall] }
+							: msg
+					)
+				);
+
+				if (toolCall.requiresConfirmation) {
+					setPendingToolCall(toolCall);
+					confirmationModal.open();
+				} else {
+					// Auto-execute if no confirmation needed
+					await executeToolCall(toolCall);
+				}
+			}
+
+			setAIProgress('complete');
+			setTimeout(() => setAIProgress('idle'), 500);
+		} catch (error) {
+			console.error('Failed to get LLM response:', error);
+			addSystemMessage('Error communicating with AI assistant.');
+			setAIProgress('idle');
+		} finally {
+			setIsLoading(false);
+			setStreamingMessageId(null);
+		}
+	};
+
+	// Execute approved tool call via MCP server
+	const executeToolCall = async (toolCall: ToolCall) => {
+		try {
+			setIsLoading(true);
+
+			// Call execute-tool endpoint
+			const result = await executeTool(
+				token!,
+				toolCall.id,
+				toolCall.tool,
+				toolCall.parameters
+			);
+
+			// Update tool call status
+			setMessages((prev) =>
+				prev.map((msg) => {
+					if (msg.toolCalls) {
+						return {
+							...msg,
+							toolCalls: msg.toolCalls.map((tc) =>
+								tc.id === toolCall.id
+									? {
+											...tc,
+											status: 'executed' as const,
+											result: result,
+									  }
+									: tc
+							),
+						};
+					}
+					return msg;
+				})
+			);
+
+			// Add result message
+			addSystemMessage(
+				`✅ Action completed successfully: ${JSON.stringify(result, null, 2)}`
+			);
+		} catch (error: any) {
+			console.error('Failed to execute tool call:', error);
+			addSystemMessage(`❌ Failed to execute action: ${error.message || 'Unknown error'}`);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	// Handle user message submission
+	const handleSendMessage = async () => {
+		if (!input.trim() || isLoading) return;
+
+		const userMessage: Message = {
+			id: crypto.randomUUID(),
+			role: 'user',
+			content: input,
+			timestamp: new Date(),
+		};
+
+		setMessages((prev) => [...prev, userMessage]);
+		setInput('');
+		setIsLoading(true);
+
+		await sendMessageToLLM(input);
+		setIsLoading(false);
+	};
+
+	// Handle tool call approval
+	const handleApproveToolCall = async () => {
+		if (!pendingToolCall) return;
+
+		confirmationModal.close();
+		await executeToolCall(pendingToolCall);
+		setPendingToolCall(null);
+	};
+
+	// Handle tool call rejection
+	const handleRejectToolCall = () => {
+		if (!pendingToolCall) return;
+
+		setMessages((prev) =>
+			prev.map((msg) => {
+				if (msg.toolCalls) {
+					return {
+						...msg,
+						toolCalls: msg.toolCalls.map((tc) =>
+							tc.id === pendingToolCall.id
+								? { ...tc, status: 'rejected' as const }
+								: tc
+						),
+					};
+				}
+				return msg;
+			})
+		);
+
+		addSystemMessage('❌ Action cancelled by user.');
+		confirmationModal.close();
+		setPendingToolCall(null);
+	};
+
+	// Add system message helper
+	const addSystemMessage = (content: string) => {
+		const systemMessage: Message = {
+			id: crypto.randomUUID(),
+			role: 'system',
+			content,
+			timestamp: new Date(),
+		};
+		setMessages((prev) => [...prev, systemMessage]);
+	};
+
+	// Handle Enter key press
+	const handleKeyPress = (e: React.KeyboardEvent) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			handleSendMessage();
+		}
+	};
+
+	return (
+		<HeaderContainer pageTitle="AI Assistant">
+			<div className="h-full flex flex-col">
+				{/* Chat Header with Info */}
+				<div className="bg-ttg-black/5 rounded-lg p-4 mb-4">
+					<div className="flex items-center justify-between">
+						<div>
+							<h2 className="text-xl font-semibold text-ttg-black">
+								MCP-Powered AI Assistant
+							</h2>
+							<p className="text-sm text-ttg-black/70">
+								Ask me to create tasks, manage teams, or get information
+							</p>
+						</div>
+						<div className="flex gap-2">
+							<div className="bg-ttg-green/20 text-ttg-green px-3 py-1 rounded-full text-sm font-medium">
+								{availableTools.length} tools available
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* AI Progress Indicator */}
+				{aiProgress !== 'idle' && (
+					<div className="bg-gradient-to-r from-ttg-purple/10 to-ttg-green/10 rounded-lg p-4 mb-4 border border-ttg-purple/20">
+						<div className="flex items-center gap-3">
+							{/* Animated spinner */}
+							<div className="animate-spin rounded-full h-5 w-5 border-2 border-ttg-purple border-t-transparent" />
+							
+							{/* Progress text */}
+							<div className="flex-1">
+								<div className="flex items-center justify-between mb-2">
+									<span className="text-sm font-medium text-ttg-black">
+										{aiProgress === 'sending' && '📤 Sending request...'}
+										{aiProgress === 'thinking' && '🧠 AI is thinking...'}
+										{aiProgress === 'generating' && '✨ Generating response...'}
+										{aiProgress === 'parsing' && '🔍 Processing tool calls...'}
+										{aiProgress === 'complete' && '✅ Complete!'}
+									</span>
+									<span className="text-xs text-ttg-black/60">
+										{aiProgress === 'sending' && '10%'}
+										{aiProgress === 'thinking' && '30%'}
+										{aiProgress === 'generating' && '70%'}
+										{aiProgress === 'parsing' && '90%'}
+										{aiProgress === 'complete' && '100%'}
+									</span>
+								</div>
+								
+								{/* Progress bar */}
+								<div className="w-full bg-ttg-black/10 rounded-full h-2 overflow-hidden">
+									<div
+										className={`h-full bg-gradient-to-r from-ttg-purple to-ttg-green transition-all duration-500 ease-out ${
+											aiProgress === 'sending' ? 'w-[10%]' :
+											aiProgress === 'thinking' ? 'w-[30%]' :
+											aiProgress === 'generating' ? 'w-[70%]' :
+											aiProgress === 'parsing' ? 'w-[90%]' :
+											'w-full'
+										}`}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Messages Container */}
+				<div className="flex-1 overflow-y-auto bg-white rounded-lg border border-gray-200 mb-4 p-4">
+					<div className="space-y-4">
+						{messages.map((message) => (
+							<div key={message.id}>
+								{/* Message Bubble */}
+								<div
+									className={`flex ${
+										message.role === 'user'
+											? 'justify-end'
+											: 'justify-start'
+									}`}
+								>
+									<div
+										className={`max-w-[70%] rounded-lg px-4 py-3 ${
+											message.role === 'user'
+												? 'bg-ttg-green text-white'
+												: message.role === 'system'
+												? 'bg-ttg-brown/20 text-ttg-black'
+												: 'bg-ttg-black/10 text-ttg-black'
+										}`}
+									>
+										<div className="flex items-start gap-2">
+											{message.role === 'assistant' && (
+												<span className="text-lg">🤖</span>
+											)}
+											{message.role === 'system' && (
+												<span className="text-lg">ℹ️</span>
+											)}
+											<div className="flex-1">
+												<p className="whitespace-pre-wrap">
+													{message.content}
+												</p>
+												
+												{/* Typing indicator for streaming messages */}
+												{message.isStreaming && !message.content && (
+													<div className="flex items-center gap-1 py-2">
+														<div className="w-2 h-2 bg-ttg-black/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+														<div className="w-2 h-2 bg-ttg-black/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+														<div className="w-2 h-2 bg-ttg-black/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+													</div>
+												)}
+												
+												<p className="text-xs opacity-70 mt-1">
+													{message.timestamp.toLocaleTimeString()}
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								{/* Tool Calls Display */}
+								{message.toolCalls &&
+									message.toolCalls.map((toolCall) => (
+										<div
+											key={toolCall.id}
+											className="ml-12 mt-2 bg-ttg-purple/10 border border-ttg-purple/30 rounded-lg p-3"
+										>
+											<div className="flex items-start justify-between">
+												<div className="flex-1">
+													<div className="flex items-center gap-2 mb-2">
+														<span className="text-sm font-semibold text-ttg-purple">
+															🔧 {toolCall.tool}
+														</span>
+														<span
+															className={`text-xs px-2 py-1 rounded-full ${
+																toolCall.status === 'pending'
+																	? 'bg-yellow-500/20 text-yellow-700'
+																	: toolCall.status === 'approved'
+																	? 'bg-blue-500/20 text-blue-700'
+																	: toolCall.status === 'executed'
+																	? 'bg-green-500/20 text-green-700'
+																	: 'bg-red-500/20 text-red-700'
+															}`}
+														>
+															{toolCall.status}
+														</span>
+													</div>
+													<pre className="text-xs bg-white/50 p-2 rounded overflow-x-auto">
+														{JSON.stringify(
+															toolCall.parameters,
+															null,
+															2
+														)}
+													</pre>
+													{toolCall.result && (
+														<div className="mt-2">
+															<span className="text-xs font-semibold">
+																Result:
+															</span>
+															<pre className="text-xs bg-green-500/10 p-2 rounded mt-1 overflow-x-auto">
+																{JSON.stringify(
+																	toolCall.result,
+																	null,
+																	2
+																)}
+															</pre>
+														</div>
+													)}
+												</div>
+											</div>
+										</div>
+									))}
+							</div>
+						))}
+
+						{/* Loading Indicator */}
+						{isLoading && (
+							<div className="flex justify-start">
+								<div className="bg-ttg-black/10 rounded-lg px-4 py-3">
+									<div className="flex items-center gap-2">
+										<div className="animate-pulse">🤖</div>
+										<span className="text-sm">Thinking...</span>
+									</div>
+								</div>
+							</div>
+						)}
+
+						<div ref={messagesEndRef} />
+					</div>
+				</div>
+
+				{/* Input Area */}
+				<div className="bg-white border border-gray-200 rounded-lg p-4">
+					<div className="flex gap-2">
+						<textarea
+							value={input}
+							onChange={(e) => setInput(e.target.value)}
+							onKeyPress={handleKeyPress}
+							placeholder="Ask me to create tasks, list teams, or manage your workflow..."
+							className="flex-1 border border-gray-300 rounded-lg px-4 py-2 resize-none focus:outline-none focus:border-ttg-green"
+							rows={2}
+							disabled={isLoading}
+						/>
+						<button
+							onClick={handleSendMessage}
+							disabled={isLoading || !input.trim()}
+							className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+								isLoading || !input.trim()
+									? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+									: 'bg-ttg-green text-white hover:bg-ttg-green/80'
+							}`}
+						>
+							<div className="flex items-center gap-2">
+								<span>Send</span>
+								<SvgComponent iconName="ARROW_RIGHT" className="w-4 h-4" />
+							</div>
+						</button>
+					</div>
+
+					{/* Quick Actions */}
+					<div className="mt-3 flex gap-2 flex-wrap">
+						<span className="text-xs text-gray-500">Quick actions:</span>
+						<button
+							onClick={() =>
+								setInput('Create a task called "Review code" with high priority')
+							}
+							className="text-xs bg-ttg-black/5 hover:bg-ttg-black/10 px-3 py-1 rounded-full"
+						>
+							Create task
+						</button>
+						<button
+							onClick={() => setInput('List all my tasks')}
+							className="text-xs bg-ttg-black/5 hover:bg-ttg-black/10 px-3 py-1 rounded-full"
+						>
+							List tasks
+						</button>
+						<button
+							onClick={() => setInput('Create a team called "Backend Team"')}
+							className="text-xs bg-ttg-black/5 hover:bg-ttg-black/10 px-3 py-1 rounded-full"
+						>
+							Create team
+						</button>
+					</div>
+				</div>
+			</div>
+
+			{/* Confirmation Modal */}
+			<SlideModalContainer
+				isOpen={confirmationModal.isOpen}
+				noFade={false}
+			>
+				<div className="p-6">
+					<h2 className="text-2xl font-bold text-ttg-black mb-4">
+						⚠️ Confirm Action
+					</h2>
+
+					{pendingToolCall && (
+						<div className="space-y-4">
+							<p className="text-ttg-black">
+								The AI assistant wants to perform the following action:
+							</p>
+
+							<div className="bg-ttg-purple/10 border border-ttg-purple/30 rounded-lg p-4">
+								<h3 className="font-semibold text-ttg-purple mb-2">
+									🔧 {pendingToolCall.tool}
+								</h3>
+								<div className="bg-white rounded p-3">
+									<p className="text-sm font-medium mb-2">Parameters:</p>
+									<pre className="text-xs overflow-x-auto">
+										{JSON.stringify(pendingToolCall.parameters, null, 2)}
+									</pre>
+								</div>
+							</div>
+
+							<div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-3">
+								<p className="text-sm text-yellow-800">
+									<strong>Note:</strong> This action will modify your data.
+									Please review the parameters before approving.
+								</p>
+							</div>
+
+							<div className="flex gap-3 mt-6">
+								<Button
+									type="Success"
+									text="✓ Approve"
+									onClick={handleApproveToolCall}
+									className="flex-1"
+								/>
+								<Button
+									type="Danger"
+									text="✗ Cancel"
+									onClick={handleRejectToolCall}
+									className="flex-1"
+								/>
+							</div>
+						</div>
+					)}
+				</div>
+			</SlideModalContainer>
+		</HeaderContainer>
+	);
+}
+
+propmt: create an AI service that will expose my local ai model and enable tools for it. After conenct this AI to my tasks and teams tools 
+code: 
+import { Ollama } from 'ollama';
+import { TaskTools, TaskSchemas } from '../mcp/tools/task-tools';
+import { TeamTools, TeamSchemas } from '../mcp/tools/team-tools';
+import { CommentTools, AdditionalTaskTools, CommentSchemas } from '../mcp/tools/comment-tools';
+
+interface ChatMessage {
+	role: 'system' | 'user' | 'assistant';
+	content: string;
+}
+
+interface ToolCall {
+	id: string;
+	type: 'function';
+	function: {
+		name: string;
+		arguments: string;
+	};
+}
+
+interface AIResponse {
+	response: string;
+	toolCall?: {
+		id: string;
+		tool: string;
+		parameters: any;
+		requiresConfirmation: boolean;
+		explanation?: string;
+	};
+}
+
+export class AIService {
+	private ollama: Ollama;
+	private model: string = 'qwen3:4b';
+
+	constructor() {
+		this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+	}
+
+	/**
+	 * Get all available MCP tools
+	 */
+	private getMCPTools() {
+		return [
+			...Object.values(TaskTools),
+			...Object.values(TeamTools),
+			...Object.values(CommentTools),
+			...Object.values(AdditionalTaskTools),
+		];
+	}
+
+	/**
+	 * Generate system prompt with available MCP tools
+	 */
+	private getSystemPrompt(userId: number): string {
+		const tools = this.getMCPTools();
+
+		const toolDescriptions = tools
+			.map((tool) => {
+				const schema: any = tool.inputSchema;
+				return `- ${tool.name}: ${tool.description}\n  Parameters: ${JSON.stringify(schema.properties || {}, null, 2)}`;
+			})
+			.join('\n\n');
+
+		return `You are an AI assistant for the Synapse Task Management application. You help users manage their tasks and teams efficiently.
+
+Available tools:
+${toolDescriptions}
+
+IMPORTANT: When a user asks you to perform an action, respond with a structured tool call in this EXACT JSON format:
+{
+  "toolCall": {
+    "tool": "tool_name",
+    "parameters": {
+      /* fill with required parameters based on the tool schema */
+    }
+  },
+  "explanation": "Brief explanation of what you're about to do"
+}
+
+For example, if user says "Create a task called Review PR with high priority":
+{
+  "toolCall": {
+    "tool": "create_task",
+    "parameters": {
+      "name": "Review PR",
+      "description": "Review pull request",
+      "priority": "HIGH"
+    }
+  },
+  "explanation": "I'll create a high priority task called 'Review PR' for you."
+}
+
+Rules:
+1. For write operations (create, update, delete), always format as JSON with toolCall
+2. For read operations (read_tasks, list_teams), you can use toolCall or respond directly
+3. Always be helpful and concise
+4. Current user ID: ${userId}
+5. Include all required parameters from the tool schema
+6. Use proper enum values (e.g., priority: "LOW", "MEDIUM", "HIGH", "URGENT")
+
+Be conversational but precise. Help users accomplish their task management goals.`;
+	}
+
+	/**
+	 * Parse tool calls from AI response
+	 */
+	private parseToolCall(response: string): ToolCall | null {
+		try {
+			// Try to extract JSON from response
+			const jsonMatch = response.match(/\{[\s\S]*"toolCall"[\s\S]*\}/);
+			if (!jsonMatch) return null;
+
+			const parsed = JSON.parse(jsonMatch[0]);
+			if (parsed.toolCall && parsed.toolCall.tool) {
+				return {
+					id: crypto.randomUUID(),
+					type: 'function',
+					function: {
+						name: parsed.toolCall.tool,
+						arguments: JSON.stringify(parsed.toolCall.parameters),
+					},
+				};
+			}
+		} catch (error) {
+			console.error('Failed to parse tool call:', error);
+		}
+		return null;
+	}
+
+	/**
+	 * Check if tool requires user confirmation
+	 */
+	private requiresConfirmation(toolName: string): boolean {
+		// Write operations require confirmation
+		const writeTools = [
+			'create_task',
+			'update_task',
+			'create_team',
+			'add_team_member',
+			'remove_team_member',
+			'archive_task',
+		];
+		return writeTools.includes(toolName);
+	}
+
+	/**
+	 * Chat with AI and get response with potential tool calls
+	 */
+	async chat(messages: ChatMessage[], userId: number): Promise<AIResponse> {
+		try {
+			// Prepend system prompt
+			const systemPrompt = this.getSystemPrompt(userId);
+			const fullMessages = [
+				{ role: 'system' as const, content: systemPrompt },
+				...messages,
+			];
+
+			// Call Ollama
+			const response = await this.ollama.chat({
+				model: this.model,
+				messages: fullMessages,
+				stream: false,
+			});
+
+			const content = response.message.content;
+
+			// Check if response contains a tool call
+			const toolCall = this.parseToolCall(content);
+
+			if (toolCall) {
+				const toolName = toolCall.function.name;
+				const parameters = JSON.parse(toolCall.function.arguments);
+
+				// Extract explanation from response
+				const explanationMatch = content.match(
+					/"explanation":\s*"([^"]*)"/
+				);
+				const explanation = explanationMatch
+					? explanationMatch[1]
+					: 'Executing action...';
+
+				return {
+					response: explanation,
+					toolCall: {
+						id: toolCall.id,
+						tool: toolName,
+						parameters,
+						requiresConfirmation:
+							this.requiresConfirmation(toolName),
+						explanation,
+					},
+				};
+			}
+
+			// No tool call, just return response
+			return {
+				response: content,
+			};
+		} catch (error: any) {
+			console.error('AI service error:', error);
+			throw new Error(
+				`Failed to get AI response: ${error.message || 'Unknown error'}`
+			);
+		}
+	}
+
+	/**
+	 * Stream chat response (for real-time UI updates)
+	 */
+	async *chatStream(
+		messages: ChatMessage[],
+		userId: number
+	): AsyncGenerator<string> {
+		try {
+			const systemPrompt = this.getSystemPrompt(userId);
+			const fullMessages = [
+				{ role: 'system' as const, content: systemPrompt },
+				...messages,
+			];
+
+			const stream = await this.ollama.chat({
+				model: this.model,
+				messages: fullMessages,
+				stream: true,
+			});
+
+			for await (const chunk of stream) {
+				yield chunk.message.content;
+			}
+		} catch (error) {
+			console.error('AI stream error:', error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Check if Ollama is available
+	 */
+	async healthCheck(): Promise<boolean> {
+		try {
+			await this.ollama.list();
+			return true;
+		} catch (error) {
+			console.error('Ollama health check failed:', error);
+			return false;
+		}
+	}
+}
+
+export const aiService = new AIService();
+
+
+import { Request, Response } from 'express';
+import { aiService } from '../services/ai-service';
+import { TaskHandlers } from '../mcp/handlers/task-handlers';
+import { TeamHandlers } from '../mcp/handlers/team-handlers';
+import { CommentHandlers } from '../mcp/handlers/comment-handlers';
+
+interface ChatRequest {
+	messages: Array<{
+		role: 'user' | 'assistant' | 'system';
+		content: string;
+	}>;
+}
+
+interface ToolExecutionRequest {
+	toolCallId: string;
+	tool: string;
+	parameters: any;
+}
+
+/**
+ * POST /api/v1/ai/chat
+ * Chat with AI and get response with potential tool calls
+ */
+export const chatWithAI = async (req: Request, res: Response) => {
+	try {
+		const { messages } = req.body as ChatRequest;
+		const userId = req.session.userData?.user.id;
+
+		if (!userId) {
+			return res.status(401).json({
+				success: false,
+				error: 'Unauthorized',
+			});
+		}
+
+		if (!messages || !Array.isArray(messages)) {
+			return res.status(400).json({
+				success: false,
+				error: 'Messages array is required',
+			});
+		}
+
+		const result = await aiService.chat(messages, userId);
+
+		return res.json({
+			success: true,
+			data: result,
+		});
+	} catch (error: any) {
+		console.error('Chat error:', error);
+		return res.status(500).json({
+			success: false,
+			error: error.message || 'Failed to process chat request',
+		});
+	}
+};
+
+/**
+ * POST /api/v1/ai/chat/stream
+ * Stream chat response in real-time (SSE)
+ */
+export const streamChat = async (req: Request, res: Response) => {
+	try {
+		const { messages } = req.body as ChatRequest;
+		const userId = req.session.userData?.user.id;
+
+		if (!userId) {
+			return res.status(401).json({
+				success: false,
+				error: 'Unauthorized',
+			});
+		}
+
+		// Set up SSE
+		res.setHeader('Content-Type', 'text/event-stream');
+		res.setHeader('Cache-Control', 'no-cache');
+		res.setHeader('Connection', 'keep-alive');
+		res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+
+		const stream = aiService.chatStream(messages, userId);
+
+		for await (const chunk of stream) {
+			res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
+		}
+
+		res.write('data: [DONE]\n\n');
+		res.end();
+	} catch (error: any) {
+		console.error('Stream error:', error);
+		if (!res.headersSent) {
+			res.status(500).json({
+				success: false,
+				error: 'Failed to stream chat',
+			});
+		}
+	}
+};
+
+/**
+ * POST /api/v1/ai/execute-tool
+ * Execute an approved tool call
+ */
+export const executeToolCall = async (req: Request, res: Response) => {
+	try {
+		const { toolCallId, tool, parameters } =
+			req.body as ToolExecutionRequest;
+		const userId = req.session.userData?.user.id;
+
+		if (!userId) {
+			return res.status(401).json({
+				success: false,
+				error: 'Unauthorized',
+			});
+		}
+
+		if (!tool || !parameters) {
+			return res.status(400).json({
+				success: false,
+				error: 'Tool name and parameters are required',
+			});
+		}
+
+		// Execute via MCP handlers
+		let result;
+
+		switch (tool) {
+			// Task tools
+			case 'create_task':
+				result = await TaskHandlers.createTask(parameters, userId);
+				break;
+			case 'read_tasks':
+				result = await TaskHandlers.readTasks(parameters, userId);
+				break;
+			case 'update_task':
+				result = await TaskHandlers.updateTask(parameters, userId);
+				break;
+			case 'subscribe_task':
+				result = await TaskHandlers.subscribeTask(parameters, userId);
+				break;
+			case 'unsubscribe_task':
+				result = await TaskHandlers.unsubscribeTask(parameters, userId);
+				break;
+			case 'archive_task':
+				result = await CommentHandlers.archiveTask(parameters, userId);
+				break;
+
+			// Team tools
+			case 'create_team':
+				result = await TeamHandlers.createTeam(parameters, userId);
+				break;
+			case 'list_teams':
+				result = await TeamHandlers.listTeams(parameters, userId);
+				break;
+			case 'add_team_member':
+				result = await TeamHandlers.addTeamMember(parameters, userId);
+				break;
+			case 'remove_team_member':
+				result = await TeamHandlers.removeTeamMember(parameters, userId);
+				break;
+
+			// Comment tools
+			case 'add_comment':
+				result = await CommentHandlers.addComment(parameters, userId);
+				break;
+			case 'read_comments':
+				result = await CommentHandlers.readComments(parameters, userId);
+				break;
+
+			default:
+				return res.status(400).json({
+					success: false,
+					error: `Unknown tool: ${tool}`,
+				});
+		}
+
+		return res.json({
+			success: true,
+			toolCallId,
+			result,
+		});
+	} catch (error: any) {
+		console.error('Tool execution error:', error);
+		return res.status(500).json({
+			success: false,
+			error: error.message || 'Failed to execute tool',
+		});
+	}
+};
+
+/**
+ * GET /api/v1/ai/health
+ * Check if AI service is available
+ */
+export const checkHealth = async (req: Request, res: Response) => {
+	try {
+		const isHealthy = await aiService.healthCheck();
+
+		return res.json({
+			success: true,
+			healthy: isHealthy,
+			message: isHealthy
+				? 'AI service is running'
+				: 'AI service is unavailable',
+		});
+	} catch (error: any) {
+		return res.status(503).json({
+			success: false,
+			healthy: false,
+			error: error.message || 'AI service unavailable',
+		});
+	}
+};
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Synapse Task Manager MCP Tools",
+  "description": "Complete tool definitions with JSON Schema validation for the Synapse Task Manager MCP server",
+  "tools": [
+    {
+      "name": "create_task",
+      "description": "Create a new task in the task management system. Automatically subscribes the creator and handles visibility rules.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Task name/title",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed task description",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
+            "default": "MEDIUM",
+            "description": "Task priority level"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Task start date in ISO 8601 format (e.g., 2025-10-26T10:00:00Z)"
+          },
+          "completeDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Task completion/due date in ISO 8601 format"
+          },
+          "taskVisibleToUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of user IDs who can see this task. Creator is automatically included.",
+            "uniqueItems": true
+          },
+          "taskVisibleToTeams": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of team IDs who can see this task",
+            "uniqueItems": true
+          },
+          "taskHiddenFromUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of user IDs who cannot see this task (overrides team visibility)",
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable status message"
+          },
+          "data": {
+            "type": "object",
+            "description": "The created task object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Unique task identifier"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
+              },
+              "createdByUserId": {
+                "type": "integer"
+              },
+              "startDate": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+              "completeDate": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "isArchived": {
+                "type": "integer"
+              },
+              "isDeleted": {
+                "type": "integer"
+              }
+            }
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if success is false"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_tasks",
+      "description": "Retrieve tasks with various filtering options. Can get all tasks, specific task by ID, user-visible tasks, or subscribed tasks.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Specific task ID to retrieve"
+          },
+          "userOnly": {
+            "type": "boolean",
+            "description": "Only return tasks visible to current user (respects visibility rules)"
+          },
+          "subscribedOnly": {
+            "type": "boolean",
+            "description": "Only return tasks user is subscribed to"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived", "all"],
+            "default": "active",
+            "description": "Filter by task status"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "createdByUserId": {
+                  "type": "integer"
+                },
+                "startDate": {
+                  "type": ["string", "null"]
+                },
+                "completeDate": {
+                  "type": ["string", "null"]
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "isArchived": {
+                  "type": "integer"
+                },
+                "taskVisibleToUsers": {
+                  "type": "array"
+                },
+                "taskVisibleToTeams": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "update_task",
+      "description": "Update an existing task. Can modify task details and visibility rules. Creator always remains visible.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to update"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Updated task name/title"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Updated task description"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
+            "description": "Updated task priority"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Updated task start date (ISO 8601 format)"
+          },
+          "completeDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Updated task completion date (ISO 8601 format)"
+          },
+          "taskVisibleToUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Updated array of user IDs who can see this task",
+            "uniqueItems": true
+          },
+          "taskVisibleToTeams": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Updated array of team IDs who can see this task",
+            "uniqueItems": true
+          },
+          "taskHiddenFromUsers": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Updated array of user IDs who cannot see this task",
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "description": "The updated task object with same structure as create_task output"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "archive_task",
+      "description": "Archive a task. Archived tasks are hidden from default views but not deleted.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to archive"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "isArchived": {
+                "type": "integer",
+                "enum": [1]
+              },
+              "archivedByUserId": {
+                "type": "integer"
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "subscribe_task",
+      "description": "Subscribe the current user to a task to receive updates and notifications.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to subscribe to"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "unsubscribe_task",
+      "description": "Unsubscribe the current user from a task to stop receiving updates.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of task to unsubscribe from"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_team",
+      "description": "Create a new team with optional initial members. The creator is automatically added to the team.",
+      "requiresConfirmation": true,
+      "inputSchema": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Team name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Team description"
+          },
+          "memberIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Array of user IDs to add as team members. Creator is automatically included.",
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "createdBy": {
+                "type": "integer"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "teamsUsersBelongTo": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_teams",
+      "description": "Retrieve all teams in the system with their members.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "includeMembers": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include team member details"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "createdBy": {
+                  "type": "integer"
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "teamsUsersBelongTo": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_comment",
+      "description": "Add a comment to a task. Useful for discussions and updates.",
+      "requiresConfirmation": false,
+      "inputSchema": {
+        "type": "object",
+        "required": ["taskId", "message"],
+        "properties": {
+          "taskId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of the task to comment on"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Comment text"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "integer"
+              },
+              "taskId": {
+                "type": "integer"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}
+/**
+ * MCP Service - API calls for AI Chat and MCP integration
+ * 
+ * This service handles communication with the AI endpoints:
+ * - POST /api/v1/ai/chat - Chat with AI
+ * - POST /api/v1/ai/chat/stream - Stream chat responses
+ * - POST /api/v1/ai/execute-tool - Execute tool calls
+ * - GET /api/v1/ai/health - Check AI service health
+ */
+
+import type {
+	MCPMessage,
+	MCPToolCall,
+} from '../../types/mcp';
+
+const AI_BASE_URL = '/api/v1/ai';
+
+/**
+ * Send a message to the AI and get a response
+ */
+export async function sendToAI(
+	token: string,
+	messages: MCPMessage[]
+): Promise<{
+	response: string;
+	toolCall?: {
+		id: string;
+		tool: string;
+		parameters: Record<string, any>;
+		requiresConfirmation: boolean;
+	};
+}> {
+	try {
+		const response = await fetch(`${AI_BASE_URL}/chat`, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ messages }),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to chat with AI: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		return data.data;
+	} catch (error) {
+		console.error('Error chatting with AI:', error);
+		throw error;
+	}
+}
+
+/**
+ * Execute an approved tool call
+ */
+export async function executeTool(
+	token: string,
+	toolCallId: string,
+	tool: string,
+	parameters: Record<string, any>
+): Promise<any> {
+	try {
+		const response = await fetch(`${AI_BASE_URL}/execute-tool`, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				toolCallId,
+				tool,
+				parameters,
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to execute tool: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		return data.result;
+	} catch (error) {
+		console.error('Error executing tool:', error);
+		throw error;
+	}
+}
+
+/**
+ * Check if AI service is available
+ */
+export async function checkAIHealth(token: string): Promise<boolean> {
+	try {
+		const response = await fetch(`${AI_BASE_URL}/health`, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!response.ok) {
+			return false;
+		}
+
+		const data = await response.json();
+		return data.healthy;
+	} catch (error) {
+		console.error('Error checking AI health:', error);
+		return false;
+	}
+}
+
+/**
+ * Stream chat responses (SSE)
+ * Returns an async generator that yields response chunks
+ */
+export async function* streamChat(
+	token: string,
+	messages: MCPMessage[]
+): AsyncGenerator<string, void, unknown> {
+	const response = await fetch(`${AI_BASE_URL}/chat/stream`, {
+		method: 'POST',
+		headers: {
+			'Authorization': `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ messages }),
+	});
+
+	if (!response.ok || !response.body) {
+		throw new Error('Failed to stream chat');
+	}
+
+	const reader = response.body.getReader();
+	const decoder = new TextDecoder();
+
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			
+			if (done) break;
+
+			const chunk = decoder.decode(value, { stream: true });
+			const lines = chunk.split('\n');
+
+			for (const line of lines) {
+				if (line.startsWith('data: ')) {
+					const data = line.slice(6);
+					if (data === '[DONE]') {
+						return;
+					}
+					try {
+						const parsed = JSON.parse(data);
+						if (parsed.chunk) {
+							yield parsed.chunk;
+						}
+					} catch (e) {
+						// Skip invalid JSON
+					}
+				}
+			}
+		}
+	} finally {
+		reader.releaseLock();
+	}
+}
+
+/**
+ * Format tool call for display
+ */
+export function formatToolCall(toolCall: MCPToolCall): string {
+	return `Tool: ${toolCall.tool}\n\nParameters:\n${JSON.stringify(
+		toolCall.parameters,
+		null,
+		2
+	)}`;
+}
