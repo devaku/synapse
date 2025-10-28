@@ -3,36 +3,18 @@ import Button from '../../components/ui/button';
 import DataTable from '../../components/container/DataTableBase';
 import { type TableColumn } from 'react-data-table-component';
 import type { Task } from '../../lib/types/models';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import StatusPill from '../../components/ui/status_pill';
 import { formatDate } from '../../lib/helpers/datehelpers';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
+import { readAllTasks } from '../../lib/services/api/task';
 
 export default function AdminTaskManagerPage() {
+	const { token } = useAuthContext();
+
 	const [allTaskData, setAllTaskData] = useState<Task[]>([]);
 	const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
 	const [filterTextTasks, setFilterTextTasks] = useState('');
-
-	useEffect(() => {
-		const taskResult = allTaskData.filter((item: Task) => {
-			return (
-				(item.id &&
-					item.id
-						.toString()
-						.toLowerCase()
-						.includes(filterTextTasks.toLowerCase())) ||
-				(item.name &&
-					item.name
-						.toLowerCase()
-						.includes(filterTextTasks.toLowerCase())) ||
-				(item.priority &&
-					item.priority
-						.toLowerCase()
-						.includes(filterTextTasks.toLowerCase()))
-			);
-		});
-		setFilteredTasks(taskResult);
-	}, [filterTextTasks, allTaskData]);
 
 	const taskColumns: TableColumn<Task>[] = [
 		{
@@ -61,6 +43,43 @@ export default function AdminTaskManagerPage() {
 			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
 		},
 	];
+
+	// Filtering logic
+	useEffect(() => {
+		const taskResult = allTaskData.filter((item: Task) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase())) ||
+				(item.priority &&
+					item.priority
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase()))
+			);
+		});
+		setFilteredTasks(taskResult);
+	}, [filterTextTasks, allTaskData]);
+
+	// API integration
+	async function refreshTableHTTP() {
+		let allTaskRows = await readAllTasks(token!);
+		setFilteredTasks(allTaskRows);
+		setAllTaskData(allTaskRows);
+	}
+
+	// Initial load
+	useEffect(() => {
+		async function start() {
+			await refreshTableHTTP();
+		}
+		start();
+	}, []);
 
 	return (
 		<HeaderContainer pageTitle="Admin - Task Manager">
