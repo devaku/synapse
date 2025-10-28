@@ -4,6 +4,7 @@ import DataTable from '../../components/container/DataTableBase';
 import { type TableColumn } from 'react-data-table-component';
 import type { Task } from '../../lib/types/models';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import StatusPill from '../../components/ui/status_pill';
 import { formatDate } from '../../lib/helpers/datehelpers';
 
@@ -11,6 +12,27 @@ export default function AdminTaskManagerPage() {
 	const [allTaskData, setAllTaskData] = useState<Task[]>([]);
 	const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
 	const [filterTextTasks, setFilterTextTasks] = useState('');
+
+	useEffect(() => {
+		const taskResult = allTaskData.filter((item: Task) => {
+			return (
+				(item.id &&
+					item.id
+						.toString()
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase())) ||
+				(item.name &&
+					item.name
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase())) ||
+				(item.priority &&
+					item.priority
+						.toLowerCase()
+						.includes(filterTextTasks.toLowerCase()))
+			);
+		});
+		setFilteredTasks(taskResult);
+	}, [filterTextTasks, allTaskData]);
 
 	const taskColumns: TableColumn<Task>[] = [
 		{
