@@ -8,9 +8,12 @@ import StatusPill from '../../components/ui/status_pill';
 import { formatDate } from '../../lib/helpers/datehelpers';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { readAllTasks } from '../../lib/services/api/task';
+import { useSocketContext } from '../../lib/contexts/SocketContext';
+import * as SocketEvents from '../../lib/helpers/socket-events';
 
 export default function AdminTaskManagerPage() {
 	const { token } = useAuthContext();
+	const { socket } = useSocketContext();
 
 	const [allTaskData, setAllTaskData] = useState<Task[]>([]);
 	const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
@@ -80,6 +83,21 @@ export default function AdminTaskManagerPage() {
 		}
 		start();
 	}, []);
+
+	// Socket listeners for real-time updates
+	useEffect(() => {
+		async function start() {
+			await refreshTableHTTP();
+		}
+
+		socket?.on(SocketEvents.TASK.MAIN_TABLE, start);
+		socket?.on(SocketEvents.TASK.TASK_ARCHIVED, start);
+
+		return () => {
+			socket?.off(SocketEvents.TASK.MAIN_TABLE, start);
+			socket?.off(SocketEvents.TASK.TASK_ARCHIVED, start);
+		};
+	}, [socket]);
 
 	return (
 		<HeaderContainer pageTitle="Admin - Task Manager">
