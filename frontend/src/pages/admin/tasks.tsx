@@ -1,4 +1,8 @@
 import HeaderContainer from '../../components/container/header_container';
+import Button from '../../components/ui/button';
+import DataTable from '../../components/container/DataTableBase';
+import { type TableColumn } from 'react-data-table-component';
+import type { Task } from '../../lib/types/models';
 
 export default function AdminTaskManagerPage() {
 	return (
