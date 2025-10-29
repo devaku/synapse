@@ -15,9 +15,15 @@ debugRouter.get('/', (req: Request, res: Response) => {
 });
 
 debugRouter.get('/image/:id', async (req: Request, res: Response) => {
-	const row = await imageService.readImage(1);
-	res.set('Content-Type', row?.mimeType);
-	res.send(row?.imageBlob);
+	const id = req.params.id;
+
+	if (id) {
+		const row = await imageService.readImage(Number(id));
+		res.set('Content-Type', row?.mimeType);
+		res.send(row?.imageBlob);
+	} else {
+		res.send();
+	}
 });
 
 debugRouter.post(
