@@ -27,12 +27,22 @@ export const createCommentService = (tx: PrismaClientOrTransaction) => {
 				},
 				include: {
 					imagesAttachedToComments: {
-						select: { image: true },
+						select: {
+							image: {
+								omit: {
+									imageBlob: true,
+								},
+							},
+						},
 					},
 					task: true,
 					user: {
 						include: {
-							image: true,
+							image: {
+								omit: {
+									imageBlob: true,
+								},
+							},
 						},
 					},
 				},
