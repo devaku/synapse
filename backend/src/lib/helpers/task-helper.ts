@@ -42,31 +42,31 @@ export async function removeImages(
 		// Get all the images associated with the task
 		const task = await taskService.readTaskById(taskId);
 
-		// if (task && task?.imagesAttachedToTasks.length > 0) {
-		// 	const removedUrls = task.imagesAttachedToTasks
-		// 		.filter((el) => removedIds.includes(el.imageId))
-		// 		.map((el) => el.image.imageBlob);
+		if (task && task?.imagesAttachedToTasks.length > 0) {
+			const removedUrls = task.imagesAttachedToTasks
+				.filter((el) => removedIds.includes(el.imageId))
+				.map((el) => el.image.imageUrl);
 
-		// 	if (removedUrls.length > 0) {
-		// 		// Remove the links in the table
-		// 		await imageLinkService.unlinkImagesToTasks(removedIds, taskId);
+			if (removedUrls.length > 0) {
+				// Remove the links in the table
+				await imageLinkService.unlinkImagesToTasks(removedIds, taskId);
 
-		// 		// Delete the PHYSICAL images themselves that are in storage
-		// 		const fileObjects = removedUrls.map((el) => {
-		// 			const splits = el.split('/uploads/');
-		// 			const filename = splits[1];
-		// 			return {
-		// 				filename,
-		// 			};
-		// 		});
+				// Delete the PHYSICAL images themselves that are in storage
+				// const fileObjects = removedUrls.map((el) => {
+				// 	const splits = el.split('/uploads/');
+				// 	const filename = splits[1];
+				// 	return {
+				// 		filename,
+				// 	};
+				// });
 
-		// 		const uploadFolder = `${globalThis.ROOT_DIR}/public/uploads`;
-		// 		await deleteUploadedFiles(fileObjects, uploadFolder);
+				// const uploadFolder = `${globalThis.ROOT_DIR}/public/uploads`;
+				// await deleteUploadedFiles(fileObjects, uploadFolder);
 
-		// 		// Delete the entry in the image table
-		// 		await imageService.deleteImages(removedIds);
-		// 	}
-		// }
+				// Delete the entry in the image table
+				await imageService.deleteImages(removedIds);
+			}
+		}
 	} catch (error) {
 		throw error;
 	}
