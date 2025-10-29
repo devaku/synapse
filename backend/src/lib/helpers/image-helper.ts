@@ -30,7 +30,7 @@ export const createImageHelper = () => {
 							// TODO: Change URL to an official one
 							imageUrl: `${
 								process.env.SERVER_URL
-							}/api/v1/debug/image/${maxId + index}`,
+							}/api/v1/debug/image/${maxId + index + 1}`,
 							mimeType: el.mimetype,
 						};
 					});
