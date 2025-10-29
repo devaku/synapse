@@ -26,7 +26,14 @@ import { createTaskSubscriptionService } from '../services/task-subscription-ser
  */
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
+import { createImageHelper } from '../lib/helpers/image-helper';
 import { pingUsersOfNewCommentOnTask } from '../lib/helpers/socket-helper';
+
+/**
+ * INITIALIZATIONS
+ */
+
+const imageHelper = createImageHelper();
 
 const commentService = createCommentService(prismaDb);
 const taskService = createTaskService(prismaDb);
@@ -63,12 +70,11 @@ export async function createComment(req: Request, res: Response) {
 			let imageRows;
 			if (Array.isArray(req.files)) {
 				const uploaded = req.files;
-				if (uploaded.length > 0) {
-					const images = uploaded.map((el: any) => {
-						return `${IMAGE_STORAGE_URL}/${el.filename}`;
-					});
-					imageRows = await imageService.createImage(userId!, images);
-				}
+				imageRows = await imageHelper.uploadImages(
+					tx,
+					uploaded,
+					userId!
+				);
 			}
 
 			// Link the images to the comment created
@@ -98,18 +104,6 @@ export async function createComment(req: Request, res: Response) {
 				.status(200)
 				.json(buildResponse(200, finalMessage, commentList));
 		} catch (error: any) {
-			/**
-			 * If there was ever any error
-			 * make sure to properly destroy any uploaded images
-			 */
-
-			if (Array.isArray(req.files)) {
-				const uploaded = req.files;
-				if (uploaded.length > 0) {
-					deleteUploadedFiles(uploaded, req.upload_location);
-				}
-			}
-
 			return res
 				.status(500)
 				.json(buildError(500, 'Error in creating the comment!', error));

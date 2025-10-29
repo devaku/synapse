@@ -32,7 +32,11 @@ export const createCommentService = (tx: PrismaClientOrTransaction) => {
 					task: true,
 					user: {
 						include: {
-							image: true,
+							image: {
+								omit: {
+									imageBlob: false,
+								},
+							},
 						},
 					},
 				},
