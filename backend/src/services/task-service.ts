@@ -50,18 +50,32 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 				where: { id, isDeleted: 0 },
 				include: {
 					imagesAttachedToTasks: {
-						include: { image: true },
+						include: {
+							image: {
+								omit: {
+									imageBlob: true,
+								},
+							},
+						},
 					},
 					comments: {
 						include: {
 							imagesAttachedToComments: {
 								include: {
-									image: true,
+									image: {
+										omit: {
+											imageBlob: true,
+										},
+									},
 								},
 							},
 							user: {
 								include: {
-									image: true,
+									image: {
+										omit: {
+											imageBlob: true,
+										},
+									},
 								},
 							},
 						},
@@ -190,7 +204,15 @@ export const createTaskService = (tx: PrismaClientOrTransaction) => {
 							lastName: true,
 						},
 					},
-					imagesAttachedToTasks: true,
+					imagesAttachedToTasks: {
+						include: {
+							image: {
+								omit: {
+									imageBlob: true,
+								},
+							},
+						},
+					},
 					taskHiddenFromUsers: true,
 					taskVisibleToTeams: true,
 					taskVisibleToUsers: true,

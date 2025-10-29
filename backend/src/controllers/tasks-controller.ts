@@ -113,6 +113,7 @@ export async function createTask(req: Request, res: Response) {
 								(el: number) => !temp.includes(el)
 							)
 						);
+
 						notificationUserIds.sort();
 					}
 				} else {
@@ -124,6 +125,11 @@ export async function createTask(req: Request, res: Response) {
 					const payload = {
 						...taskRow,
 					};
+
+					// Do not notify yourself
+					notificationUserIds = notificationUserIds.filter(
+						(el) => el != userId
+					);
 
 					const notificationBody = {
 						createdByUserId: req.session.userData?.user.id!,

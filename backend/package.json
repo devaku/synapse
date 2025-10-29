@@ -9,7 +9,7 @@
 		"compose:up": "docker compose -f ../docker-compose.yaml -p synapse_backend up --build",
 		"compose:down": "docker compose -p synapse_backend down",
 		"compose:stop": "docker compose -p synapse_backend stop",
-		"db:seed": "npm run clean:uploads && npm run seed:uploads && npx prisma migrate reset --force && ts-node prisma/index_seed.js",
+		"db:seed": "npx prisma migrate reset --force && ts-node prisma/index_seed.js",
 		"db:reset": "npx prisma migrate reset --force",
 		"db:generate": "npx prisma generate",
 		"clean:uploads": "rimraf public/uploads",
