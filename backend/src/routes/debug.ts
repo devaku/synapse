@@ -14,7 +14,7 @@ debugRouter.get('/', (req: Request, res: Response) => {
 	});
 });
 
-debugRouter.get('/image', async (req: Request, res: Response) => {
+debugRouter.get('/image/:id', async (req: Request, res: Response) => {
 	const row = await imageService.readImage(1);
 	res.set('Content-Type', row?.mimeType);
 	res.send(row?.imageBlob);
@@ -54,7 +54,7 @@ debugRouter.post(
 						mimeType: el.mimetype,
 					};
 				});
-				await imageService.createImage(5, images);
+				// await imageService.createImage(5, images);
 			}
 		}
 

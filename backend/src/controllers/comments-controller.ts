@@ -1,4 +1,4 @@
-import { prismaDb } from '../lib/database';
+import { prismaDb, txtimeoutValue } from '../lib/database';
 import { Request, Response } from 'express';
 import { IMAGE_STORAGE_URL } from '../lib/env-variables';
 import { Server as SocketIOServer } from 'socket.io';
@@ -49,66 +49,76 @@ export async function createComment(req: Request, res: Response) {
 	taskId = Number(taskId);
 	const userId = req.session.userData?.user.id;
 
-	await prismaDb.$transaction(async (tx: PrismaClientOrTransaction) => {
-		// Load up the service
-		const imageService = createImageService(tx);
-		const imageLinkService = createImageLinkService(tx);
+	await prismaDb.$transaction(
+		async (tx: PrismaClientOrTransaction) => {
+			// Load up the service
+			const imageService = createImageService(tx);
+			const imageLinkService = createImageLinkService(tx);
 
-		try {
-			// req.files[0].filename
-			// console.log(req.files);
+			try {
+				// req.files[0].filename
+				// console.log(req.files);
 
-			// Create the comment in the database
-			const commentRow = await commentService.createComment(
-				userId!,
-				taskId,
-				message
-			);
+				// Create the comment in the database
+				const commentRow = await commentService.createComment(
+					userId!,
+					taskId,
+					message
+				);
 
-			// If there were images uploaded
-			// store them to database
-			let imageRows;
-			if (Array.isArray(req.files)) {
-				const uploaded = req.files;
-				imageRows = await imageHelper.uploadImages(
+				// If there were images uploaded
+				// store them to database
+				let imageRows;
+				if (Array.isArray(req.files)) {
+					const uploaded = req.files;
+					imageRows = await imageHelper.uploadImages(
+						tx,
+						uploaded,
+						userId!
+					);
+				}
+
+				// Link the images to the comment created
+				if (imageRows) {
+					let imageIds = imageRows.map((el: any) => el.id);
+					await imageLinkService.linkImagesToComments(
+						imageIds,
+						commentRow.id
+					);
+				}
+
+				// Retrieve comment, this time with all the comments
+				const commentList = await commentService.readComment(
 					tx,
-					uploaded,
-					userId!
+					taskId
 				);
-			}
+				let finalMessage = '';
+				finalMessage =
+					commentList.length > 0
+						? 'Data retrieved successfully.'
+						: 'No data found.';
 
-			// Link the images to the comment created
-			if (imageRows) {
-				let imageIds = imageRows.map((el: any) => el.id);
-				await imageLinkService.linkImagesToComments(
-					imageIds,
-					commentRow.id
+				await setupNotification(
+					req.io,
+					taskId,
+					req.session.userData?.user!
 				);
+
+				return res
+					.status(200)
+					.json(buildResponse(200, finalMessage, commentList));
+			} catch (error: any) {
+				return res
+					.status(500)
+					.json(
+						buildError(500, 'Error in creating the comment!', error)
+					);
 			}
-
-			// Retrieve comment, this time with all the comments
-			const commentList = await commentService.readComment(tx, taskId);
-			let finalMessage = '';
-			finalMessage =
-				commentList.length > 0
-					? 'Data retrieved successfully.'
-					: 'No data found.';
-
-			await setupNotification(
-				req.io,
-				taskId,
-				req.session.userData?.user!
-			);
-
-			return res
-				.status(200)
-				.json(buildResponse(200, finalMessage, commentList));
-		} catch (error: any) {
-			return res
-				.status(500)
-				.json(buildError(500, 'Error in creating the comment!', error));
+		},
+		{
+			timeout: txtimeoutValue(),
 		}
-	});
+	);
 }
 
 async function setupNotification(

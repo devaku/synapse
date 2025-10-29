@@ -3,6 +3,7 @@ import { PrismaClientOrTransaction } from '../types';
 type imageType = {
 	imageBlob: Buffer;
 	mimeType: string;
+	imageUrl: string;
 };
 
 export const createImageService = (tx: PrismaClientOrTransaction) => {
@@ -15,7 +16,7 @@ export const createImageService = (tx: PrismaClientOrTransaction) => {
 				return {
 					imageBlob: el.imageBlob,
 					userId,
-					imageUrl: '',
+					imageUrl: el.imageUrl,
 					mimeType: el.mimeType,
 				};
 			});
@@ -24,6 +25,9 @@ export const createImageService = (tx: PrismaClientOrTransaction) => {
 			// Retrieve the newly stored images
 			const row = await tx.image.createManyAndReturn({
 				data: [...finalData],
+				omit: {
+					imageBlob: true,
+				},
 			});
 
 			return row;
