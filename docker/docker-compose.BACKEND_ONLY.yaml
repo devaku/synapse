@@ -9,8 +9,6 @@ services:
       # HOST - CONTAINER
       ports:
           - '8080:8080'
-      volumes:
-          - backend_data:/usr/src/app/backend/dist/public/uploads
       networks:
           - synapse_network
 
@@ -29,10 +27,9 @@ services:
         # Access 5432 container port via LOCAL 4001
         ports:
             - '4001:5432'
+        # Needs to be removed in final release
         volumes:
             - postgres_data:/var/lib/postgresql/data
-
-        # Needs to be removed in final release
         networks:
             - synapse_network
 
@@ -72,8 +69,6 @@ services:
 
 volumes:
     postgres_data:
-    backend_data:
 
-# Needs to be removed in final release
 networks:
     synapse_network:
