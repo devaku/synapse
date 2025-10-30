@@ -283,16 +283,17 @@ export async function readAllMyTasks(token: string) {
 	}
 }
 
-export async function deleteTask(taskIdArray: number[]) {
+export async function deleteTask(token: string, taskIdArray: number[]) {
 	let body = {
 		taskIdArray,
 	};
 	let response: jsonResponse = await fetch(`${url}/tasks`, {
 		method: 'DELETE',
 		headers: {
-			'Authorization': 'Bearer TOKEN',
+			'Authorization': `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
+		credentials: 'include',
 		body: JSON.stringify(body),
 	})
 		.then((res) => res.json())
@@ -300,9 +301,16 @@ export async function deleteTask(taskIdArray: number[]) {
 			console.error('Fetch error:', error);
 		});
 
-	let { data } = response;
-	if (data) {
-		return data;
+	if (response.statusCode == 401) {
+		throw new Error(response.data![0].error);
+	}
+
+	if (response) {
+		if (response.data) {
+			return response.data;
+		} else {
+			return [];
+		}
 	} else {
 		return [];
 	}
