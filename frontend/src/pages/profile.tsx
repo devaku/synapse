@@ -52,7 +52,9 @@ export default function ProfilePage() {
 							<button
 								type="button"
 								className="w-full h-[35px] px-4 py-1 text-white bg-[#153243]"
-								onClick={() => navigate('/')}
+								onClick={() =>
+									alert('Do not use this button to logout')
+								}
 							>
 								Logout
 							</button>
