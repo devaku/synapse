@@ -1,16 +1,4 @@
 services:
-    backend_service:
-      image: devaku/synapse-backend:latest
-      container_name: synapse_backend
-      restart: unless-stopped  
-      env_file: 
-        - backend.env
-
-      # HOST - CONTAINER
-      ports:
-          - '8080:8080'
-      networks:
-          - synapse_network
 
     postgres_service:
         image: postgres:15
@@ -27,11 +15,49 @@ services:
         # Access 5432 container port via LOCAL 4001
         ports:
             - '4001:5432'
-        # Needs to be removed in final release
         volumes:
             - postgres_data:/var/lib/postgresql/data
         networks:
             - synapse_network
+
+    nginx_service:
+      image: devaku/synapse-nginx:latest
+      container_name: synapse_nginx
+      restart: unless-stopped
+      
+      ports:
+        - '80:80'
+        - '443:443'
+
+    backend_service:
+      image: devaku/synapse-backend:latest
+      container_name: synapse_backend
+      restart: unless-stopped  
+      env_file: 
+        - backend.env
+
+      # HOST - CONTAINER
+      ports:
+          - '8080:8080'
+      networks:
+          - synapse_network
+      depends_on: 
+          - postgres_service
+      command: /bin/sh -c "npm run build-dist"
+          
+
+    frontend_service:
+      image: devaku/synapse-frontend:latest
+      container_name: synapse_frontend
+      restart: unless-stopped  
+      env_file: 
+        - frontend.env
+
+      # HOST - CONTAINER
+      ports:
+          - '3000:3000'
+      networks:
+          - synapse_network
 
     keycloak_service:
         container_name: synapse_keycloak
@@ -42,26 +68,7 @@ services:
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
 
-            # IMPORTANT. These database settings need to be removed
-            # In final release because Keycloak should handle its own database
-            # and not stored in the local database
-            # Database Type
-            KC_DB: postgres
-
-            # Name of the SERVICE
-            # That is running the database
-            KC_DB_URL_HOST: postgres_service
-
-            # Database Credentials
-            # Should be the same as the one in the DB setup
-            KC_DB_URL_DATABASE: synapse_db
-            KC_DB_USERNAME: myuser
-            KC_DB_PASSWORD: mypassword
-
-        # Needs to be removed in final release
         # Reference the SERVICE
-        depends_on:
-            - postgres_service
         networks:
             - synapse_network
 
