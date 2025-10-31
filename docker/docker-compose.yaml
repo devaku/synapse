@@ -41,7 +41,7 @@ services:
           - synapse_network
       depends_on: 
           - postgres_service
-      command: /bin/sh -c "npm run build-dist"
+      command: /bin/sh -c "npm run build-dist && npm run dist"
           
 
     frontend_service:
