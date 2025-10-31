@@ -8,6 +8,7 @@ misc
 */**/node_modules
 */**/dist
 */**/synapses-test.2025-09-30.private-key.pem
+nginx/dist
 
 # Backend
 backend/.env
@@ -15,6 +16,7 @@ backend/src/public/uploads/*
 backend/scratch.ts
 backend/database/generated/prisma
 backend/api/github.http
+backend/dist-html
 
 # Frontend
 frontend/src/scratch
