@@ -53,7 +53,6 @@ export default function AdminTaskManagerPage() {
 			name: 'Task',
 			selector: (row) => row.name,
 			sortable: true,
-			grow: 2,
 		},
 		{
 			name: 'Created At',
