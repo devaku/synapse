@@ -4,9 +4,15 @@ echo "=============="
 echo "SCRIPT STARTING"
 echo "=============="
 
-if [[ ! -e backend.env || ! -e frontend.env]]
+if [[ ! -e backend.env || ! -e frontend.env ]]
 then
     echo "Necessary env files are missing. Please create it first before running this script."
+    exit 1
+fi
+
+if [[ ! -e docker-compose.yaml ]]
+then
+    echo "Missing docker-compose file"
     exit 1
 fi
 
@@ -22,8 +28,7 @@ sudo usermod -aG docker $USER
 echo "Creating the containers"
 sudo docker compose -f docker-compose.yaml up -d
 
-echo "Seeding the database"
-sudo docker exec -it synapse_backend bash
+
 
 echo "=============="
 echo "SCRIPT FINISHED"

@@ -3,7 +3,6 @@ services:
     postgres_service:
         image: postgres:15
         container_name: synapse_postgres_db
-        restart: unless-stopped
 
         # Database credentials
         environment:
@@ -24,7 +23,6 @@ services:
       image: devaku/synapse-nginx:latest
       container_name: synapse_nginx
       restart: unless-stopped
-      
       ports:
         - '80:80'
         - '443:443'
@@ -32,9 +30,9 @@ services:
     backend_service:
       image: devaku/synapse-backend:latest
       container_name: synapse_backend
-      restart: unless-stopped  
+      restart: unless-stopped
       env_file: 
-        - backend.env
+        - ./backend.env
 
       # HOST - CONTAINER
       ports:
@@ -49,9 +47,9 @@ services:
     frontend_service:
       image: devaku/synapse-frontend:latest
       container_name: synapse_frontend
-      restart: unless-stopped  
+      restart: unless-stopped
       env_file: 
-        - frontend.env
+        - ./frontend.env
 
       # HOST - CONTAINER
       ports:
