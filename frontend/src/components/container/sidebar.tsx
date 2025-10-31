@@ -126,8 +126,7 @@ export default function Sidebar() {
 					onClick={() => {
 						//  Clear socket session ID
 						localStorage.setItem('SOCKET-SESSIONID', '');
-
-						const logoutUrl = import.meta.env.VITE_FRONTEND_URL;
+						const logoutUrl = location.origin;
 
 						keycloak.logout({
 							redirectUri: logoutUrl,

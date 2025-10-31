@@ -26,7 +26,7 @@ export function AuthWarningModal({
 
 	useEffect(() => {
 		if (isTokenExpired) {
-			const logoutUrl = import.meta.env.VITE_FRONTEND_URL;
+			const logoutUrl = location.origin;
 
 			keycloak.logout({
 				redirectUri: logoutUrl,
