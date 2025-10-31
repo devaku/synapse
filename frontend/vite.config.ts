@@ -14,6 +14,7 @@ export default defineConfig({
 				changeOrigin: true,
 			},
 		},
+		allowedHosts: ['.synapses.software'],
 	},
 	resolve: {
 		alias: {
