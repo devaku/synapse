@@ -8,22 +8,22 @@ type Tab = {
 };
 
 export type TabGroupStyle = 'Default' | 'Title';
-const styles = [
-	{
+const styles = {
+	Default: {
 		// Default
 		base: 'w-40 h-10 flex items-center justify-center hover:cursor-pointer',
 		selected: 'border-b-1 bg-ttg-black/5',
 		unselected: 'bg-ttg-black/15',
 		div: 'flex',
 	},
-	{
+	Title: {
 		// Title
 		base: 'text-3xl font-semibold w-60 h-12 flex items-center justify-center hover:cursor-pointer border-b-2',
 		selected: 'border-ttg-black',
 		unselected: 'border-ttg-white',
 		div: 'flex justify-center',
 	},
-];
+};
 
 export default function TabGroup({
 	tabs,
