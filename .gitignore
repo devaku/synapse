@@ -4,7 +4,7 @@ misc
 *.env
 
 # Apply to both
-*/**/.env
+*/**/.env.*
 */**/node_modules
 */**/dist
 */**/synapses-test.2025-09-30.private-key.pem
