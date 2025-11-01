@@ -18,6 +18,7 @@
 		"build": "npm run db:generate && npm run clean && npm run compile && npm run copy",
 		"clean": "rimraf dist",
 		"compile": "tsc",
+		"copy": "cpx \"src/**/!(uploads)/*\" dist",
 		"copy-backend": "cpx \"src/**/!(uploads)/*\" dist",
 		"copy-frontend": "cpx \"dist-html/**/*\" dist/public",
 		"format": "npx prettier . --write --config ../.prettierrc.json",
