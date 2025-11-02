@@ -32,7 +32,8 @@ app.get('/docker', (req: Request, res: Response, next: NextFunction) => {
 setupServerMiddleware(app);
 
 // Setup socket
-const httpServer = app.listen(PORT, () => {
+const host = '0.0.0.0';
+const httpServer = app.listen(Number(PORT), host, () => {
 	console.log(`Server is listening at PORT: ${PORT}`);
 });
 const io = socketMiddleware(httpServer);

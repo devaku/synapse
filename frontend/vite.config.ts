@@ -5,6 +5,9 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
+	build: {
+		outDir: '../backend/dist-html',
+	},
 	server: {
 		host: true,
 		port: 3000,

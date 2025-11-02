@@ -5,6 +5,7 @@ export interface User {
 	email: string;
 	firstName?: string | null;
 	lastName?: string | null;
+	phoneNumber?: string;
 	phone?: number | null;
 	imageId?: number | null;
 	lastActivity: Date;

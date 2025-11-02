@@ -26,6 +26,8 @@ services:
       ports:
         - '80:80'
         - '443:443'
+      networks:
+          - synapse_network
 
     backend_service:
       image: devaku/synapse-backend:latest
@@ -43,20 +45,6 @@ services:
           - postgres_service
       command: /bin/sh -c "npm run build-dist && npm run dist"
           
-
-    frontend_service:
-      image: devaku/synapse-frontend:latest
-      container_name: synapse_frontend
-      restart: unless-stopped
-      env_file: 
-        - ./frontend.env
-
-      # HOST - CONTAINER
-      ports:
-          - '3000:3000'
-      networks:
-          - synapse_network
-
     keycloak_service:
         container_name: synapse_keycloak
         image: quay.io/keycloak/keycloak:26.2.5
@@ -65,6 +53,7 @@ services:
         environment:
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+            KC_PROXY_HEADERS: xforwarded 
 
         # Reference the SERVICE
         networks:
@@ -77,3 +66,4 @@ volumes:
 
 networks:
     synapse_network:
+      driver: bridge
