@@ -95,13 +95,9 @@ export default function SettingsPage() {
 
 								<SelectGroup
 									selectionBoxes={[
-										{ name: 'Test 1' },
-										{ name: 'test 2' },
-										{ name: 'test 3' },
-										{ name: 'test 4' },
-										{ name: 'test 5' },
-										{ name: 'test 6' },
-										{ name: 'test 7' },
+										{ name: 'Task Creation' },
+										{ name: 'Task Completion' },
+										{ name: 'Comments' },
 									]}
 								/>
 								<TabNotification />
