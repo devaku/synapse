@@ -2,9 +2,9 @@ import { useState, useRef } from 'react';
 import HeaderContainer from '../components/container/header_container';
 
 import TabNotification from '../components/tabs/tab_notification';
-
 import TabGroup from '../components/ui/tab_group';
 import RadioGroup from '../components/ui/radio_group';
+import SelectGroup from '../components/ui/select_group';
 
 export default function SettingsPage() {
 	return (
@@ -81,7 +81,32 @@ export default function SettingsPage() {
 					},
 					{
 						name: 'Notifications',
-						content: <TabNotification></TabNotification>,
+						content: (
+							<>
+								<div className="flex flex-col gap-2 my-5">
+									<h2 className="text-3xl font-semibold">
+										Notification Filters
+									</h2>
+									<p>
+										For which categories should you receive
+										notifications?
+									</p>
+								</div>
+
+								<SelectGroup
+									selectionBoxes={[
+										{ name: 'Test 1' },
+										{ name: 'test 2' },
+										{ name: 'test 3' },
+										{ name: 'test 4' },
+										{ name: 'test 5' },
+										{ name: 'test 6' },
+										{ name: 'test 7' },
+									]}
+								/>
+								<TabNotification />
+							</>
+						),
 					},
 					{ name: 'Category', content: <div></div> },
 				]}
