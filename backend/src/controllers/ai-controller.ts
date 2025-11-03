@@ -3,6 +3,7 @@ import { aiService } from '../services/ai-service';
 import { TaskHandlers } from '../mcp/handlers/task-handlers';
 import { TeamHandlers } from '../mcp/handlers/team-handlers';
 import { CommentHandlers } from '../mcp/handlers/comment-handlers';
+import { UserHandlers } from '../mcp/handlers/user-handlers';
 
 interface ChatRequest {
 	messages: Array<{
@@ -26,7 +27,12 @@ export const chatWithAI = async (req: Request, res: Response) => {
 		const { messages } = req.body as ChatRequest;
 		const userId = req.session.userData?.user.id;
 
+		console.log('[AI Controller] Chat request received');
+		console.log('[AI Controller] User ID:', userId);
+		console.log('[AI Controller] Messages:', JSON.stringify(messages, null, 2));
+
 		if (!userId) {
+			console.error('[AI Controller] Unauthorized: No user ID in session');
 			return res.status(401).json({
 				success: false,
 				error: 'Unauthorized',
@@ -34,6 +40,7 @@ export const chatWithAI = async (req: Request, res: Response) => {
 		}
 
 		if (!messages || !Array.isArray(messages)) {
+			console.error('[AI Controller] Invalid request: Messages not provided or not an array');
 			return res.status(400).json({
 				success: false,
 				error: 'Messages array is required',
@@ -41,16 +48,32 @@ export const chatWithAI = async (req: Request, res: Response) => {
 		}
 
 		const result = await aiService.chat(messages, userId);
-
+		
+		console.log('[AI Controller] Chat completed successfully');
+		console.log('[AI Controller] Result structure:', JSON.stringify({
+			hasResponse: !!result.response,
+			hasToolCall: !!result.toolCall,
+			responseLength: result.response?.length || 0,
+		}, null, 2));
+		console.log('[AI Controller] Full result:', JSON.stringify(result, null, 2));
+		
 		return res.json({
 			success: true,
 			data: result,
 		});
 	} catch (error: any) {
-		console.error('Chat error:', error);
+		console.error('=== AI CONTROLLER CHAT ERROR ===');
+		console.error('Error type:', error.constructor.name);
+		console.error('Error message:', error.message);
+		console.error('Error stack:', error.stack);
+		
 		return res.status(500).json({
 			success: false,
 			error: error.message || 'Failed to process chat request',
+			details: process.env.NODE_ENV === 'DEVELOPMENT' ? {
+				type: error.constructor.name,
+				stack: error.stack,
+			} : undefined,
 		});
 	}
 };
@@ -64,7 +87,11 @@ export const streamChat = async (req: Request, res: Response) => {
 		const { messages } = req.body as ChatRequest;
 		const userId = req.session.userData?.user.id;
 
+		console.log('[AI Controller] Stream request received');
+		console.log('[AI Controller] User ID:', userId);
+
 		if (!userId) {
+			console.error('[AI Controller] Stream: Unauthorized - no user ID');
 			return res.status(401).json({
 				success: false,
 				error: 'Unauthorized',
@@ -77,6 +104,8 @@ export const streamChat = async (req: Request, res: Response) => {
 		res.setHeader('Connection', 'keep-alive');
 		res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
 
+		console.log('[AI Controller] SSE headers set, starting stream...');
+
 		const stream = aiService.chatStream(messages, userId);
 
 		for await (const chunk of stream) {
@@ -85,13 +114,27 @@ export const streamChat = async (req: Request, res: Response) => {
 
 		res.write('data: [DONE]\n\n');
 		res.end();
+		
+		console.log('[AI Controller] Stream completed successfully');
 	} catch (error: any) {
-		console.error('Stream error:', error);
+		console.error('=== AI CONTROLLER STREAM ERROR ===');
+		console.error('Error type:', error.constructor.name);
+		console.error('Error message:', error.message);
+		console.error('Error stack:', error.stack);
+		
 		if (!res.headersSent) {
 			res.status(500).json({
 				success: false,
-				error: 'Failed to stream chat',
+				error: error.message || 'Failed to stream chat',
+				details: process.env.NODE_ENV === 'DEVELOPMENT' ? {
+					type: error.constructor.name,
+					stack: error.stack,
+				} : undefined,
 			});
+		} else {
+			// Send error via SSE if headers already sent
+			res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+			res.end();
 		}
 	}
 };
@@ -151,11 +194,22 @@ export const executeToolCall = async (req: Request, res: Response) => {
 			case 'list_teams':
 				result = await TeamHandlers.listTeams(parameters, userId);
 				break;
+			case 'find_team':
+				result = await TeamHandlers.findTeam(parameters, userId);
+				break;
 			case 'add_team_member':
 				result = await TeamHandlers.addTeamMember(parameters, userId);
 				break;
 			case 'remove_team_member':
 				result = await TeamHandlers.removeTeamMember(parameters, userId);
+				break;
+
+			// User tools
+			case 'list_users':
+				result = await UserHandlers.listUsers(parameters, userId);
+				break;
+			case 'find_user':
+				result = await UserHandlers.findUser(parameters, userId);
 				break;
 
 			// Comment tools
@@ -193,6 +247,7 @@ export const executeToolCall = async (req: Request, res: Response) => {
  */
 export const checkHealth = async (req: Request, res: Response) => {
 	try {
+		console.log('[AI Controller] Health check requested');
 		const isHealthy = await aiService.healthCheck();
 
 		return res.json({
@@ -203,6 +258,9 @@ export const checkHealth = async (req: Request, res: Response) => {
 				: 'AI service is unavailable',
 		});
 	} catch (error: any) {
+		console.error('=== AI CONTROLLER HEALTH CHECK ERROR ===');
+		console.error('Error:', error.message);
+		
 		return res.status(503).json({
 			success: false,
 			healthy: false,
