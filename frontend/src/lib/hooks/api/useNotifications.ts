@@ -82,7 +82,30 @@ export function useNotifications() {
 
 	// Subscribe to Socket
 	useEffect(() => {
-		async function start() {
+		async function start(payload) {
+			const notifFilters = localStorage.getItem("notificationFilters")
+			let filters = []
+			if (notifFilters) {
+				filters = JSON.parse(notifFilters)
+			}
+			
+			if ("isDeleted" in payload && payload.isDeleted == 0) {
+				console.log("Creation")
+				if (!filters.find((name) => name == "Task Creation")) {
+					return
+				}
+			} else if ("notification" in payload) {
+				console.log("Comment")
+				if (!filters.find((name) => name == "Comments")) {
+					return
+				}
+			} else if ("updatedTask" in payload) {
+				console.log("Deletion")
+				if (!filters.find((name) => name == "Task Completion")) {
+					return
+				}
+			}
+
 			playSound();
 			await fetchNotifications();
 		}
