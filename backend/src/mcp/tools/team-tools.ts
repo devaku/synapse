@@ -24,6 +24,23 @@ const listTeamsSchema = z.object({
 		.boolean()
 		.default(true)
 		.describe('Whether to include team member details'),
+	search: z
+		.string()
+		.optional()
+		.describe('Optional search term to filter teams by name or description'),
+});
+
+const findTeamSchema = z.object({
+	name: z
+		.string()
+		.optional()
+		.describe('Team name to search for'),
+	id: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Team ID to search for'),
 });
 
 const addTeamMemberSchema = z.object({
@@ -44,6 +61,7 @@ const removeTeamMemberSchema = z.object({
 export const TeamSchemas = {
 	createTeam: createTeamSchema,
 	listTeams: listTeamsSchema,
+	findTeam: findTeamSchema,
 	addTeamMember: addTeamMemberSchema,
 	removeTeamMember: removeTeamMemberSchema,
 };
@@ -67,9 +85,17 @@ export const TeamTools = {
 	list_teams: {
 		name: 'list_teams',
 		description:
-			'Retrieve all teams in the system with their members.',
+			'Retrieve all teams in the system with their members. Optionally filter by search term.',
 		requiresConfirmation: false,
 		inputSchema: getInlineSchema(listTeamsSchema),
+	},
+
+	find_team: {
+		name: 'find_team',
+		description:
+			'Find a specific team by name or ID. Returns team details including id which can be used for task assignment.',
+		requiresConfirmation: false,
+		inputSchema: getInlineSchema(findTeamSchema),
 	},
 
 	add_team_member: {

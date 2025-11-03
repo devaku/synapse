@@ -17,9 +17,8 @@ export async function createNotification(
 	const notificationForUsersService =
 		createNotificationForUsersService(prismaDb);
 
-	let notificationRow = await notificationService.createNotification(
-		notificationBody
-	);
+	let notificationRow =
+		await notificationService.createNotification(notificationBody);
 
 	await notificationForUsersService.linkNotificationToUsers(
 		notificationRow.id,

@@ -144,6 +144,8 @@ model RepoColaboratorRequest {
 model Image {
     id                       Int                        @id @default(autoincrement())
     imageUrl                 String
+    imageBlob                Bytes
+    mimeType                 String
     userId                   Int
     uploadedBy               User                       @relation("ImagesUploadedByUser", fields: [userId], references: [id])
     createdAt                DateTime                   @default(now()) @db.Timestamp(6)

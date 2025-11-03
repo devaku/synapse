@@ -2,6 +2,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
+
 const STORAGE_LOCATION = `${path.join(__dirname, '..')}/public/uploads`;
 
 // Create folder if it doesn't exist
@@ -32,7 +33,7 @@ const uploader = multer.diskStorage({
 const acceptedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
 
 export const uploadMiddleware = multer({
-	storage: uploader,
+	storage: multer.memoryStorage(),
 	fileFilter(req, file, callback) {
 		// console.log('FILE FILTERING');
 		// console.log(file);

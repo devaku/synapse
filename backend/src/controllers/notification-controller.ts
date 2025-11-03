@@ -17,9 +17,8 @@ export async function readAllNotifications(req: Request, res: Response) {
 	const notificationService = createNotificationService(prismaDb);
 	try {
 		const userId = req.session.userData?.user.id!;
-		const notifications = await notificationService.readAllNotifications(
-			userId
-		);
+		const notifications =
+			await notificationService.readAllNotifications(userId);
 		let message = '';
 
 		if (notifications.length > 0) {
