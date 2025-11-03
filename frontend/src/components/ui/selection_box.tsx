@@ -2,7 +2,7 @@ import { type radioType } from '../../lib/types/custom';
 
 export function SelectionBox({ name, selected = false, onClick }: radioType) {
     return (
-        <div className="flex items-center gap-2 w-40">
+        <div className="flex items-center gap-2 w-50">
             <button
                 onClick={onClick}
                 className={`
