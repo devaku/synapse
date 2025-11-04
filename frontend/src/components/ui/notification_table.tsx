@@ -44,6 +44,7 @@ export default function NotificationTable({
 				Notifications
 			</h2>
 			<div className="pb-[33px]" />
+			{data.length == 0 && <div className='mx-auto mt-15'>No Notifications</div>}
 			{data.map((entry, index) => (
 				<NotificationCard
 					key={index}

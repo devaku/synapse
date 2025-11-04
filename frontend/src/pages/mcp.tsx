@@ -522,7 +522,7 @@ export default function MCPChatPage() {
 						<span className="text-xs text-gray-500">Quick actions:</span>
 						<button
 							onClick={() =>
-								setInput('Create a task called "Review code" with high priority')
+								setInput('Create a task called "TASK NAME" with "PRIORITY" priority and description "DESCRIPTION" make sure to use the right id for "username"')
 							}
 							className="text-xs bg-ttg-black/5 hover:bg-ttg-black/10 px-3 py-1 rounded-full"
 						>

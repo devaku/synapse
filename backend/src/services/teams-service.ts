@@ -20,7 +20,7 @@ export const createTeamsService = (tx: PrismaClientOrTransaction) => {
 									create: users.map((userId: number) => ({
 										userId: userId,
 									})),
-							  }
+								}
 							: undefined,
 				},
 				include: {

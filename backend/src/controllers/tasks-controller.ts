@@ -450,18 +450,52 @@ export async function archiveTask(req: Request, res: Response) {
 	}
 }
 
-// DELETE - Delete tasks (single or multiple)
+// DELETE - Delete tasks (single or multiple) - ADMIN ONLY
 export async function deleteTask(req: Request, res: Response) {
 	const taskService = createTaskService(prismaDb);
 	try {
+
+		// Used AI for lines 453-497 in tasks-controller.ts
+		// Prompt: "Add admin role authorization to the deleteTask function. 
+		// Only users with 'admins' role in Keycloak JWT token (resource_access.client_synapse.roles) should be allowed to delete tasks. 
+		// Decode the JWT from the Authorization header and return 403 Forbidden if user is not an admin."
+		// SECURITY CHECK: Only admins can delete tasks
+		const authHeader = req.headers.authorization;
+		if (!authHeader) {
+			return res
+				.status(401)
+				.json(buildError(401, 'Unauthorized: No token provided', null));
+		}
+
+		const token = authHeader.split(' ')[1];
+		
+		// Decode the JWT token to get roles
+		const base64Url = token.split('.')[1];
+		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+		const jsonPayload = decodeURIComponent(
+			Buffer.from(base64, 'base64')
+				.toString()
+				.split('')
+				.map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+				.join('')
+		);
+		const decodedToken = JSON.parse(jsonPayload);
+		
+		const userRoles = decodedToken?.resource_access?.client_synapse?.roles || [];
+		
+		if (!userRoles.includes('admins')) {
+			return res
+				.status(403)
+				.json(buildError(403, 'Forbidden: Only admins can delete tasks', null));
+		}
+
 		const { id } = req.params;
-		const taskIdArray = req.body?.taskIdArray; // safe even if body is undefined
+		const taskIdArray = req.body?.taskIdArray;
 
 		const deletedTasks = [];
 		let message = '';
 
 		if (id) {
-			// Delete single task
 			const taskId = parseInt(id);
 			if (isNaN(taskId))
 				return res
@@ -476,7 +510,6 @@ export async function deleteTask(req: Request, res: Response) {
 			Array.isArray(taskIdArray) &&
 			taskIdArray.length > 0
 		) {
-			// Delete multiple tasks
 			for (const taskIdString of taskIdArray) {
 				const taskId = parseInt(taskIdString);
 				if (!isNaN(taskId)) {
