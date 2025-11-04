@@ -64,14 +64,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	// Whenever a token is refereshed, reset the timer
 	useEffect(() => {
-		const timer = convertSecondsToMilliseconds(2 * 60);
-		const timerId = setTimeout(() => {
-			setIsTokenWarning(true);
-		}, timer);
+		if (token) {
+			let jwtData = parseJWT(token);
 
-		return () => {
-			clearTimeout(timerId);
-		};
+			const expiration = new Date(jwtData.exp * 1000);
+
+			// Set time to run 3 minutes before expiration time
+			const warningTime = subtractMinutes(expiration, 3);
+			const millisecondDifference =
+				expiration.getTime() - warningTime.getTime();
+			const timerId = setTimeout(() => {
+				setIsTokenWarning(true);
+			}, millisecondDifference);
+
+			return () => {
+				clearTimeout(timerId);
+			};
+		}
 	}, [token]);
 
 	function keycloakEventHandler(kc: typeof keycloak) {
@@ -84,7 +93,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 					let jwtData = parseJWT(kc.token);
 					const expiration = formatDate(new Date(jwtData.exp * 1000));
-					console.log(expiration);
 					setUserData(jwtData);
 
 					// Fetch data from the server
@@ -105,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 		let jwtData = parseJWT(kc.token!);
 		const expiration = formatDate(new Date(jwtData.exp * 1000));
-		console.log('NEW EXPIRATION: ', expiration);
+		// console.log('NEW EXPIRATION: ', expiration);
 		setIsTokenExpired(false);
 		setIsTokenWarning(false);
 	}
@@ -153,4 +161,10 @@ function convertSecondsToMilliseconds(seconds) {
 
 export function useAuthContext() {
 	return useContext(AuthContext);
+}
+
+function subtractMinutes(date, minutes) {
+	const newDate = new Date(date); // Create a new Date object to avoid modifying the original
+	newDate.setMinutes(newDate.getMinutes() - minutes);
+	return newDate;
 }
