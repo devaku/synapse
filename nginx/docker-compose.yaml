@@ -1,0 +1,9 @@
+services:
+    nginx_service:
+        image: devaku/nginx:latest
+        container_name: nginx_service
+        restart: unless-stopped
+
+        ports:
+            - '80:80'
+            - '443:443'

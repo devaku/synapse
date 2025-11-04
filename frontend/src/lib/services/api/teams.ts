@@ -28,13 +28,17 @@ export async function getTeams(token: string) {
 	}
 }
 
+type createTeamData = {
+	name: string;
+	description?: string;
+	users?: number[];
+	createdBy: number;
+};
+
 /**
  * Create a new team
  */
-export async function createTeam(
-	token: string,
-	data: { name: string; description?: string; users?: number[]; createdBy: number }
-) {
+export async function createTeam(token: string, data: Partial<createTeamData>) {
 	try {
 		const res = await fetch(`${BASE_URL}/teams/`, {
 			method: 'POST',

@@ -39,9 +39,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 			notificationChoice = 'notification1';
 			volume = 1;
 		}
-		const url = `${
-			import.meta.env.VITE_FRONTEND_URL
-		}/${notificationChoice}.mp3`;
+		const url = `${location.origin}/${notificationChoice}.mp3`;
 
 		setNotificationSoundUrl(url);
 		setVolume(volume);
@@ -49,9 +47,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
 	function setNotificationSound(notificationChoice: string) {
 		localStorage.setItem('NOTIFICATION_SOUND', notificationChoice);
-		const url = `${
-			import.meta.env.VITE_FRONTEND_URL
-		}/${notificationChoice}.mp3`;
+		const url = `${location.origin}/${notificationChoice}.mp3`;
 
 		setNotificationSoundUrl(url);
 	}
