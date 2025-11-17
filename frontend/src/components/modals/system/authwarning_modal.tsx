@@ -26,8 +26,10 @@ export function AuthWarningModal({
 
 	useEffect(() => {
 		if (isTokenExpired) {
+			const logoutUrl = location.origin;
+
 			keycloak.logout({
-				redirectUri: 'http://localhost:3000',
+				redirectUri: logoutUrl,
 			});
 		}
 	}, [isTokenExpired]);

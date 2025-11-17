@@ -22,7 +22,7 @@ export default function TabNotification() {
 		'notification6',
 	];
 
-	const url = `${import.meta.env.VITE_FRONTEND_URL}/`;
+	const url = `${location.origin}/`;
 
 	function handleSelectClick(el: string) {
 		setNotification(el);

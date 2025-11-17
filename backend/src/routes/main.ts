@@ -10,6 +10,9 @@ import commentRouter from './comments';
 import notificationRouter from './notifications';
 import deletionRequestRouter from './deletion_request';
 import aiRouter from './ai-routes';
+import cors from 'cors';
+import { corsValues } from '../lib/cors';
+import path from 'path';
 
 const mainRouter = express.Router();
 
@@ -18,9 +21,19 @@ mainRouter.use(
 	'/api/v1',
 
 	// All routes are now protected
+	// Load CORS
+	cors({
+		// origin: '*',
+		origin: corsValues,
+		credentials: true,
+	}),
 	verifyJwt,
 	setupApiRoutes()
 );
+
+mainRouter.use((req, res) => {
+	res.sendFile(path.join(ROOT_DIR, 'public/index.html'));
+});
 
 function setupApiRoutes(): express.Router {
 	const apiRouter = express.Router();

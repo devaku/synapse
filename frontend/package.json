@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc -b && vite build",
+		"build": "tsc -b && vite build --emptyOutDir",
 		"format": "npx prettier . --write --config ../.prettierrc.json",
 		"lint": "eslint .",
 		"preview": "vite preview"

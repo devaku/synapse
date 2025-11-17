@@ -126,9 +126,10 @@ export default function Sidebar() {
 					onClick={() => {
 						//  Clear socket session ID
 						localStorage.setItem('SOCKET-SESSIONID', '');
+						const logoutUrl = location.origin;
 
 						keycloak.logout({
-							redirectUri: 'http://localhost:3000',
+							redirectUri: logoutUrl,
 						});
 					}}
 				>

@@ -3,10 +3,11 @@ import HeaderContainer from '../../components/container/header_container';
 import DataTable from '../../components/container/DataTableBase';
 import { useEffect, useState } from 'react';
 
-import NotificationTesting from '../../../testing_jsons/notification_admin_testing.json';
+import notificationTestingJson from '../../../testing_jsons/notification_admin_testing.json';
 export default function AdminNotificationsManagerPage() {
 	const [tableType, setTableType] = useState('teams');
-	const [data, setData] = useState(NotificationTesting);
+	const notificationTesting = notificationTestingJson;
+	const [data, setData] = useState(notificationTesting);
 	const [filterText, setFilterText] = useState('');
 	const [selectedRows, setSelectedRows] = useState([]);
 
@@ -133,7 +134,7 @@ export default function AdminNotificationsManagerPage() {
 
 	useEffect(() => {
 		// Filter data based on filterText
-		let result = [];
+		let result: any[] = [];
 		if (tableType === 'teams') {
 			result = data.teams.filter((item) => {
 				return (
@@ -194,10 +195,10 @@ export default function AdminNotificationsManagerPage() {
 		setSelectedRows([]);
 		setTableType('teams');
 		setFilterText('');
-		setData(NotificationTesting);
-		setTeamsData(NotificationTesting.teams);
-		setTasksData(NotificationTesting.tasks);
-		setUsersData(NotificationTesting.users);
+		setData(notificationTesting);
+		setTeamsData(notificationTesting.teams);
+		setTasksData(notificationTesting.tasks);
+		setUsersData(notificationTesting.users);
 	};
 
 	return (
@@ -246,15 +247,15 @@ export default function AdminNotificationsManagerPage() {
 							tableType === 'teams'
 								? teamsData
 								: tableType === 'tasks'
-									? tasksData
-									: usersData
+								? tasksData
+								: usersData
 						}
 						columns={
 							tableType === 'teams'
 								? teamsColumns
 								: tableType === 'tasks'
-									? tasksColumns
-									: usersColumns
+								? tasksColumns
+								: usersColumns
 						}
 						fixedHeaderScrollHeight="400px"
 						selectableRows
