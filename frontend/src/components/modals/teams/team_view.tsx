@@ -4,6 +4,8 @@ import { useAuthContext } from '../../../lib/contexts/AuthContext';
 import { getTeams } from '../../../lib/services/api/teams';
 import Button from '../../ui/button';
 import type { User } from '../../../lib/types/models';
+import { type TableColumn } from 'react-data-table-component';
+import DataTable from '../../../components/container/DataTableBase';
 
 interface TeamData {
 	id: number;
@@ -75,6 +77,13 @@ export default function TeamsViewModal({
 		loadTeam();
 	}, [teamId, token]);
 
+	const columns: TableColumn<User>[] = [
+			{
+				name: 'Name',
+				selector: (row) => row.user.username
+			},
+		]
+
 	return (
 		<>
 			{isLoading ? (
@@ -121,24 +130,13 @@ export default function TeamsViewModal({
 										teamData.teamsUsersBelongTo.length > 0
 									) {
 										return (
-											<ul className="list-disc list-inside mt-2">
-												{teamData.teamsUsersBelongTo.map(
-													(membership) => (
-														<li
-															key={
-																membership.user
-																	.id
-															}
-															className="text-lg"
-														>
-															{
-																membership.user
-																	.username
-															}
-														</li>
-													)
-												)}
-											</ul>
+											<>
+											<DataTable
+												columns={columns}
+												data={teamData.teamsUsersBelongTo}
+												pagination
+											/>
+											</>
 										);
 									} else {
 										return (
