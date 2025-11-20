@@ -1,5 +1,5 @@
 import HeaderContainer from '../components/container/header_container';
-import TabGroup, { TabGroupStyle } from '../components/ui/tab_group';
+import TabGroup from '../components/ui/tab_group';
 // import DataTable, { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
 import { type TableColumn } from 'react-data-table-component';
@@ -115,7 +115,7 @@ export default function ChartsPage() {
 	return (
 		<HeaderContainer pageTitle={'Charts'}>
 			<TabGroup
-				style={TabGroupStyle.Title}
+				style={'Title'}
 				tabs={[
 					{
 						name: 'Personal',

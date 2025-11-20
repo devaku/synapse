@@ -4,11 +4,7 @@ import Select from 'react-select';
 import Spinner from '../../ui/spinner';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
 import { readAllUsers } from '../../../lib/services/api/user';
-import {
-	createTeam,
-	getTeams,
-	editTeam,
-} from '../../../lib/services/api/teams';
+import { createTeam, getTeams, editTeam } from '../../../lib/services/api/teams';
 import type { User } from '../../../lib/types/models';
 
 type OptionType = { value: number; label: string };
@@ -44,10 +40,12 @@ export default function TeamsCreateUpdateModal({
 	modalTitle,
 	teamId,
 	handleModalDisplay,
+	refresh
 }: {
 	modalTitle: string;
 	teamId?: number;
 	handleModalDisplay: () => void;
+	refresh: () => void;
 }) {
 	const { token, serverData } = useAuthContext();
 	const {
@@ -152,6 +150,7 @@ export default function TeamsCreateUpdateModal({
 				});
 			}
 
+			refresh();
 			handleModalDisplay();
 		} catch (err) {
 			console.error(err);

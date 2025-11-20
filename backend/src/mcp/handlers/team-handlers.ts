@@ -54,16 +54,92 @@ export class TeamHandlers {
 		try {
 			const teams = await teamsService.readAllTeam();
 
+			let filteredTeams = teams;
+			
+			// Apply search filter if provided
+			if (params.search) {
+				const searchLower = params.search.toLowerCase();
+				filteredTeams = teams.filter(
+					(team: any) =>
+						team.name.toLowerCase().includes(searchLower) ||
+						(team.description && team.description.toLowerCase().includes(searchLower))
+				);
+			}
+
 			return {
 				success: true,
-				data: teams,
-				message: `Found ${teams.length} teams`,
+				data: filteredTeams,
+				message: `Found ${filteredTeams.length} teams`,
 			};
 		} catch (error: any) {
 			return {
 				success: false,
 				error: error.message,
 				message: 'Failed to list teams',
+			};
+		}
+	}
+
+	/**
+	 * Find a specific team by name or ID
+	 */
+	static async findTeam(params: any, userId: number) {
+		try {
+			const { name, id } = params;
+
+			if (!name && !id) {
+				return {
+					success: false,
+					message: 'Either name or id must be provided',
+				};
+			}
+
+			let team;
+
+			// Search by ID if provided
+			if (id) {
+				team = await teamsService.readTeam(id);
+				
+				if (!team) {
+					return {
+						success: false,
+						message: `Team with id ${id} not found`,
+					};
+				}
+			}
+			// Search by name
+			else if (name) {
+				const allTeams = await teamsService.readAllTeam();
+				const nameLower = name.toLowerCase();
+				
+				team = allTeams.find((t: any) => 
+					t.name.toLowerCase() === nameLower ||
+					t.name.toLowerCase().includes(nameLower)
+				);
+
+				if (!team) {
+					return {
+						success: false,
+						message: `Team with name "${name}" not found`,
+					};
+				}
+			}
+
+			// Return simplified team object
+			return {
+				success: true,
+				data: {
+					id: team!.id,
+					name: team!.name,
+					description: team!.description || undefined,
+				},
+				message: 'Team found',
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				error: error.message,
+				message: 'Failed to find team',
 			};
 		}
 	}

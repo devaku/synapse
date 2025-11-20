@@ -5,7 +5,11 @@ import { IMAGE_STORAGE_URL } from '../env-variables';
 import { createTaskService } from '../../services/task-service';
 import { deleteUploadedFiles } from '../file-helper';
 
+import { createImageHelper } from './image-helper';
+
 import { PrismaClientOrTransaction } from '../../types';
+
+const imageHelper = createImageHelper();
 
 export async function uploadImages(
 	tx: PrismaClientOrTransaction,
@@ -14,18 +18,9 @@ export async function uploadImages(
 	taskId: number
 ) {
 	const imageLinkService = createImageLinkService(tx);
-	const imageService = createImageService(tx);
+
 	// Save the images
-	let imageRows;
-	if (files) {
-		const uploaded = files;
-		if (uploaded.length > 0) {
-			const images = uploaded.map((el: any) => {
-				return `${IMAGE_STORAGE_URL}/${el.filename}`;
-			});
-			imageRows = await imageService.createImage(userId!, images);
-		}
-	}
+	let imageRows = await imageHelper.uploadImages(tx, files, userId!);
 
 	// Link the images to the task created
 	if (imageRows) {
@@ -57,16 +52,16 @@ export async function removeImages(
 				await imageLinkService.unlinkImagesToTasks(removedIds, taskId);
 
 				// Delete the PHYSICAL images themselves that are in storage
-				const fileObjects = removedUrls.map((el) => {
-					const splits = el.split('/uploads/');
-					const filename = splits[1];
-					return {
-						filename,
-					};
-				});
+				// const fileObjects = removedUrls.map((el) => {
+				// 	const splits = el.split('/uploads/');
+				// 	const filename = splits[1];
+				// 	return {
+				// 		filename,
+				// 	};
+				// });
 
-				const uploadFolder = `${globalThis.ROOT_DIR}/public/uploads`;
-				await deleteUploadedFiles(fileObjects, uploadFolder);
+				// const uploadFolder = `${globalThis.ROOT_DIR}/public/uploads`;
+				// await deleteUploadedFiles(fileObjects, uploadFolder);
 
 				// Delete the entry in the image table
 				await imageService.deleteImages(removedIds);

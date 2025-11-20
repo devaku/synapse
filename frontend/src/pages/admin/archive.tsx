@@ -6,117 +6,118 @@ import StatusPill from '../../components/ui/status_pill';
 import { useEffect, useState } from 'react';
 
 export default function AdminArchiveManagerPage() {
-	const [data, setData] = useState(Data);
-	const [filteredData, setFilteredData] = useState(data);
-	const [filterText, setFilterText] = useState('');
+	// const [data, setData] = useState([]);
+	// const [filteredData, setFilteredData] = useState(data);
+	// const [filterText, setFilterText] = useState('');
 
-	const [selectedRows, setSelectedRows] = useState([]);
-	const [display, setDisplay] = useState('hidden');
+	// const [selectedRows, setSelectedRows] = useState([]);
+	// const [display, setDisplay] = useState('hidden');
 
-	const columns = [
-		{
-			name: 'ID',
-			selector: (row) => row.id,
-			sortable: true,
-			width: '50px',
-		},
-		{
-			name: 'Name',
-			selector: (row) => row.name,
-			sortable: true,
-		},
-		{
-			name: 'Created By',
-			selector: (row) => row.createdByUserId,
-			sortable: true,
-		},
-		{
-			name: 'Archived By',
-			selector: (row) => row.archivedByUserId,
-			sortable: true,
-		},
-	];
+	// const columns = [
+	// 	{
+	// 		name: 'ID',
+	// 		selector: (row) => row.id,
+	// 		sortable: true,
+	// 		width: '50px',
+	// 	},
+	// 	{
+	// 		name: 'Name',
+	// 		selector: (row) => row.name,
+	// 		sortable: true,
+	// 	},
+	// 	{
+	// 		name: 'Created By',
+	// 		selector: (row) => row.createdByUserId,
+	// 		sortable: true,
+	// 	},
+	// 	{
+	// 		name: 'Archived By',
+	// 		selector: (row) => row.archivedByUserId,
+	// 		sortable: true,
+	// 	},
+	// ];
 
-	const handleRowSelected = ({ selectedRows }) => {
-		setSelectedRows(selectedRows);
-		if (selectedRows.length > 0) {
-			setDisplay('visible');
-		} else {
-			setDisplay('hidden');
-		}
-	};
+	// const handleRowSelected = ({ selectedRows }) => {
+	// 	setSelectedRows(selectedRows);
+	// 	if (selectedRows.length > 0) {
+	// 		setDisplay('visible');
+	// 	} else {
+	// 		setDisplay('hidden');
+	// 	}
+	// };
 
-	const deleteSelectedRows = (selectedRows) => {
-		const selectedIds = new Set(selectedRows.map((row) => row.id));
-		const newData = data.filter((item) => !selectedIds.has(item.id));
+	// const deleteSelectedRows = (selectedRows) => {
+	// 	const selectedIds = new Set(selectedRows.map((row) => row.id));
+	// 	const newData = data.filter((item) => !selectedIds.has(item.id));
 
-		setData(newData);
-		setFilteredData(newData);
-		setSelectedRows([]);
-	};
+	// 	setData(newData);
+	// 	setFilteredData(newData);
+	// 	setSelectedRows([]);
+	// };
 
-	const ExpandedComponent = ({ data }) => (
-		<pre className="w-full whitespace-pre-wrap break-all overflow-hidden text-xs leading-relaxed bg-gray-50 border border-gray-200 p-3">
-			<ul className="">
-				<li>ID: {data.id}</li>
-				<li>
-					Priority: <StatusPill text={data.priority} />
-				</li>
-				<li>Name: {data.name}</li>
-				<li>Description: {data.description}</li>
-				<li>
-					Image:{' '}
-					{data.image ? (
-						<img src={data.image} alt={data.name} />
-					) : (
-						'N/A'
-					)}
-				</li>
-				<li>Start Date: {data.startDate}</li>
-				<li>Completed Date: {data.completedDate}</li>
-				<li>Created At: {data.createdAt}</li>
-				<li>Is Deleted: {data.isDeleted ? 'Yes' : 'No'}</li>
-				<li>Created By User ID: {data.createdByUserId}</li>
-				<li>Is Archived: {data.isArchived ? 'Yes' : 'No'}</li>
-				<li>
-					Archived By User ID:{' '}
-					{data.archivedByUserId ? data.archivedByUserId : 'N/A'}
-				</li>
-			</ul>
-		</pre>
-	);
+	// const ExpandedComponent = ({ data }) => (
+	// 	<pre className="w-full whitespace-pre-wrap break-all overflow-hidden text-xs leading-relaxed bg-gray-50 border border-gray-200 p-3">
+	// 		<ul className="">
+	// 			<li>ID: {data.id}</li>
+	// 			<li>
+	// 				Priority: <StatusPill text={data.priority} />
+	// 			</li>
+	// 			<li>Name: {data.name}</li>
+	// 			<li>Description: {data.description}</li>
+	// 			<li>
+	// 				Image:{' '}
+	// 				{data.image ? (
+	// 					<img src={data.image} alt={data.name} />
+	// 				) : (
+	// 					'N/A'
+	// 				)}
+	// 			</li>
+	// 			<li>Start Date: {data.startDate}</li>
+	// 			<li>Completed Date: {data.completedDate}</li>
+	// 			<li>Created At: {data.createdAt}</li>
+	// 			<li>Is Deleted: {data.isDeleted ? 'Yes' : 'No'}</li>
+	// 			<li>Created By User ID: {data.createdByUserId}</li>
+	// 			<li>Is Archived: {data.isArchived ? 'Yes' : 'No'}</li>
+	// 			<li>
+	// 				Archived By User ID:{' '}
+	// 				{data.archivedByUserId ? data.archivedByUserId : 'N/A'}
+	// 			</li>
+	// 		</ul>
+	// 	</pre>
+	// );
 
-	useEffect(() => {
-		const result = data.filter((item) => {
-			return (
-				(item.id &&
-					item.id
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase())) ||
-				(item.createdByUserId &&
-					item.createdByUserId
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase())) ||
-				(item.archivedByUserId &&
-					item.archivedByUserId
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase())) ||
-				(item.name &&
-					item.name
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase()))
-			);
-		});
-		setFilteredData(result);
-	}, [filterText, data]);
+	// useEffect(() => {
+	// 	const result = data.filter((item) => {
+	// 		return (
+	// 			(item.id &&
+	// 				item.id
+	// 					.toString()
+	// 					.toLowerCase()
+	// 					.includes(filterText.toLowerCase())) ||
+	// 			(item.createdByUserId &&
+	// 				item.createdByUserId
+	// 					.toString()
+	// 					.toLowerCase()
+	// 					.includes(filterText.toLowerCase())) ||
+	// 			(item.archivedByUserId &&
+	// 				item.archivedByUserId
+	// 					.toString()
+	// 					.toLowerCase()
+	// 					.includes(filterText.toLowerCase())) ||
+	// 			(item.name &&
+	// 				item.name
+	// 					.toString()
+	// 					.toLowerCase()
+	// 					.includes(filterText.toLowerCase()))
+	// 		);
+	// 	});
+	// 	setFilteredData(result);
+	// }, [filterText, data]);
 
 	return (
 		<HeaderContainer pageTitle="Archive Manager">
-			<div className="flex justify-between items-center">
+			<></>
+			{/* <div className="flex justify-between items-center">
 				<div className="">
 					<input
 						type="text"
@@ -156,7 +157,7 @@ export default function AdminArchiveManagerPage() {
 				className="max-h-full border border-gray-200"
 				selectableRows
 				onSelectedRowsChange={handleRowSelected}
-			/>
+			/> */}
 		</HeaderContainer>
 	);
 }
