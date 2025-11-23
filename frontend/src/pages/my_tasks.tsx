@@ -464,7 +464,8 @@ export default function MyTasksPage() {
 			>
 				<NotificationModal
 					notificationId={modalNotificationInfoId}
-					handleModalDisplay={modalNotificationinfo.open}
+					// changed to toggle since wont close on "back" button
+					handleModalDisplay={modalNotificationinfo.toggle}
 				></NotificationModal>
 			</SlideModalContainer>
 		</>
