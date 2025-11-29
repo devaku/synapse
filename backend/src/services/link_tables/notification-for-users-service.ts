@@ -12,7 +12,7 @@ export const createNotificationForUsersService = (
 				data: userList.map((el) => {
 					return {
 						notificationId,
-						userId: el,
+						userId: Number(el),
 						status: 'SENT',
 						updatedAt: new Date(),
 					};
