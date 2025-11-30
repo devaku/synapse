@@ -65,7 +65,7 @@ const protectedRoutes = [
 			},
 			{ path: 'admin/tasks', Component: AdminTaskManagerPage },
 			{ path: 'admin/archive', Component: AdminArchiveManagerPage },
-			{ path: 'logs', Component: LogsPage },
+			{ path: 'admin/logs', Component: LogsPage },
 		],
 	},
 ];

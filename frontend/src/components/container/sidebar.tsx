@@ -84,7 +84,7 @@ export default function Sidebar() {
 							<h1 className="text-white">Admin Pages</h1>
 							<SidebarButton
 								tabName="Logs"
-								routePath="/logs"
+								routePath="/admin/logs"
 								iconPath=""
 							/>
 							<SidebarButton
