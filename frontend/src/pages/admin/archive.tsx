@@ -9,11 +9,9 @@ import { useAuthContext } from '../../lib/contexts/AuthContext';
 export default function AdminArchiveManagerPage() {
 
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
 	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
 
-	// console.log(userData);
-
+	// Check if user is admin and set isAdmin state
 	useEffect(() => {
 		if (
 			userData?.resource_access?.client_synapse.roles.includes('admins')

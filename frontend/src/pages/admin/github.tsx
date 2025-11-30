@@ -21,7 +21,21 @@ export default function AdminGithubManagerPage() {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
-	const { token } = useAuthContext();
+	// Admin check for rendering page
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+
+	// Check if user is admin and set isAdmin state
+	useEffect(() => {
+		if (
+			userData?.resource_access?.client_synapse.roles.includes('admins')
+		) {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+	}, [userData]);
+	// End of admin check
 
 	const columns = [
 		{
@@ -249,7 +263,8 @@ export default function AdminGithubManagerPage() {
 		};
 	}, [token]);
 
-	return (
+	if (isAdmin) {
+		return (
 		<HeaderContainer pageTitle="GitHub Manager">
 			<SlideModalContainer
 				isOpen={modalOpen}
@@ -297,5 +312,15 @@ export default function AdminGithubManagerPage() {
 				className="max-h-full border border-gray-200"
 			/>
 		</HeaderContainer>
+	); } else {
+		return (
+		<HeaderContainer pageTitle="GitHub Manager">
+			<div className="w-full h-full">
+				<p className="text-2xl font-semibold mb-4">
+					GitHub Manager Page Testing admin access
+				</p>
+			</div>
+		</HeaderContainer>
 	);
+	}
 }
