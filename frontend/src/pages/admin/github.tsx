@@ -263,28 +263,13 @@ export default function AdminGithubManagerPage() {
 		};
 	}, [token]);
 
-	if (isAdmin) {
-		return (
+	
+	return (
+		<>
 		<HeaderContainer pageTitle="GitHub Manager">
-			<SlideModalContainer
-				isOpen={modalOpen}
-				noFade={false}
-				onRequestClose={() => {
-					setModalOpen(false);
-					setSelectedRow(null);
-				}}
-			>
-				<AdminInfoSelectionModal
-					isOpen={modalOpen}
-					request={selectedRow}
-					onClose={() => {
-						setModalOpen(false);
-						setSelectedRow(null);
-					}}
-					onActionComplete={async () => await refreshList()}
-				/>
-			</SlideModalContainer>
-			{loading && (
+			{isAdmin ? (
+				<>
+				{loading && (
 				<div className="text-sm text-gray-600 mb-2">
 					Loading repositories...
 				</div>
@@ -311,16 +296,33 @@ export default function AdminGithubManagerPage() {
 				dense={true}
 				className="max-h-full border border-gray-200"
 			/>
+			</>
+			) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 		</HeaderContainer>
-	); } else {
-		return (
-		<HeaderContainer pageTitle="GitHub Manager">
-			<div className="w-full h-full">
-				<p className="text-2xl font-semibold mb-4">
-					GitHub Manager Page Testing admin access
-				</p>
-			</div>
-		</HeaderContainer>
+		<SlideModalContainer
+				isOpen={modalOpen}
+				noFade={false}
+				onRequestClose={() => {
+					setModalOpen(false);
+					setSelectedRow(null);
+				}}
+			>
+				<AdminInfoSelectionModal
+					isOpen={modalOpen}
+					request={selectedRow}
+					onClose={() => {
+						setModalOpen(false);
+						setSelectedRow(null);
+					}}
+					onActionComplete={async () => await refreshList()}
+				/>
+			</SlideModalContainer>
+			</>
 	);
-	}
 }
