@@ -14,6 +14,7 @@ import {
 	deleteRepoCollaboratorRequest,
 } from '../lib/services/api/github';
 import AccessCreationModal from '../components/modals/access/access_creation_model';
+import SearchBar from '../components/ui/searchbar';
 
 export default function MyAccesssPage() {
 	// Table react components and stuff
@@ -159,12 +160,10 @@ export default function MyAccesssPage() {
 				<div className="flex justify-between items-center">
 					<div>
 						{/* Search Bar */}
-						<input
-							type="text"
-							placeholder="Search Requests..."
+						<SearchBar
+							placeholder="Requests . . ."
 							value={filterText}
-							onChange={(e) => setFilterText(e.target.value)}
-							className="border border-gray-300 rounded-md p-2"
+							onSearch={(text) => setFilterText(text)}
 						/>
 					</div>
 					<div className="w-fit">
