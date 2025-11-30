@@ -1,9 +1,9 @@
 import HeaderContainer from '../../components/container/header_container';
-
 import DataTable from '../../components/container/DataTableBase';
 import { useEffect, useState } from 'react';
-
 import notificationTestingJson from '../../../testing_jsons/notification_admin_testing.json';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
+
 export default function AdminNotificationsManagerPage() {
 	const [tableType, setTableType] = useState('teams');
 	const notificationTesting = notificationTestingJson;
@@ -17,6 +17,22 @@ export default function AdminNotificationsManagerPage() {
 
 	const [notificationTitle, setNotificationTitle] = useState('');
 	const [notificationContent, setNotificationContent] = useState('');
+
+	// Admin check for rendering page
+			const [isAdmin, setIsAdmin] = useState<boolean>(false);
+			const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+		
+			// Check if user is admin and set isAdmin state
+			useEffect(() => {
+				if (
+					userData?.resource_access?.client_synapse.roles.includes('admins')
+				) {
+					setIsAdmin(true);
+				} else {
+					setIsAdmin(false);
+				}
+			}, [userData]);
+		// End of admin check
 
 	// Define columns for each table type
 	const teamsColumns = [
@@ -203,6 +219,7 @@ export default function AdminNotificationsManagerPage() {
 
 	return (
 		<HeaderContainer pageTitle="Notifications Manager">
+			{isAdmin ? (
 			<div>
 				{/* Table Component */}
 				<div className="flex justify-between items-center">
@@ -324,6 +341,13 @@ export default function AdminNotificationsManagerPage() {
 					</div>
 				</form>
 			</div>
+			) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 		</HeaderContainer>
 	);
 }

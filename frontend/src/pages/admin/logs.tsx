@@ -166,7 +166,7 @@ export default function LogsPage() {
 					>
 						<span className="">{selectedRows.length} Selected</span>
 						<button
-							className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded"
 							onClick={() => downloadCSV(selectedRows)}
 						>
 							Download CSV

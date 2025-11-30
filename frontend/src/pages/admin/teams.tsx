@@ -9,6 +9,8 @@ import { useState } from 'react';
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import TeamsCreateUpdateModal from '../../components/modals/teams/team_create_update';
 import TeamsViewModal from '../../components/modals/teams/team_view';
+import { useEffect } from 'react';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
 
 export default function AdminTeamsManagerPage() {
 	const [selectedRows, setSelectedRows] = useState<Team[]>([]);
@@ -16,6 +18,22 @@ export default function AdminTeamsManagerPage() {
 
 	const [formData, setFormData] = useState<any>({});
 	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+
+	// Admin check for rendering page
+		const [isAdmin, setIsAdmin] = useState<boolean>(false);
+		const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+	
+		// Check if user is admin and set isAdmin state
+		useEffect(() => {
+			if (
+				userData?.resource_access?.client_synapse.roles.includes('admins')
+			) {
+				setIsAdmin(true);
+			} else {
+				setIsAdmin(false);
+			}
+		}, [userData]);
+	// End of admin check
 
 	const {
 		teams,
@@ -133,6 +151,8 @@ export default function AdminTeamsManagerPage() {
 	return (
 		<>
 			<HeaderContainer pageTitle="Admin - Teams Manager">
+				{isAdmin ? (
+				<>
 				<div className="flex flex-row justify-between items-center p-2.5">
 					<div className="flex flex-row gap-15">
 						<Button
@@ -169,6 +189,14 @@ export default function AdminTeamsManagerPage() {
 						/>
 					)}
 				</div>
+				</>
+				) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 			</HeaderContainer>
 
 			{/* Create Modal */}

@@ -18,7 +18,6 @@ import TaskCreateUpdateModal from '../../components/modals/task/task_create_upda
 import SvgComponent from '../../components/ui/svg_component';
 
 export default function AdminTaskManagerPage() {
-	const { token, userData } = useAuthContext();
 	const { socket } = useSocketContext();
 
 	const [allTaskData, setAllTaskData] = useState<Task[]>([]);
@@ -37,10 +36,21 @@ export default function AdminTaskManagerPage() {
 	const modalTaskDelete = useModal();
 	const [modalTaskDeleteId, setModalTaskDeleteId] = useState<number | null>(null);
 
-	// Check if user has admin role from Keycloak JWT token
-	const isAdmin = 
-		userData?.resource_access?.client_synapse?.roles?.includes('admins') 
-	|| false;
+	// Admin check for rendering page
+			const [isAdmin, setIsAdmin] = useState<boolean>(false);
+			const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+		
+			// Check if user is admin and set isAdmin state
+			useEffect(() => {
+				if (
+					userData?.resource_access?.client_synapse.roles.includes('admins')
+				) {
+					setIsAdmin(true);
+				} else {
+					setIsAdmin(false);
+				}
+			}, [userData]);
+		// End of admin check
 
 	const taskColumns: TableColumn<Task>[] = [
 		{
@@ -196,6 +206,8 @@ export default function AdminTaskManagerPage() {
 	return (
 		<>
 			<HeaderContainer pageTitle="Admin - Task Manager">
+				{isAdmin ? (
+					<>
 				<div className="flex flex-col">
 					<div className="flex flex-row gap-2">
 						<input
@@ -233,6 +245,14 @@ export default function AdminTaskManagerPage() {
 						pagination
 					></DataTable>
 				</div>
+				</>
+				) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 			</HeaderContainer>
 
 			{/* Create Modal */}
