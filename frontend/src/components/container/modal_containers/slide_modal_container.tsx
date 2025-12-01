@@ -1,22 +1,24 @@
 import { createPortal } from 'react-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type ModalContainer = {
 	isOpen: boolean;
+	close: () => void;
 	children: React.ReactNode;
 	noFade: boolean;
 };
 
 export default function SlideModalContainer({
 	isOpen,
+	close,
 	children,
 	noFade,
 }: ModalContainer) {
 	const [shouldRender, setShouldRender] = useState<boolean>();
 	const [playAnimation, setPlayAnimation] = useState<boolean>();
+	const ref = useRef(null);
 
 	useEffect(() => {
-		// On open of the modal, display the HTML
 		if (isOpen) {
 			setShouldRender(true);
 
@@ -37,6 +39,20 @@ export default function SlideModalContainer({
 			}, 300);
 		}
 	}, [isOpen]);
+
+	useEffect(() => {
+		function clickHandler(e: MouseEvent) {
+			if (ref.current && !ref.current.contains(e.target as Node)) {
+				close()
+			}
+		}
+
+		document.addEventListener('mousedown', clickHandler);
+
+		return () => {
+			document.removeEventListener('mousedown', clickHandler);
+		};
+	}, [ref]);
 
 	function handleFade() {
 		if (noFade) {
@@ -67,7 +83,7 @@ export default function SlideModalContainer({
 						(playAnimation ? '-right-0' : '-right-200')
 					}
 				>
-					<div className="h-screen bg-ttg-white w-xl text-ttg-black">
+					<div className="h-screen bg-ttg-white w-xl text-ttg-black" ref={ref}>
 						{children}
 					</div>
 				</div>
