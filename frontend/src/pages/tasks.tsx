@@ -12,6 +12,7 @@ import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
 import Button from '../components/ui/button';
 import { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
+import SearchBar from '../components/ui/searchbar';
 
 import type { Task } from '../lib/types/models';
 
@@ -241,24 +242,11 @@ export default function TasksPage() {
 					<div>
 						{/* Search Bar */}
 						<div className="flex flex-row gap-2">
-							<input
-								type="text"
-								placeholder="Search My Tasks..."
-								className="mb-4 p-2 border rounded border-gray-300 w-50"
+							<SearchBar
+								placeholder="My Tasks..."
 								value={filterTextTasks}
-								onChange={(e) =>
-									setFilterTextTasks(e.target.value)
-								}
+								onSearch={(text) => setFilterTextTasks(text)}
 							/>
-							<div className="w-10">
-								<Button
-									type="Info"
-									text="X"
-									onClick={() => {
-										setFilterTextTasks('');
-									}}
-								></Button>
-							</div>
 							<div className="w-fit">
 								<Button
 									type="Info"
