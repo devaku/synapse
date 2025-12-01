@@ -98,7 +98,7 @@ export default function Sidebar() {
 								iconPath=""
 							/>
 							<SidebarButton
-								tabName="Notific..."
+								tabName="Notifications"
 								routePath="/admin/notifications"
 								iconPath=""
 							/>
