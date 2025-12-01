@@ -2682,7 +2682,6 @@ export default function MCPChatPage() {
 			{/* Confirmation Modal */}
 			<SlideModalContainer
 				isOpen={confirmationModal.isOpen}
-        close={confirmationModal.close}
 				noFade={false}
 			>
 				<div className="p-6">

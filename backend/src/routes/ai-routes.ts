@@ -4,7 +4,7 @@ import {
 	streamChat,
 	executeToolCall,
 	checkHealth,
-} from '../controllers/ai-controller-qwen';
+} from '../controllers/ai-controller';
 import { verifyJwt } from '../middlewares/auth-middleware';
 
 const router = express.Router();
@@ -21,6 +21,5 @@ router.post('/execute-tool', executeToolCall);
 
 // Health check
 router.get('/health', checkHealth);
-
 
 export default router;

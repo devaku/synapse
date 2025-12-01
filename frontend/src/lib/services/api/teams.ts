@@ -73,7 +73,7 @@ export async function softDeleteTeam(token: string, teamIdArray: number[]) {
 	};
 	try {
 		const res = await fetch(`${BASE_URL}/teams/soft-delete/`, {
-			method: 'PATCH',
+			method: 'DELETE',
 			headers: {
 				'Authorization': `Bearer ${token}`,
 				'Accept': 'application/json',

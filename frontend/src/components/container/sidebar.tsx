@@ -37,7 +37,8 @@ export default function Sidebar() {
 				className="mb-10 max-h-10 10 max-md:visible md:hidden"
 			/>
 			<div
-				className="overflow-y-auto flex flex-col w-full justify-between flex-1 hover:thin-scrollbar hidden-scrollbar"
+				style={{ scrollbarWidth: 'thin' }}
+				className="flex flex-col w-full justify-between flex-1 overflow-y-auto"
 			>
 				{/* Tab Buttons */}
 				<div className="flex flex-col gap-7.5 md:px-5 max-md:px-0 max-md:items-center max-md:h-10">
@@ -79,8 +80,7 @@ export default function Sidebar() {
 
 					{/* Admin Privileges for accessing logs and stuff unless not necessary */}
 					{isAdmin ? (
-						<div className="flex flex-col gap-3 cursor-pointer">
-							<div className="h-[1px] mb-4 bg-white" />
+						<div className="mt-10 flex flex-col gap-3 cursor-pointer">
 							<h1 className="text-white">Admin Pages</h1>
 							<SidebarButton
 								tabName="Logs"
@@ -98,7 +98,7 @@ export default function Sidebar() {
 								iconPath=""
 							/>
 							<SidebarButton
-								tabName="Notifications"
+								tabName="Notific..."
 								routePath="/admin/notifications"
 								iconPath=""
 							/>
