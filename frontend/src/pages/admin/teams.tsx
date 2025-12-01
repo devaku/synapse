@@ -11,37 +11,36 @@ import TeamsCreateUpdateModal from '../../components/modals/teams/team_create_up
 import TeamsViewModal from '../../components/modals/teams/team_view';
 import { useEffect } from 'react';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
+import SearchBar from '../../components/ui/searchbar';
 
 export default function AdminTeamsManagerPage() {
+	const { teams, loading, error, refreshTeams, softRemoveTeam } = useTeams();
+
 	const [selectedRows, setSelectedRows] = useState<Team[]>([]);
 	const [toggleClearRows, setToggleClearRows] = useState(false);
 
 	const [formData, setFormData] = useState<any>({});
 	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+	const [filteredTeams, setFilteredTeams] = useState<Team[]>(
+		Array.isArray(teams) ? teams : []
+	);
+	const [filterTextTeams, setFilterTextTeams] = useState('');
 
 	// Admin check for rendering page
-		const [isAdmin, setIsAdmin] = useState<boolean>(false);
-		const { keycloak, isAuthenticated, token, userData } = useAuthContext();
-	
-		// Check if user is admin and set isAdmin state
-		useEffect(() => {
-			if (
-				userData?.resource_access?.client_synapse.roles.includes('admins')
-			) {
-				setIsAdmin(true);
-			} else {
-				setIsAdmin(false);
-			}
-		}, [userData]);
-	// End of admin check
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
 
-	const {
-		teams,
-		loading,
-		error,
-		refreshTeams,
-		softRemoveTeam,
-	} = useTeams();
+	// Check if user is admin and set isAdmin state
+	useEffect(() => {
+		if (
+			userData?.resource_access?.client_synapse.roles.includes('admins')
+		) {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+	}, [userData]);
+	// End of admin check
 
 	const createTeamModal = useModal();
 	const readTeamModal = useModal();
@@ -56,13 +55,14 @@ export default function AdminTeamsManagerPage() {
 			name: 'ID',
 			selector: (row: Team) => row.id,
 			sortable: true,
-			width: '80px',
+			width: '60px',
 		},
 		{
 			name: 'Team Name',
 			selector: (row: Team) => row.name,
 			sortable: true,
 			grow: 2,
+
 		},
 		{
 			name: 'Description',
@@ -105,6 +105,10 @@ export default function AdminTeamsManagerPage() {
 			// allowOverflow: true,
 			// button: true,
 			width: '150px',
+			center: true,
+			style: {
+				paddingRight: '0px',
+			},
 		},
 	];
 
@@ -148,55 +152,81 @@ export default function AdminTeamsManagerPage() {
 		);
 	};
 
+	useEffect(() => {
+		if (Array.isArray(teams)) {
+			const filtered = teams.filter((team) =>
+				team.name.toLowerCase().includes(filterTextTeams.toLowerCase())
+			);
+			setFilteredTeams(filtered);
+		}
+	}, [filterTextTeams, teams]);
+
 	return (
 		<>
 			<HeaderContainer pageTitle="Admin - Teams Manager">
 				{isAdmin ? (
-				<>
-				<div className="flex flex-row justify-between items-center p-2.5">
-					<div className="flex flex-row gap-15">
-						<Button
-							type="Success"
-							text="Create Team"
-							onClick={createTeamModal.open}
-						/>
-					</div>
-				</div>
-				<div className="min-h-0 flex flex-col">
-					{loading ? (
-						<div className="flex justify-center items-center p-8">
-							<div>Loading teams...</div>
+					<>
+						<div className="flex flex-row justify-between items-center p-2.5 w-full">
+							<div className="flex justify-between w-full">
+								<SearchBar
+									placeholder="Teams..."
+									value={filterTextTeams}
+									onSearch={(text) =>
+										setFilterTextTeams(text)
+									}
+								/>
+								<div>
+									<Button
+										type="Success"
+										text="Create Team"
+										onClick={createTeamModal.open}
+									/>
+								</div>
+							</div>
 						</div>
-					) : error ? (
-						<div className="flex justify-center items-center p-8">
-							<div className="text-red-500">Error: {error}</div>
+						<div className="min-h-0 flex flex-col">
+							{loading ? (
+								<div className="flex justify-center items-center p-8">
+									<div>Loading teams...</div>
+								</div>
+							) : error ? (
+								<div className="flex justify-center items-center p-8">
+									<div className="text-red-500">
+										Error: {error}
+									</div>
+								</div>
+							) : (
+								<DataTable
+									title="Teams"
+									columns={columns}
+									data={filteredTeams}
+									selectableRows
+									onSelectedRowsChange={
+										handleSelectedRowsChange
+									}
+									clearSelectedRows={toggleClearRows}
+									contextActions={tableDataActions()}
+									defaultSortFieldId={1}
+									progressPending={loading}
+									progressComponent={
+										<div>Loading teams...</div>
+									}
+									noDataComponent={
+										<div className="p-8">
+											No teams found!
+										</div>
+									}
+								/>
+							)}
 						</div>
-					) : (
-						<DataTable
-							title="Teams"
-							columns={columns}
-							data={Array.isArray(teams) ? teams : []}
-							selectableRows
-							onSelectedRowsChange={handleSelectedRowsChange}
-							clearSelectedRows={toggleClearRows}
-							contextActions={tableDataActions()}
-							defaultSortFieldId={1}
-							progressPending={loading}
-							progressComponent={<div>Loading teams...</div>}
-							noDataComponent={
-								<div className="p-8">No teams found!</div>
-							}
-						/>
-					)}
-				</div>
-				</>
+					</>
 				) : (
-				<div className="w-full h-full">
-					<p className="text-2xl font-semibold mb-4">
-						You do not have access to view this page.
-					</p>
-				</div>
-			)}
+					<div className="w-full h-full">
+						<p className="text-2xl font-semibold mb-4">
+							You do not have access to view this page.
+						</p>
+					</div>
+				)}
 			</HeaderContainer>
 
 			{/* Create Modal */}

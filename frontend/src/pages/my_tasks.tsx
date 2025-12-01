@@ -111,6 +111,9 @@ export default function MyTasksPage() {
 			},
 			sortable: true,
 			width: '180px',
+			// This is an actual thing for the react data table component
+			// to fix it so that it hides on md screen and below
+			// why there is an error?????
 			hide: 'md',
 		},
 		{

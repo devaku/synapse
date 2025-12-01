@@ -16,6 +16,7 @@ import MyTaskModalHeader from '../../components/modals/my_tasks/my_task_header';
 import MyTaskReadModal from '../../components/modals/my_tasks/my_task_read';
 import TaskCreateUpdateModal from '../../components/modals/task/task_create_update';
 import SvgComponent from '../../components/ui/svg_component';
+import SearchBar from '../../components/ui/searchbar';
 
 export default function AdminTaskManagerPage() {
 	const { socket } = useSocketContext();
@@ -57,7 +58,7 @@ export default function AdminTaskManagerPage() {
 			name: 'ID',
 			selector: (row) => row.id,
 			sortable: true,
-			width: '80px',
+			width: '50px',
 		},
 		{
 			name: 'Task',
@@ -70,12 +71,17 @@ export default function AdminTaskManagerPage() {
 				return formatDate(new Date(row.createdAt!));
 			},
 			sortable: true,
+			hide: 'md',
 		},
 		{
 			name: 'Status',
 			selector: (row) => row.priority,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
+			width: '120px',
+			style: {
+				paddingRight: '0px',
+			}
 		},
 		{
 			name: 'Actions',
@@ -106,7 +112,11 @@ export default function AdminTaskManagerPage() {
 					)}
 				</div>
 			),
-			width: '150px',
+			width: '130px',
+			center: true,
+			style: {
+				paddingRight: '0px',
+			},
 		},
 	];
 
@@ -210,20 +220,11 @@ export default function AdminTaskManagerPage() {
 					<>
 				<div className="flex flex-col">
 					<div className="flex flex-row gap-2">
-						<input
-							type="text"
+						<SearchBar
 							placeholder="Search All Tasks (ID, Name, Status)..."
-							className="mb-4 p-2 border rounded border-gray-300 w-50"
 							value={filterTextTasks}
-							onChange={(e) => setFilterTextTasks(e.target.value)}
+							onSearch={(text) => setFilterTextTasks(text)}
 						/>
-						<div className="w-10">
-							<Button
-								type="Info"
-								text="X"
-								onClick={() => setFilterTextTasks('')}
-							></Button>
-						</div>
 						<div className="w-fit">
 							<Button
 								type="Info"
