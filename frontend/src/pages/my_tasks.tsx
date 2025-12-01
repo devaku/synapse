@@ -464,7 +464,7 @@ export default function MyTasksPage() {
 			>
 				<NotificationModal
 					notificationId={modalNotificationInfoId}
-					handleModalDisplay={modalNotificationinfo.open}
+					handleModalDisplay={modalNotificationinfo.toggle}
 				></NotificationModal>
 			</SlideModalContainer>
 		</>
