@@ -4,7 +4,7 @@ import { useTeams, type Team } from '../../lib/hooks/api/useTeams';
 import { useModal } from '../../lib/hooks/ui/useModal';
 import DataTable from '../../components/container/DataTableBase';
 import SvgComponent from '../../components/ui/svg_component';
-import { type TableColumn, type ConditionalStyles } from 'react-data-table-component';
+import { type TableColumn } from 'react-data-table-component';
 import { useState } from 'react';
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import TeamsCreateUpdateModal from '../../components/modals/teams/team_create_update';
@@ -71,11 +71,6 @@ export default function AdminTeamsManagerPage() {
 			grow: 3,
 		},
 		{
-			name: 'Deleted',
-			selector: (row: Team) => row.isDeleted,
-			omit: true
-		},
-		{
 			name: 'Actions',
 			cell: (row: Team) => (
 				<div className="flex gap-2">
@@ -112,13 +107,6 @@ export default function AdminTeamsManagerPage() {
 			width: '150px',
 		},
 	];
-
-	const conditionalRowStyles: ConditionalStyles<Team>[] = [
-		{
-			when: (row: Team) => row.isDeleted == 1,
-			style: { display: 'none' }
-		}
-	]
 
 	const handleViewTeam = (team: Team) => {
 		setCurrentTeam(team);
@@ -188,7 +176,6 @@ export default function AdminTeamsManagerPage() {
 							title="Teams"
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
-							conditionalRowStyles={conditionalRowStyles}
 							selectableRows
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
@@ -213,7 +200,7 @@ export default function AdminTeamsManagerPage() {
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={createTeamModal.isOpen} close={createTeamModal.close} noFade={false}>
+			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
 				<TeamsCreateUpdateModal
 					modalTitle="Create Team"
 					handleModalDisplay={createTeamModal.toggle}
@@ -221,14 +208,14 @@ export default function AdminTeamsManagerPage() {
 				/>
 			</SlideModalContainer>
 			{/* View Modal - Read Only */}
-			<SlideModalContainer isOpen={readTeamModal.isOpen} close={readTeamModal.close} noFade={false}>
+			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}
 				/>
 			</SlideModalContainer>
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={updateTeamModal.isOpen} close={updateTeamModal.close} noFade={false}>
+			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
 				<TeamsCreateUpdateModal
 					modalTitle="Update Team"
 					teamId={currentTeam?.id}

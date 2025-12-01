@@ -11,7 +11,7 @@ import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
 // import DataTable, { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
-import { type TableColumn, type ConditionalStyles } from 'react-data-table-component';
+import { type TableColumn } from 'react-data-table-component';
 
 import schema from '../assets/schemas/schema.json';
 
@@ -80,13 +80,6 @@ export default function TeamsPage() {
 		},
 	];
 
-	const conditionalRowStyles: ConditionalStyles<Team>[] = [
-		{
-			when: (row: Team) => row.isDeleted == 1,
-			style: { display: 'none' }
-		}
-	]
-
 	/**
 	 * MODAL STATES
 	 */
@@ -147,7 +140,6 @@ export default function TeamsPage() {
 							title="Teams"
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
-							conditionalRowStyles={conditionalRowStyles}
 							selectableRows
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
@@ -164,7 +156,7 @@ export default function TeamsPage() {
 			</HeaderContainer>
 
 			{/* View Modal - Read Only */}
-			<SlideModalContainer isOpen={readTeamModal.isOpen} close={readTeamModal.close} noFade={false}>
+			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}

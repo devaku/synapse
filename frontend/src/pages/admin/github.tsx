@@ -11,7 +11,6 @@ import AdminInfoSelectionModal from '../../components/modals/access/admin_infose
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import SvgComponent from '../../components/ui/svg_component';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
-import { useModal } from '../../lib/hooks/ui/useModal';
 
 export default function AdminGithubManagerPage() {
 	const [data, setData] = useState<any[]>([]);
@@ -19,8 +18,8 @@ export default function AdminGithubManagerPage() {
 	const [filterText, setFilterText] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedRow, setSelectedRow] = useState<any | null>(null);
-	const infoSelectionModal = useModal();
 
 	// Admin check for rendering page
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -37,15 +36,6 @@ export default function AdminGithubManagerPage() {
 		}
 	}, [userData]);
 	// End of admin check
-
-	const testData = [
-		{
-			id: "1"
-		},
-		{
-			id: "2"
-		}
-	]
 
 	const columns = [
 		{
@@ -97,7 +87,7 @@ export default function AdminGithubManagerPage() {
 						title={`View request ${row.id}`}
 						onClick={() => {
 							setSelectedRow(row);
-							infoSelectionModal.open();
+							setModalOpen(true);
 						}}
 					>
 						<SvgComponent iconName="INFO" className="" />
@@ -277,26 +267,6 @@ export default function AdminGithubManagerPage() {
 	return (
 		<>
 		<HeaderContainer pageTitle="GitHub Manager">
-			<SlideModalContainer
-				isOpen={infoSelectionModal.isOpen}
-				close={infoSelectionModal.close}
-				noFade={false}
-				onRequestClose={() => {
-					infoSelectionModal.close();
-					setSelectedRow(null);
-				}}
-			>
-				<AdminInfoSelectionModal
-					isOpen={infoSelectionModal.isOpen}
-					request={selectedRow}
-					onClose={() => {
-						infoSelectionModal.close();
-						setSelectedRow(null);
-					}}
-					onActionComplete={async () => await refreshList()}
-				/>
-			</SlideModalContainer>
-			{loading && (
 			{isAdmin ? (
 				<>
 				{loading && (
@@ -318,7 +288,7 @@ export default function AdminGithubManagerPage() {
 			</div>
 			<DataTable
 				columns={columns}
-				data={testData}
+				data={filteredData}
 				expandableRows
 				expandableRowsComponent={ExpandedComponent}
 				expandableRowsHideExpander
