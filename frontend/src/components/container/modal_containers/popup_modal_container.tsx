@@ -52,7 +52,7 @@ export default function PopupModalContainer({
 			>
 				<div
 					className={
-						'h-fit bg-white w-xl fade ' +
+						'h-5/12 bg-white w-xl fade ' +
 						(isVisible ? 'opacity-100' : 'opacity-0')
 					}
 				>
