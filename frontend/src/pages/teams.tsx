@@ -48,7 +48,7 @@ export default function TeamsPage() {
 			name: 'ID',
 			selector: (row: Team) => row.id,
 			sortable: true,
-			width: '80px',
+			width: '60px',
 		},
 		{
 			name: 'Team Name',
@@ -65,7 +65,7 @@ export default function TeamsPage() {
 		{
 			name: 'Actions',
 			cell: (row: Team) => (
-				<div className="flex gap-2">
+				<div className="flex gap-2 m-auto">
 					<button
 						className="cursor-pointer w-6 h-6"
 						onClick={() => handleViewTeam(row)}
@@ -78,7 +78,7 @@ export default function TeamsPage() {
 			ignoreRowClick: true,
 			// allowOverflow: true,
 			// button: true,
-			width: '150px',
+			width: '70px',
 		},
 	];
 

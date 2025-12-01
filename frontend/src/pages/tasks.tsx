@@ -98,17 +98,19 @@ export default function TasksPage() {
 				return formatDate(new Date(row.createdAt!));
 			},
 			sortable: true,
+			width: '180px',
 		},
 		{
 			name: 'Status',
 			selector: (row) => row.priority,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
+			width: '150px',
 		},
 		{
 			name: 'Actions',
 			cell: (row) => (
-				<div className="flex gap-2">
+				<div className="flex gap-2 m-auto">
 					<button
 						className="cursor-pointer w-6 h-6"
 						onClick={() => handleTaskClickInfo(row)}
@@ -123,6 +125,7 @@ export default function TasksPage() {
 					</button>
 				</div>
 			),
+			width: '90px',
 		},
 	];
 
