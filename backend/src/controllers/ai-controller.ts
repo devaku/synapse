@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { aiService } from '../services/ai-service-qwen';
+import { aiService } from '../services/ai-service';
 import { TaskHandlers } from '../mcp/handlers/task-handlers';
 import { TeamHandlers } from '../mcp/handlers/team-handlers';
 import { CommentHandlers } from '../mcp/handlers/comment-handlers';
@@ -265,33 +265,6 @@ export const checkHealth = async (req: Request, res: Response) => {
 			success: false,
 			healthy: false,
 			error: error.message || 'AI service unavailable',
-		});
-	}
-};
-
-/**
- * GET /api/v1/ai/tools
- * Get available MCP tools (for debugging)
- */
-export const getAvailableTools = async (req: Request, res: Response) => {
-	try {
-		console.log('[AI Controller] Tools list requested');
-		
-		// Get tools from AI service (we'll need to expose this method)
-		const tools = (aiService as any).getMCPToolsFormatted();
-		
-		return res.json({
-			success: true,
-			tools: tools,
-			count: tools.length,
-		});
-	} catch (error: any) {
-		console.error('=== AI CONTROLLER TOOLS LIST ERROR ===');
-		console.error('Error:', error.message);
-		
-		return res.status(500).json({
-			success: false,
-			error: error.message || 'Failed to get tools list',
 		});
 	}
 };

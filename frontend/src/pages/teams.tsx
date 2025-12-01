@@ -9,9 +9,9 @@ import TeamsCreateUpdateModal from '../components/modals/teams/team_create_updat
 import TeamsViewModal from '../components/modals/teams/team_view';
 import DynamicForm, { type FieldMetadata } from '../components/ui/dynamic_form';
 import { useTeams, type Team } from '../lib/hooks/api/useTeams';
-// import DataTable, { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
-import { type TableColumn, type ConditionalStyles } from 'react-data-table-component';
+import { type TableColumn } from 'react-data-table-component';
+import SearchBar from '../components/ui/searchbar';
 
 import schema from '../assets/schemas/schema.json';
 
@@ -34,6 +34,8 @@ export default function TeamsPage() {
 	const [selectedRows, setSelectedRows] = useState<Team[]>([]);
 	const [toggleClearRows, setToggleClearRows] = useState(false);
 
+	const [filteredTeams, setFilteredTeams] = useState<Team[]>(Array.isArray(teams) ? teams : []);
+
 	// Dynamic modal state
 	const [formData, setFormData] = useState<any>({});
 	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
@@ -46,7 +48,7 @@ export default function TeamsPage() {
 			name: 'ID',
 			selector: (row: Team) => row.id,
 			sortable: true,
-			width: '80px',
+			width: '60px',
 		},
 		{
 			name: 'Team Name',
@@ -63,7 +65,7 @@ export default function TeamsPage() {
 		{
 			name: 'Actions',
 			cell: (row: Team) => (
-				<div className="flex gap-2">
+				<div className="flex gap-2 m-auto">
 					<button
 						className="cursor-pointer w-6 h-6"
 						onClick={() => handleViewTeam(row)}
@@ -76,16 +78,9 @@ export default function TeamsPage() {
 			ignoreRowClick: true,
 			// allowOverflow: true,
 			// button: true,
-			width: '150px',
+			width: '70px',
 		},
 	];
-
-	const conditionalRowStyles: ConditionalStyles<Team>[] = [
-		{
-			when: (row: Team) => row.isDeleted == 1,
-			style: { display: 'none' }
-		}
-	]
 
 	/**
 	 * MODAL STATES
@@ -114,6 +109,18 @@ export default function TeamsPage() {
 		readTeamModal.open();
 	};
 
+	// Filtering 
+	const [filterTextTeams, setFilterTextTeams] = useState('');
+
+	useEffect(() => {
+		if (Array.isArray(teams)) {
+			const filtered = teams.filter((team) =>
+				team.name.toLowerCase().includes(filterTextTeams.toLowerCase())
+			);
+			setFilteredTeams(filtered);
+		}
+	}, [filterTextTeams, teams]);
+
 	const tableDataActions = () => {
 		return (
 			<>
@@ -133,7 +140,12 @@ export default function TeamsPage() {
 	return (
 		<>
 			<HeaderContainer pageTitle={'Teams'}>
-				<div className="min-h-0 flex flex-col">
+				<div className="min-h-0 flex flex-col pb-1">
+					<SearchBar
+						placeholder="Search Teams..."
+						value={filterTextTeams}
+						onSearch={(text) => setFilterTextTeams(text)}
+					/>
 					{loading ? (
 						<div className="flex justify-center items-center p-8">
 							<div>Loading teams...</div>
@@ -146,8 +158,7 @@ export default function TeamsPage() {
 						<DataTable
 							title="Teams"
 							columns={columns}
-							data={Array.isArray(teams) ? teams : []}
-							conditionalRowStyles={conditionalRowStyles}
+							data={filteredTeams}
 							selectableRows
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
@@ -164,7 +175,7 @@ export default function TeamsPage() {
 			</HeaderContainer>
 
 			{/* View Modal - Read Only */}
-			<SlideModalContainer isOpen={readTeamModal.isOpen} close={readTeamModal.close} noFade={false}>
+			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}

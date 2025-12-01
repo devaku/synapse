@@ -6,11 +6,13 @@ import HeaderContainer from '../../components/container/header_container';
 
 // import DataTable from 'react-data-table-component';
 import DataTable from '../../components/container/DataTableBase';
+import SearchBar from '../../components/ui/searchbar';
 
 // import TableData from '../../testing_jsons/log_data_10000.json';
 import TableData from '../../../testing_jsons/logs_table_testing_extended_complex.json';
 
 import React, { useState, useEffect } from 'react';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
 
 export default function LogsPage() {
 	const [selectedRows, setSelectedRows] = useState([]);
@@ -19,6 +21,22 @@ export default function LogsPage() {
 
 	const [filterText, setFilterText] = useState('');
 	const [filteredItems, setFilteredItems] = useState(data);
+
+	// Admin check for rendering page
+		const [isAdmin, setIsAdmin] = useState<boolean>(false);
+		const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+	
+		// Check if user is admin and set isAdmin state
+		useEffect(() => {
+			if (
+				userData?.resource_access?.client_synapse.roles.includes('admins')
+			) {
+				setIsAdmin(true);
+			} else {
+				setIsAdmin(false);
+			}
+		}, [userData]);
+	// End of admin check
 
 	const handleRowSelected = ({ selectedRows }) => {
 		setSelectedRows(selectedRows);
@@ -100,7 +118,7 @@ export default function LogsPage() {
 			name: 'Log ID',
 			selector: (row) => row.logID,
 			sortable: true,
-			maxwidth: '10px',
+			width: '70px',
 			grow: 0,
 		},
 		{
@@ -113,7 +131,7 @@ export default function LogsPage() {
 			name: 'Created At',
 			selector: (row) => row.createdAt,
 			sortable: true,
-			grow: 1,
+			width: '200px',
 		},
 		// {
 		// 	name: "Description",
@@ -124,31 +142,22 @@ export default function LogsPage() {
 
 	return (
 		<HeaderContainer pageTitle={'Logs'}>
-			<main className="relative">
+			{isAdmin ? (
+				<main className="relative">
 				<div className="flex justify-between items-center">
 					<div className="">
-						<input
-							type="text"
-							placeholder="Search logs..."
-							className="mb-4 p-2 border rounded border-gray-300 w-50"
+						<SearchBar
+							placeholder="Logs..."
 							value={filterText}
-							onChange={(e) => setFilterText(e.target.value)}
+							onSearch={(text) => setFilterText(text)}
 						/>
-						<button
-							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
-							onClick={() => {
-								setFilterText('');
-							}}
-						>
-							X
-						</button>
 					</div>
 					<div
 						className={`flex mb-4 w-fit bg-gray-100 p-2 rounded ${display} flex items-center justify-between`}
 					>
 						<span className="">{selectedRows.length} Selected</span>
 						<button
-							className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							className="py-2 px-3 ml-3 bg-[#153243] text-white border border-[#153243] rounded"
 							onClick={() => downloadCSV(selectedRows)}
 						>
 							Download CSV
@@ -173,150 +182,13 @@ export default function LogsPage() {
 					/>
 				</div>
 			</main>
+			) : (
+			<div className="w-full h-full">
+				<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+						</p>
+						</div>
+			)}
 		</HeaderContainer>
 	);
-
-	// const mockLogsAPIResponse = [
-	// 	{
-	// 		name: '#20462',
-	// 		user: 'Matt Dickerson',
-	// 		date: '13/06/2022',
-	// 		description: 'Transfer Bank',
-	// 	},
-	// 	{
-	// 		name: '#18953',
-	// 		user: 'Wiktoria',
-	// 		date: '22/05/2022',
-	// 		description: 'Cash on Delivery',
-	// 	},
-	// 	{
-	// 		name: '#46169',
-	// 		user: 'Trixie Byrd',
-	// 		date: '15/06/2022',
-	// 		description: 'Cash on Delivery',
-	// 	},
-	// 	{
-	// 		name: '#47188',
-	// 		user: 'Sanderson',
-	// 		date: '25/09/2022',
-	// 		description: 'Transfer Bank',
-	// 	},
-	// 	{
-	// 		name: '#73063',
-	// 		user: 'Jon Redfern',
-	// 		date: '04/10/2022',
-	// 		description: 'Transfer Bank',
-	// 	},
-	// 	{
-	// 		name: '#58825',
-	// 		user: 'Miriam Kidd',
-	// 		date: '17/10/2022',
-	// 		description: 'Transfer Bank',
-	// 	},
-	// 	{
-	// 		name: '#44122',
-	// 		user: 'Dominic',
-	// 		date: '24/10/2022',
-	// 		description: 'Cash on Delivery',
-	// 	},
-	// 	{
-	// 		name: '#89994',
-	// 		user: 'Shanice',
-	// 		date: '01/11/2022',
-	// 		description: 'Transfer Bank',
-	// 	},
-	// 	{
-	// 		name: '#85252',
-	// 		user: 'Poppy-Rose',
-	// 		date: '22/11/2022',
-	// 		description: 'Transfer Bank',
-	// 	},
-	// 	{
-	// 		name: '#96347',
-	// 		user: 'Elijah Smith',
-	// 		date: '25/11/2022',
-	// 		description: 'Cash on Delivery',
-	// 	},
-	// ];
-
-	// const [logTableData, setLogTableData] = useState<tableData>({
-	// 	columnName: [],
-	// 	rowData: [],
-	// });
-
-	// useEffect(() => {
-	// 	async function start() {
-	// 		refreshTable();
-	// 	}
-	// 	start();
-	// }, []);
-
-	// function refreshTable() {
-	// 	loadLogTable(mockLogsAPIResponse);
-	// }
-
-	// function loadLogTable(data: any) {
-	// 	const formatted = prepareTableData(data);
-	// 	setLogTableData(formatted);
-	// }
-
-	// function prepareTableData(data: any) {
-	// 	const columns = ['Name', 'User', 'Date', 'Description'];
-	// 	const finalRows: any[] = [];
-
-	// 	data.forEach((log: any) => {
-	// 		const row = [
-	// 			log.name,
-	// 			log.user,
-	// 			log.date,
-	// 			log.description,
-	// 			loadTableActions(log),
-	// 		];
-	// 		finalRows.push(row);
-	// 	});
-
-	// 	return {
-	// 		columnName: columns,
-	// 		rowData: finalRows,
-	// 	};
-	// }
-
-	// function loadTableActions(dataObject: any) {
-	// 	function handleClickDelete() {
-	// 		// replace with real delete logic when ready
-	// 		console.log('Delete log:', dataObject.name);
-	// 	}
-
-	// 	return (
-	// 		<div className="flex justify-center items-center">
-	// 			<button
-	// 				className="cursor-pointer w-6 h-6 flex items-center justify-center"
-	// 				onClick={handleClickDelete}
-	// 			>
-	// 				<SvgComponent iconName="TRASHCAN" className="w-4 h-4" />
-	// 			</button>
-	// 		</div>
-	// 	);
-	// }
-
-	// return (
-	// 	<>
-	// 		<HeaderContainer pageTitle={'Logs'}>
-	// 			<div className="w-full">
-	// 				<SearchBar />
-	// 				<div className="min-h-0 flex flex-col">
-	// 					{logTableData.columnName.length > 0 ? (
-	// 						<Table
-	// 							columnName={logTableData.columnName}
-	// 							rowData={logTableData.rowData}
-	// 							withActions={true}
-	// 						/>
-	// 					) : (
-	// 						<div>Table is empty!</div>
-	// 					)}
-	// 				</div>
-	// 			</div>
-	// 		</HeaderContainer>
-	// 	</>
-	// );
 }

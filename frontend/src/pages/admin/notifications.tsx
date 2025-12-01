@@ -1,9 +1,10 @@
 import HeaderContainer from '../../components/container/header_container';
-
 import DataTable from '../../components/container/DataTableBase';
 import { useEffect, useState } from 'react';
-
 import notificationTestingJson from '../../../testing_jsons/notification_admin_testing.json';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
+import SearchBar from '../../components/ui/searchbar';
+
 export default function AdminNotificationsManagerPage() {
 	const [tableType, setTableType] = useState('teams');
 	const notificationTesting = notificationTestingJson;
@@ -18,12 +19,29 @@ export default function AdminNotificationsManagerPage() {
 	const [notificationTitle, setNotificationTitle] = useState('');
 	const [notificationContent, setNotificationContent] = useState('');
 
+	// Admin check for rendering page
+			const [isAdmin, setIsAdmin] = useState<boolean>(false);
+			const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+		
+			// Check if user is admin and set isAdmin state
+			useEffect(() => {
+				if (
+					userData?.resource_access?.client_synapse.roles.includes('admins')
+				) {
+					setIsAdmin(true);
+				} else {
+					setIsAdmin(false);
+				}
+			}, [userData]);
+		// End of admin check
+
 	// Define columns for each table type
 	const teamsColumns = [
 		{
 			name: 'Team ID',
 			selector: (row) => row.id,
 			sortable: true,
+			width: '80px',
 		},
 		{
 			name: 'Team Name',
@@ -35,12 +53,14 @@ export default function AdminNotificationsManagerPage() {
 			// It will require joining tables or access data from Team/User table if there is one
 			name: '# of Members',
 			selector: (row) => row.members?.length || 0,
+			width: '120px',
 		},
 		{
 			// This will display the number of tasks associated with the team
 			// It will require joining tables or access data from Team/Task table if there is one
 			name: '# of Tasks',
 			selector: (row) => row.tasks?.length || 0,
+			width: '100px',
 		},
 	];
 
@@ -49,6 +69,7 @@ export default function AdminNotificationsManagerPage() {
 			name: 'Task ID',
 			selector: (row) => row.id,
 			sortable: true,
+			width: '75px',
 		},
 		{
 			name: 'Task Name',
@@ -56,7 +77,7 @@ export default function AdminNotificationsManagerPage() {
 			sortable: true,
 		},
 		{
-			name: 'Associated Team',
+			name: 'Team',
 			selector: (row) => {
 				return (
 					data.teams.find((team) => team.id === row.associatedTeam)
@@ -64,10 +85,16 @@ export default function AdminNotificationsManagerPage() {
 				);
 			},
 			sortable: true,
+			width: '100px',
+			style: {
+				whiteSpace: 'normal',
+				paddingRight: '0px',
+			}
 		},
 		{
 			name: '# of Subscribers',
 			selector: (row) => row.subscribers?.length || 0,
+			width: '100px',
 		},
 	];
 
@@ -76,6 +103,7 @@ export default function AdminNotificationsManagerPage() {
 			name: 'User ID',
 			selector: (row) => row.id,
 			sortable: true,
+			width: '80px',
 		},
 		{
 			name: 'User Name',
@@ -86,6 +114,7 @@ export default function AdminNotificationsManagerPage() {
 			name: '# of Tasks',
 			selector: (row) => row.subscribedTasks?.length || 0,
 			sortable: true,
+			width: '100px',
 		},
 	];
 
@@ -203,25 +232,17 @@ export default function AdminNotificationsManagerPage() {
 
 	return (
 		<HeaderContainer pageTitle="Notifications Manager">
+			{isAdmin ? (
 			<div>
 				{/* Table Component */}
 				<div className="flex justify-between items-center">
 					<div className="flex flex-row no-wrap">
-						<input
-							type="text"
-							placeholder={'Search ' + tableType + '...'}
-							className="mb-4 p-2 border rounded border-gray-300 w-50"
+						<SearchBar
+							placeholder={
+								tableType.charAt(0).toUpperCase() + tableType.slice(1) + '...'}
 							value={filterText}
-							onChange={(e) => setFilterText(e.target.value)}
+							onSearch={(text) => setFilterText(text)}
 						/>
-						<button
-							className="py-2 px-3 bg-[#153243] text-white border h-fit border-[#153243] rounded ml-1"
-							onClick={() => {
-								setFilterText('');
-							}}
-						>
-							X
-						</button>
 					</div>
 					<div className="flex mb-4 w-fit bg-gray-100 p-2 px-5 rounded items-center justify-between">
 						<label className="mr-2 font-medium">Table:</label>
@@ -324,6 +345,13 @@ export default function AdminNotificationsManagerPage() {
 					</div>
 				</form>
 			</div>
+			) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 		</HeaderContainer>
 	);
 }

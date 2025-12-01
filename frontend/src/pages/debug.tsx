@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import RHFVideoUploader from '../components/rhf/rhf_videouploader';
 
 export default function DebugPage() {
 	interface FormValues {
-		videoFiles: File[];
+		removedImages: number[];
 	}
 
 	const { register, handleSubmit, control } = useForm<FormValues>({
 		defaultValues: {
-			videoFiles: [],
+			removedImages: [],
 		},
 	});
 
@@ -41,25 +40,27 @@ export default function DebugPage() {
 		console.log(data);
 	}
 	return (
-		<div className="p-10">
-			<div>This is the debug page</div>
-			<form onSubmit={handleSubmit(handleFormSubmit)}>
-				<div className="flex gap-2">
-					<Controller
-						name="videoFiles"
-						control={control}
-						render={({ field }) => {
-							return (
-								<RHFVideoUploader
-									value={field.value}
-									onChange={field.onChange}
-								></RHFVideoUploader>
-							);
-						}}
-					></Controller>
-				</div>
-				<input className="bg-red-400" type="submit" value="SUBMIT" />
-			</form>
-		</div>
+		<></>
+		// <div className="p-10">
+		// 	<div>This is the debug page</div>
+		// 	<form onSubmit={handleSubmit(handleFormSubmit)}>
+		// 		<div className="flex gap-2">
+		// 			{images.map((el, index) => {
+		// 				return (
+		// 					<Controller
+		// 						key={index}
+		// 						name="removedImages"
+		// 						control={control}
+		// 						render={({ field }) => {
+
+		// 							);
+		// 						}}
+		// 					></Controller>
+		// 				);
+		// 			})}
+		// 		</div>
+		// 		<input className="bg-red-400" type="submit" value="SUBMIT" />
+		// 	</form>
+		// </div>
 	);
 }
