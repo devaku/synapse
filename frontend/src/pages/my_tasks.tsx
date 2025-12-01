@@ -434,7 +434,7 @@ export default function MyTasksPage() {
 				</div>
 			</HeaderContainer>
 			{/* TASK MODALS */}
-			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskInfo.isOpen} close={modalTaskInfo.close} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
 					taskId={modalTaskInfoId}
@@ -445,7 +445,7 @@ export default function MyTasksPage() {
 					></MyTaskReadModal>
 				</MyTaskModalHeader>
 			</SlideModalContainer>
-			<SlideModalContainer isOpen={modalTaskDelete.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskDelete.isOpen} close={modalTaskDelete.close} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="Deletion Request"
 					taskId={modalTaskDeleteId}
@@ -460,6 +460,7 @@ export default function MyTasksPage() {
 			{/* NOTIFICATION MODALS */}
 			<SlideModalContainer
 				isOpen={modalNotificationinfo.isOpen}
+				close={modalNotificationinfo.close}
 				noFade={false}
 			>
 				<NotificationModal

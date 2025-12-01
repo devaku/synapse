@@ -164,7 +164,7 @@ export default function TeamsPage() {
 			</HeaderContainer>
 
 			{/* View Modal - Read Only */}
-			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={readTeamModal.isOpen} close={readTeamModal.close} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}

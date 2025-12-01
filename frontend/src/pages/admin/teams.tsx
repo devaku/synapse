@@ -185,7 +185,7 @@ export default function AdminTeamsManagerPage() {
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={createTeamModal.isOpen} close={createTeamModal.close} noFade={false}>
 				<TeamsCreateUpdateModal
 					modalTitle="Create Team"
 					handleModalDisplay={createTeamModal.toggle}
@@ -193,14 +193,14 @@ export default function AdminTeamsManagerPage() {
 				/>
 			</SlideModalContainer>
 			{/* View Modal - Read Only */}
-			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={readTeamModal.isOpen} close={readTeamModal.close} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}
 				/>
 			</SlideModalContainer>
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={updateTeamModal.isOpen} close={updateTeamModal.close} noFade={false}>
 				<TeamsCreateUpdateModal
 					modalTitle="Update Team"
 					teamId={currentTeam?.id}
