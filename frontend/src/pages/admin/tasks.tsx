@@ -256,7 +256,7 @@ export default function AdminTaskManagerPage() {
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={modalTaskCreate.isOpen} close={modalTaskCreate.close} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskCreate.isOpen} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Create a Task'}
 					handleModalDisplay={modalTaskCreate.toggle}
@@ -264,7 +264,7 @@ export default function AdminTaskManagerPage() {
 			</SlideModalContainer>
 
 			{/* Read Modal */}
-			<SlideModalContainer isOpen={modalTaskInfo.isOpen} close={modalTaskInfo.close} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
 					taskId={modalTaskInfoId!}
@@ -277,7 +277,7 @@ export default function AdminTaskManagerPage() {
 			</SlideModalContainer>
 
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} close={modalTaskUpdate.close} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Update a Task'}
 					taskId={modalTaskUpdateId!}
@@ -287,7 +287,7 @@ export default function AdminTaskManagerPage() {
 
 			{/* Delete Confirmation Modal */}
 			{isAdmin && (
-				<SlideModalContainer isOpen={modalTaskDelete.isOpen} close={modalTaskDelete.close} noFade={false}>
+				<SlideModalContainer isOpen={modalTaskDelete.isOpen} noFade={false}>
 					<div className="p-6">
 						<h2 className="text-xl font-bold mb-4">Delete Task</h2>
 						<p className="mb-6">

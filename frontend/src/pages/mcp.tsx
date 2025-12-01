@@ -368,7 +368,7 @@ export default function MCPChatPage() {
 				)}
 
 				{/* Messages Container */}
-				<div className="flex-1 overflow-y-auto bg-ttg-white rounded-lg border border-ttg-black/20 mb-4 p-4">
+				<div className="flex-1 overflow-y-auto bg-white rounded-lg border border-gray-200 mb-4 p-4">
 					<div className="space-y-4">
 						{messages.map((message) => (
 							<div key={message.id}>
@@ -490,14 +490,14 @@ export default function MCPChatPage() {
 				</div>
 
 				{/* Input Area */}
-				<div className="bg-ttg-white border border-ttg-black/20 rounded-lg p-4">
+				<div className="bg-white border border-gray-200 rounded-lg p-4">
 					<div className="flex gap-2">
 						<textarea
 							value={input}
 							onChange={(e) => setInput(e.target.value)}
 							onKeyPress={handleKeyPress}
 							placeholder="Ask me to create tasks, list teams, or manage your workflow..."
-							className="flex-1 border border-ttg-black/30 rounded-lg px-4 py-2 resize-none focus:outline-none focus:border-ttg-green"
+							className="flex-1 border border-gray-300 rounded-lg px-4 py-2 resize-none focus:outline-none focus:border-ttg-green"
 							rows={2}
 							disabled={isLoading}
 						/>
@@ -506,7 +506,7 @@ export default function MCPChatPage() {
 							disabled={isLoading || !input.trim()}
 							className={`px-6 py-2 rounded-lg font-medium transition-colors ${
 								isLoading || !input.trim()
-									? 'bg-ttg-black/30 text-ttg-black cursor-not-allowed'
+									? 'bg-gray-300 text-gray-500 cursor-not-allowed'
 									: 'bg-ttg-green text-white hover:bg-ttg-green/80'
 							}`}
 						>
@@ -547,7 +547,6 @@ export default function MCPChatPage() {
 			{/* Confirmation Modal */}
 			<SlideModalContainer
 				isOpen={confirmationModal.isOpen}
-				close={confirmationModal.close}
 				noFade={false}
 			>
 				<div className="p-6">

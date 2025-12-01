@@ -83,7 +83,23 @@ export class AIService {
 	/**
 	 * Convert MCP tools to OpenAI-compatible tool format
 	 */
-	public getMCPToolsFormatted() {
+	private getMCPToolsFormatted() {
+		const tools = this.getMCPTools();
+		
+		return tools.map((tool) => ({
+			type: 'function',
+			function: {
+				name: tool.name,
+				description: tool.description,
+				parameters: tool.inputSchema,
+			},
+		}));
+	}
+
+	/**
+	 * Convert MCP tools to Ollama-native tool format
+	 */
+	private getMCPToolsForOllama() {
 		const tools = this.getMCPTools();
 		
 		return tools.map((tool) => ({
@@ -99,7 +115,7 @@ export class AIService {
 	/**
 	 * Generate system prompt with available MCP tools
 	 */
-	private getSystemPrompt(userId: number, includeMCPTools: boolean = true, useNativeFunctionCalling: boolean = false): string {
+	private getSystemPrompt(userId: number, includeMCPTools: boolean = true): string {
 		if (!includeMCPTools) {
 			// Simple prompt without tool descriptions
 			return `You are an AI assistant for the Synapse Task Management application. You help users manage their tasks and teams efficiently.
@@ -109,29 +125,6 @@ Current user ID: ${userId}
 Be helpful, concise, and conversational. Help users accomplish their task management goals.`;
 		}
 
-		// If using native function calling (vLLM/OpenAI with tools parameter), use concise prompt
-		if (useNativeFunctionCalling) {
-			return `You are an AI assistant for the Synapse Task Management application. Help users manage tasks and teams efficiently.
-
-Current user ID: ${userId}
-
-Use the available functions to:
-- read_tasks: View/list tasks (with filters like userOnly, subscribedOnly, status)
-- create_task: Create new tasks (requires name, description; optional: priority, dates, visibility)  
-- update_task: Modify existing tasks
-- archive_task: Archive tasks
-- subscribe_task/unsubscribe_task: Manage task subscriptions
-- list_teams: View all teams
-- create_team: Create new teams
-- find_team: Search for specific teams
-- add_team_member/remove_team_member: Manage team membership
-- list_users/find_user: Find users
-- add_comment/read_comments: Manage task comments
-
-Always use the appropriate function for user requests. Be helpful and concise.`;
-		}
-
-		// Manual JSON format instructions (for models without native function calling)
 		const tools = this.getMCPTools();
 
 		const toolDescriptions = tools
@@ -277,8 +270,7 @@ Be conversational but precise. Help users accomplish their task management goals
 			console.log('[AI Service - Ollama] Include MCP Tools:', includeMCPTools);
 
 			// Prepare messages with system prompt
-			// When using Ollama with tools, use native function calling prompt
-			const systemPrompt = this.getSystemPrompt(userId, includeMCPTools, includeMCPTools);
+			const systemPrompt = this.getSystemPrompt(userId, includeMCPTools);
 			const fullMessages = [
 				{ role: 'system' as const, content: systemPrompt },
 				...messages,
@@ -293,9 +285,10 @@ Be conversational but precise. Help users accomplish their task management goals
 
 			// Add tools if enabled
 			if (includeMCPTools) {
-				const tools = this.getMCPToolsFormatted();
+				const tools = this.getMCPToolsForOllama();
 				requestOptions.tools = tools;
 				console.log('[AI Service - Ollama] MCP Tools enabled, sending', tools.length, 'tools to model');
+				console.log('[AI Service - Ollama] Tool format sample:', JSON.stringify(tools[0], null, 2));
 			}
 
 			console.log('[AI Service - Ollama] Calling Ollama chat API...');
@@ -390,9 +383,7 @@ Be conversational but precise. Help users accomplish their task management goals
 				fullMessages = messages;
 			} else {
 				// NORMAL MODE: Include system prompt
-				// Use native function calling prompt when tools are enabled
-				const useNativeFunctionCalling = includeMCPTools;
-				const systemPrompt = this.getSystemPrompt(userId, includeMCPTools, useNativeFunctionCalling);
+				const systemPrompt = this.getSystemPrompt(userId, includeMCPTools);
 				fullMessages = [
 					{ role: 'system' as const, content: systemPrompt },
 					...messages,
@@ -411,9 +402,7 @@ Be conversational but precise. Help users accomplish their task management goals
 			if (includeMCPTools && !AI_USE_SIMPLE_MODE) {
 				const tools = this.getMCPToolsFormatted();
 				requestPayload.tools = tools;
-				requestPayload.tool_choice = "auto"; // Required for vLLM/OpenAI-compatible APIs
 				console.log('[AI Service - Server] Tools exposed:', tools.length);
-				console.log('[AI Service - Server] Tool choice set to auto for vLLM compatibility');
 			} else {
 				console.log('[AI Service - Server] MCP Tools disabled for this request');
 			}
@@ -438,24 +427,10 @@ Be conversational but precise. Help users accomplish their task management goals
 
 			// Handle response
 			let content: string;
-			let nativeToolCalls: any[] = [];
-			
-			console.log('[AI Service - Server] Full response data:', JSON.stringify(response.data, null, 2));
 			
 			if (response.data.choices && response.data.choices.length > 0) {
-				const choice = response.data.choices[0];
-				content = choice.message?.content || choice.delta?.content || '';
-				
-				// Check for native tool calls in the response (vLLM/OpenAI format)
-				if (choice.message?.tool_calls && choice.message.tool_calls.length > 0) {
-					nativeToolCalls = choice.message.tool_calls;
-					console.log('[AI Service - Server] Native tool calls detected:', nativeToolCalls.length);
-					console.log('[AI Service - Server] Tool calls:', JSON.stringify(nativeToolCalls, null, 2));
-				}
-				
+				content = response.data.choices[0].message?.content || response.data.choices[0].delta?.content || '';
 				console.log('[AI Service - Server] Using choices format');
-				console.log('[AI Service - Server] Message content:', content);
-				console.log('[AI Service - Server] Choice object:', JSON.stringify(choice, null, 2));
 			} else if (response.data.response) {
 				content = response.data.response;
 				console.log('[AI Service - Server] Using response format');
@@ -474,40 +449,7 @@ Be conversational but precise. Help users accomplish their task management goals
 
 			console.log('[AI Service - Server] Extracted content:', content);
 
-			// First, check for native tool calls (OpenAI/vLLM format)
-			if (nativeToolCalls.length > 0) {
-				const toolCall = nativeToolCalls[0];
-				console.log('[AI Service - Server] Native tool call detected:', toolCall.function.name);
-				
-				try {
-					const parameters = typeof toolCall.function.arguments === 'string' 
-						? JSON.parse(toolCall.function.arguments)
-						: toolCall.function.arguments;
-
-					console.log('[AI Service - Server] Parsed tool parameters:', JSON.stringify(parameters, null, 2));
-
-					return {
-						response: content || 'Executing action...',
-						toolCall: {
-							id: toolCall.id || `call_${Date.now()}`,
-							tool: toolCall.function.name,
-							parameters,
-							requiresConfirmation: this.requiresConfirmation(toolCall.function.name),
-							explanation: content || `Calling ${toolCall.function.name} function...`,
-						},
-					};
-				} catch (parseError: any) {
-					console.error('[AI Service - Server] Failed to parse tool call arguments:', parseError);
-					console.error('[AI Service - Server] Raw arguments:', toolCall.function.arguments);
-					
-					// Return the content without tool call if parsing fails
-					return {
-						response: content || 'I encountered an error processing the function call. Please try rephrasing your request.',
-					};
-				}
-			}
-
-			// Fallback: Check if response contains a tool call in text format (for models without native support)
+			// Check if response contains a tool call
 			const toolCall = this.parseToolCall(content);
 
 			if (toolCall) {
