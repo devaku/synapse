@@ -14,6 +14,7 @@ import { AuthWarningModal } from '../modals/system/authwarning_modal';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
 import { useModal } from '../../lib/hooks/ui/useModal';
 import { SoundProvider } from '../../lib/contexts/SoundContext';
+import { ErrorWarningModal } from '../modals/system/errorwarning_modal';
 
 export default function DashboardLayout() {
 	const {
@@ -26,6 +27,7 @@ export default function DashboardLayout() {
 	} = useAuthContext();
 
 	const authWatcherModal = useModal();
+	const errorWarningModal = useModal();
 	const [futureExpiration, setFutureExpiration] = useState<number>(0);
 
 	useEffect(() => {
@@ -57,11 +59,15 @@ export default function DashboardLayout() {
 						<div className="w-full bg-ttg-white">
 							<Outlet></Outlet>
 						</div>
-						<AuthWarningModal
+						{/* <AuthWarningModal
 							isOpen={authWatcherModal.isOpen}
 							futureTime={futureExpiration}
 							handleModalToggle={handleModalClose}
-						></AuthWarningModal>
+						></AuthWarningModal> */}
+						<ErrorWarningModal 
+							isOpen={errorWarningModal.isOpen}
+							handleModalToggle={errorWarningModal.close}
+						/>
 					</main>
 				) : (
 					<Spinner></Spinner>
