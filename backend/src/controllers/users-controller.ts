@@ -8,6 +8,14 @@ const userService = createUserService(prismaDb);
 // READ
 export async function readAllUsers(req: Request, res: Response) {
 	try {
+		// SECURITY: Only admins can view all users
+		const userRoles = req.session.userData?.roles || [];
+		if (!userRoles.includes('admins')) {
+			return res
+				.status(403)
+				.json(buildError(403, 'Forbidden: Only admins can view all users', null));
+		}
+
 		let rowData;
 		let message = '';
 
