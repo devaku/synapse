@@ -29,7 +29,7 @@
 	--color-ttg-black: #ffffff;
 }
 
-/* Scrollbar  */
+/* Scrollbar */
 
 @utility hidden-scrollbar {
 	&::-webkit-scrollbar {
