@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		};
 
 		kc.onTokenExpired = async () => {
-			setIsTokenExpired(true);
+			await keycloakRefreshToken(kc);
 		};
 	}
 
@@ -114,8 +114,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		let jwtData = parseJWT(kc.token!);
 		const expiration = formatDate(new Date(jwtData.exp * 1000));
 		// console.log('NEW EXPIRATION: ', expiration);
-		setIsTokenExpired(false);
-		setIsTokenWarning(false);
+		// setIsTokenExpired(false);
+		// setIsTokenWarning(false);
 	}
 
 	function parseJWT(token: string) {
