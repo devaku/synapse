@@ -11,7 +11,7 @@ import AdminInfoSelectionModal from '../../components/modals/access/admin_infose
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import SvgComponent from '../../components/ui/svg_component';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
-import { useModal } from '../../lib/hooks/ui/useModal';
+import SearchBar from '../../components/ui/searchbar';
 
 export default function AdminGithubManagerPage() {
 	const [data, setData] = useState<any[]>([]);
@@ -19,19 +19,24 @@ export default function AdminGithubManagerPage() {
 	const [filterText, setFilterText] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedRow, setSelectedRow] = useState<any | null>(null);
-	const infoSelectionModal = useModal();
 
-	const { token } = useAuthContext();
+	// Admin check for rendering page
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
 
-	const testData = [
-		{
-			id: "1"
-		},
-		{
-			id: "2"
+	// Check if user is admin and set isAdmin state
+	useEffect(() => {
+		if (
+			userData?.resource_access?.client_synapse.roles.includes('admins')
+		) {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
 		}
-	]
+	}, [userData]);
+	// End of admin check
 
 	const columns = [
 		{
@@ -44,29 +49,27 @@ export default function AdminGithubManagerPage() {
 			name: 'User ID',
 			selector: (row) => row.userId,
 			sortable: true,
-			width: '100px',
+			width: '75px',
+			grow: 0,
+			hide: 'md',
 		},
 		{
 			name: 'User',
 			selector: (row) => row.requesterName,
 			sortable: true,
+			width: '100px',
 		},
 		{
 			name: 'Repository ID',
 			selector: (row) => row.repoId,
 			sortable: true,
-			width: '120px',
+			width: '110px',
 		},
 		{
-			name: 'Permission',
+			name: 'Perms',
 			selector: (row) => row.permission,
 			sortable: true,
-			width: '100px',
-		},
-		{
-			name: 'Created At',
-			selector: (row) => row.createdAt,
-			sortable: true,
+			width: '90px',
 		},
 		{
 			name: 'GitHub Username',
@@ -83,7 +86,7 @@ export default function AdminGithubManagerPage() {
 						title={`View request ${row.id}`}
 						onClick={() => {
 							setSelectedRow(row);
-							infoSelectionModal.open();
+							setModalOpen(true);
 						}}
 					>
 						<SvgComponent iconName="INFO" className="" />
@@ -92,6 +95,9 @@ export default function AdminGithubManagerPage() {
 			),
 			width: '80px',
 			center: true,
+			style: {
+				paddingRight: '0px',
+			}
 		},
 	];
 
@@ -207,11 +213,6 @@ export default function AdminGithubManagerPage() {
 						.toString()
 						.toLowerCase()
 						.includes(filterText.toLowerCase())) ||
-				(item.createdAt &&
-					item.createdAt
-						.toString()
-						.toLowerCase()
-						.includes(filterText.toLowerCase())) ||
 				(item.githubUsername &&
 					item.githubUsername
 						.toString()
@@ -259,47 +260,28 @@ export default function AdminGithubManagerPage() {
 		};
 	}, [token]);
 
+	
 	return (
+		<>
 		<HeaderContainer pageTitle="GitHub Manager">
-			<SlideModalContainer
-				isOpen={infoSelectionModal.isOpen}
-				close={infoSelectionModal.close}
-				noFade={false}
-				onRequestClose={() => {
-					infoSelectionModal.close();
-					setSelectedRow(null);
-				}}
-			>
-				<AdminInfoSelectionModal
-					isOpen={infoSelectionModal.isOpen}
-					request={selectedRow}
-					onClose={() => {
-						infoSelectionModal.close();
-						setSelectedRow(null);
-					}}
-					onActionComplete={async () => await refreshList()}
-				/>
-			</SlideModalContainer>
-			{loading && (
+			{isAdmin ? (
+				<>
+				{loading && (
 				<div className="text-sm text-gray-600 mb-2">
 					Loading repositories...
 				</div>
 			)}
 			{error && <div className="text-sm text-red-600 mb-2">{error}</div>}
 			<div className="flex justify-between items-center">
-				<div className="">
-					<input
-						type="text"
+					<SearchBar
 						placeholder="Search requests..."
-						className="mb-4 p-2 border rounded border-gray-300 w-50"
 						value={filterText}
-						onChange={(e) => setFilterText(e.target.value)}
+						onSearch={(text) => setFilterText(text)}
 					/>
-				</div>
 			</div>
 			<DataTable
 				columns={columns}
-				data={testData}
+				data={filteredData}
 				expandableRows
 				expandableRowsComponent={ExpandedComponent}
 				expandableRowsHideExpander
@@ -307,6 +289,33 @@ export default function AdminGithubManagerPage() {
 				dense={true}
 				className="max-h-full border border-gray-200"
 			/>
+			</>
+			) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 		</HeaderContainer>
+		<SlideModalContainer
+				isOpen={modalOpen}
+				noFade={false}
+				onRequestClose={() => {
+					setModalOpen(false);
+					setSelectedRow(null);
+				}}
+			>
+				<AdminInfoSelectionModal
+					isOpen={modalOpen}
+					request={selectedRow}
+					onClose={() => {
+						setModalOpen(false);
+						setSelectedRow(null);
+					}}
+					onActionComplete={async () => await refreshList()}
+				/>
+			</SlideModalContainer>
+			</>
 	);
 }

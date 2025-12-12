@@ -14,7 +14,7 @@ import {
 	deleteRepoCollaboratorRequest,
 } from '../lib/services/api/github';
 import AccessCreationModal from '../components/modals/access/access_creation_model';
-import { useModal } from '../lib/hooks/ui/useModal';
+import SearchBar from '../components/ui/searchbar';
 
 export default function MyAccesssPage() {
 	// Table react components and stuff
@@ -23,7 +23,7 @@ export default function MyAccesssPage() {
 	const [filterText, setFilterText] = useState('');
 
 	// modal states
-	const modalCreateAccess = useModal();
+	const [showModalCreateAccess, setShowModalCreateAccess] = useState(false);
 
 	// Auth context
 	const { token, serverData } = useAuthContext();
@@ -150,7 +150,7 @@ export default function MyAccesssPage() {
 
 	// This is the function that the modal will call to close itself
 	function handleModalAccessCreateDisplay() {
-		modalCreateAccess.close()
+		setShowModalCreateAccess(false);
 	}
 
 	return (
@@ -160,12 +160,10 @@ export default function MyAccesssPage() {
 				<div className="flex justify-between items-center">
 					<div>
 						{/* Search Bar */}
-						<input
-							type="text"
-							placeholder="Search Requests..."
+						<SearchBar
+							placeholder="Requests . . ."
 							value={filterText}
-							onChange={(e) => setFilterText(e.target.value)}
-							className="border border-gray-300 rounded-md p-2"
+							onSearch={(text) => setFilterText(text)}
 						/>
 					</div>
 					<div className="w-fit">
@@ -173,7 +171,7 @@ export default function MyAccesssPage() {
 						<Button
 							type="Success"
 							text="Request Access"
-							onClick={() => modalCreateAccess.open()}
+							onClick={() => setShowModalCreateAccess(true)}
 						/>
 					</div>
 				</div>
@@ -187,7 +185,7 @@ export default function MyAccesssPage() {
 
 			{/* Modals */}
 			{/* Github Request Creation Modal */}
-			<SlideModalContainer isOpen={modalCreateAccess.isOpen} close={modalCreateAccess.close} noFade={false}>
+			<SlideModalContainer isOpen={showModalCreateAccess} noFade={false}>
 				<AccessCreationModal
 					handleModalDisplay={handleModalAccessCreateDisplay}
 					onCreated={async () => await loadMyRequests()}
