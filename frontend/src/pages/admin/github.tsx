@@ -296,7 +296,7 @@ export default function AdminGithubManagerPage() {
 					onActionComplete={async () => await refreshList()}
 				/>
 			</SlideModalContainer>
-			{loading && (
+			
 			{isAdmin ? (
 				<>
 				{loading && (
@@ -318,7 +318,7 @@ export default function AdminGithubManagerPage() {
 			</div>
 			<DataTable
 				columns={columns}
-				data={testData}
+				data={filteredData}
 				expandableRows
 				expandableRowsComponent={ExpandedComponent}
 				expandableRowsHideExpander
@@ -335,24 +335,7 @@ export default function AdminGithubManagerPage() {
 				</div>
 			)}
 		</HeaderContainer>
-		<SlideModalContainer
-				isOpen={modalOpen}
-				noFade={false}
-				onRequestClose={() => {
-					setModalOpen(false);
-					setSelectedRow(null);
-				}}
-			>
-				<AdminInfoSelectionModal
-					isOpen={modalOpen}
-					request={selectedRow}
-					onClose={() => {
-						setModalOpen(false);
-						setSelectedRow(null);
-					}}
-					onActionComplete={async () => await refreshList()}
-				/>
-			</SlideModalContainer>
+		
 			</>
 	);
 }
