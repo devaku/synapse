@@ -12,7 +12,6 @@ import MyTaskReadModal from '../components/modals/my_tasks/my_task_read';
 import Button from '../components/ui/button';
 import { type TableColumn } from 'react-data-table-component';
 import DataTable from '../components/container/DataTableBase';
-import SearchBar from '../components/ui/searchbar';
 
 import type { Task } from '../lib/types/models';
 
@@ -98,19 +97,17 @@ export default function TasksPage() {
 				return formatDate(new Date(row.createdAt!));
 			},
 			sortable: true,
-			width: '180px',
 		},
 		{
 			name: 'Status',
 			selector: (row) => row.priority,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
-			width: '150px',
 		},
 		{
 			name: 'Actions',
 			cell: (row) => (
-				<div className="flex gap-2 m-auto">
+				<div className="flex gap-2">
 					<button
 						className="cursor-pointer w-6 h-6"
 						onClick={() => handleTaskClickInfo(row)}
@@ -125,7 +122,6 @@ export default function TasksPage() {
 					</button>
 				</div>
 			),
-			width: '90px',
 		},
 	];
 
@@ -245,11 +241,24 @@ export default function TasksPage() {
 					<div>
 						{/* Search Bar */}
 						<div className="flex flex-row gap-2">
-							<SearchBar
-								placeholder="My Tasks..."
+							<input
+								type="text"
+								placeholder="Search My Tasks..."
+								className="mb-4 p-2 border rounded border-gray-300 w-50"
 								value={filterTextTasks}
-								onSearch={(text) => setFilterTextTasks(text)}
+								onChange={(e) =>
+									setFilterTextTasks(e.target.value)
+								}
 							/>
+							<div className="w-10">
+								<Button
+									type="Info"
+									text="X"
+									onClick={() => {
+										setFilterTextTasks('');
+									}}
+								></Button>
+							</div>
 							<div className="w-fit">
 								<Button
 									type="Info"
@@ -275,7 +284,7 @@ export default function TasksPage() {
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={modalTaskCreate.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskCreate.isOpen} close={modalTaskCreate.close} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Create a Task'}
 					handleModalDisplay={modalTaskCreate.toggle}
@@ -283,7 +292,7 @@ export default function TasksPage() {
 			</SlideModalContainer>
 
 			{/* Read Modal */}
-			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskInfo.isOpen} close={modalTaskInfo.close} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
 					taskId={modalTaskInfoId!}
@@ -296,7 +305,7 @@ export default function TasksPage() {
 			</SlideModalContainer>
 
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} close={modalTaskUpdate.close} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Update a Task'}
 					taskId={modalTaskUpdateId!}

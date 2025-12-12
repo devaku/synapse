@@ -23,7 +23,8 @@
 		"copy-frontend": "cpx \"dist-html/**/*\" dist/public",
 		"format": "npx prettier . --write --config ../.prettierrc.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"mcp": "tsx src/mcp/index.ts"
+		"mcp": "tsx src/mcp/index.ts",
+		"test:vllm": "npx ts-node test-vllm-tools.ts"
 	},
 	"author": "",
 	"license": "ISC",
