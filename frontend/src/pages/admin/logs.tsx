@@ -6,7 +6,6 @@ import HeaderContainer from '../../components/container/header_container';
 
 // import DataTable from 'react-data-table-component';
 import DataTable from '../../components/container/DataTableBase';
-import SearchBar from '../../components/ui/searchbar';
 
 // import TableData from '../../testing_jsons/log_data_10000.json';
 import TableData from '../../../testing_jsons/logs_table_testing_extended_complex.json';
@@ -118,7 +117,7 @@ export default function LogsPage() {
 			name: 'Log ID',
 			selector: (row) => row.logID,
 			sortable: true,
-			width: '70px',
+			maxwidth: '10px',
 			grow: 0,
 		},
 		{
@@ -131,7 +130,7 @@ export default function LogsPage() {
 			name: 'Created At',
 			selector: (row) => row.createdAt,
 			sortable: true,
-			width: '200px',
+			grow: 1,
 		},
 		// {
 		// 	name: "Description",
@@ -146,11 +145,21 @@ export default function LogsPage() {
 				<main className="relative">
 				<div className="flex justify-between items-center">
 					<div className="">
-						<SearchBar
-							placeholder="Logs..."
+						<input
+							type="text"
+							placeholder="Search logs..."
+							className="mb-4 p-2 border rounded border-gray-300 w-50"
 							value={filterText}
-							onSearch={(text) => setFilterText(text)}
+							onChange={(e) => setFilterText(e.target.value)}
 						/>
+						<button
+							className="py-2 px-3 bg-[#153243] text-white border border-[#153243] rounded ml-1"
+							onClick={() => {
+								setFilterText('');
+							}}
+						>
+							X
+						</button>
 					</div>
 					<div
 						className={`flex mb-4 w-fit bg-gray-100 p-2 rounded ${display} flex items-center justify-between`}

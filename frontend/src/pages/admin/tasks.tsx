@@ -16,7 +16,6 @@ import MyTaskModalHeader from '../../components/modals/my_tasks/my_task_header';
 import MyTaskReadModal from '../../components/modals/my_tasks/my_task_read';
 import TaskCreateUpdateModal from '../../components/modals/task/task_create_update';
 import SvgComponent from '../../components/ui/svg_component';
-import SearchBar from '../../components/ui/searchbar';
 
 export default function AdminTaskManagerPage() {
 	const { socket } = useSocketContext();
@@ -58,7 +57,7 @@ export default function AdminTaskManagerPage() {
 			name: 'ID',
 			selector: (row) => row.id,
 			sortable: true,
-			width: '50px',
+			width: '80px',
 		},
 		{
 			name: 'Task',
@@ -71,17 +70,12 @@ export default function AdminTaskManagerPage() {
 				return formatDate(new Date(row.createdAt!));
 			},
 			sortable: true,
-			hide: 'md',
 		},
 		{
 			name: 'Status',
 			selector: (row) => row.priority,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
-			width: '120px',
-			style: {
-				paddingRight: '0px',
-			}
 		},
 		{
 			name: 'Actions',
@@ -112,11 +106,7 @@ export default function AdminTaskManagerPage() {
 					)}
 				</div>
 			),
-			width: '130px',
-			center: true,
-			style: {
-				paddingRight: '0px',
-			},
+			width: '150px',
 		},
 	];
 
@@ -220,11 +210,20 @@ export default function AdminTaskManagerPage() {
 					<>
 				<div className="flex flex-col">
 					<div className="flex flex-row gap-2">
-						<SearchBar
+						<input
+							type="text"
 							placeholder="Search All Tasks (ID, Name, Status)..."
+							className="mb-4 p-2 border rounded border-gray-300 w-50"
 							value={filterTextTasks}
-							onSearch={(text) => setFilterTextTasks(text)}
+							onChange={(e) => setFilterTextTasks(e.target.value)}
 						/>
+						<div className="w-10">
+							<Button
+								type="Info"
+								text="X"
+								onClick={() => setFilterTextTasks('')}
+							></Button>
+						</div>
 						<div className="w-fit">
 							<Button
 								type="Info"
@@ -257,7 +256,7 @@ export default function AdminTaskManagerPage() {
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={modalTaskCreate.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskCreate.isOpen} close={modalTaskCreate.close} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Create a Task'}
 					handleModalDisplay={modalTaskCreate.toggle}
@@ -265,7 +264,7 @@ export default function AdminTaskManagerPage() {
 			</SlideModalContainer>
 
 			{/* Read Modal */}
-			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskInfo.isOpen} close={modalTaskInfo.close} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
 					taskId={modalTaskInfoId!}
@@ -278,7 +277,7 @@ export default function AdminTaskManagerPage() {
 			</SlideModalContainer>
 
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskUpdate.isOpen} close={modalTaskUpdate.close} noFade={false}>
 				<TaskCreateUpdateModal
 					modalTitle={'Update a Task'}
 					taskId={modalTaskUpdateId!}
@@ -288,7 +287,7 @@ export default function AdminTaskManagerPage() {
 
 			{/* Delete Confirmation Modal */}
 			{isAdmin && (
-				<SlideModalContainer isOpen={modalTaskDelete.isOpen} noFade={false}>
+				<SlideModalContainer isOpen={modalTaskDelete.isOpen} close={modalTaskDelete.close} noFade={false}>
 					<div className="p-6">
 						<h2 className="text-xl font-bold mb-4">Delete Task</h2>
 						<p className="mb-6">
