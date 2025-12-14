@@ -4,11 +4,13 @@ import { useTeams, type Team } from '../../lib/hooks/api/useTeams';
 import { useModal } from '../../lib/hooks/ui/useModal';
 import DataTable from '../../components/container/DataTableBase';
 import SvgComponent from '../../components/ui/svg_component';
-import { type TableColumn } from 'react-data-table-component';
+import { type TableColumn, type ConditionalStyles } from 'react-data-table-component';
 import { useState } from 'react';
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import TeamsCreateUpdateModal from '../../components/modals/teams/team_create_update';
 import TeamsViewModal from '../../components/modals/teams/team_view';
+import { useEffect } from 'react';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
 
 export default function AdminTeamsManagerPage() {
 	const [selectedRows, setSelectedRows] = useState<Team[]>([]);
@@ -16,6 +18,22 @@ export default function AdminTeamsManagerPage() {
 
 	const [formData, setFormData] = useState<any>({});
 	const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+
+	// Admin check for rendering page
+		const [isAdmin, setIsAdmin] = useState<boolean>(false);
+		const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+	
+		// Check if user is admin and set isAdmin state
+		useEffect(() => {
+			if (
+				userData?.resource_access?.client_synapse.roles.includes('admins')
+			) {
+				setIsAdmin(true);
+			} else {
+				setIsAdmin(false);
+			}
+		}, [userData]);
+	// End of admin check
 
 	const {
 		teams,
@@ -51,6 +69,11 @@ export default function AdminTeamsManagerPage() {
 			selector: (row: Team) => row.description || 'No description',
 			sortable: true,
 			grow: 3,
+		},
+		{
+			name: 'Deleted',
+			selector: (row: Team) => row.isDeleted,
+			omit: true
 		},
 		{
 			name: 'Actions',
@@ -89,6 +112,13 @@ export default function AdminTeamsManagerPage() {
 			width: '150px',
 		},
 	];
+
+	const conditionalRowStyles: ConditionalStyles<Team>[] = [
+		{
+			when: (row: Team) => row.isDeleted == 1,
+			style: { display: 'none' }
+		}
+	]
 
 	const handleViewTeam = (team: Team) => {
 		setCurrentTeam(team);
@@ -133,6 +163,8 @@ export default function AdminTeamsManagerPage() {
 	return (
 		<>
 			<HeaderContainer pageTitle="Admin - Teams Manager">
+				{isAdmin ? (
+				<>
 				<div className="flex flex-row justify-between items-center p-2.5">
 					<div className="flex flex-row gap-15">
 						<Button
@@ -156,6 +188,7 @@ export default function AdminTeamsManagerPage() {
 							title="Teams"
 							columns={columns}
 							data={Array.isArray(teams) ? teams : []}
+							conditionalRowStyles={conditionalRowStyles}
 							selectableRows
 							onSelectedRowsChange={handleSelectedRowsChange}
 							clearSelectedRows={toggleClearRows}
@@ -169,10 +202,18 @@ export default function AdminTeamsManagerPage() {
 						/>
 					)}
 				</div>
+				</>
+				) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 			</HeaderContainer>
 
 			{/* Create Modal */}
-			<SlideModalContainer isOpen={createTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={createTeamModal.isOpen} close={createTeamModal.close} noFade={false}>
 				<TeamsCreateUpdateModal
 					modalTitle="Create Team"
 					handleModalDisplay={createTeamModal.toggle}
@@ -180,14 +221,14 @@ export default function AdminTeamsManagerPage() {
 				/>
 			</SlideModalContainer>
 			{/* View Modal - Read Only */}
-			<SlideModalContainer isOpen={readTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={readTeamModal.isOpen} close={readTeamModal.close} noFade={false}>
 				<TeamsViewModal
 					teamId={currentTeam?.id || 0}
 					handleModalDisplay={readTeamModal.toggle}
 				/>
 			</SlideModalContainer>
 			{/* Update Modal */}
-			<SlideModalContainer isOpen={updateTeamModal.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={updateTeamModal.isOpen} close={updateTeamModal.close} noFade={false}>
 				<TeamsCreateUpdateModal
 					modalTitle="Update Team"
 					teamId={currentTeam?.id}

@@ -4,8 +4,24 @@ import DataTable from '../../components/container/DataTableBase';
 import Data from '../../../testing_jsons/tasks.json';
 import StatusPill from '../../components/ui/status_pill';
 import { useEffect, useState } from 'react';
+import { useAuthContext } from '../../lib/contexts/AuthContext';
 
 export default function AdminArchiveManagerPage() {
+
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+
+	// Check if user is admin and set isAdmin state
+	useEffect(() => {
+		if (
+			userData?.resource_access?.client_synapse.roles.includes('admins')
+		) {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+	}, [userData]);
+
 	// const [data, setData] = useState([]);
 	// const [filteredData, setFilteredData] = useState(data);
 	// const [filterText, setFilterText] = useState('');
@@ -116,7 +132,19 @@ export default function AdminArchiveManagerPage() {
 
 	return (
 		<HeaderContainer pageTitle="Archive Manager">
-			<></>
+			{isAdmin ? (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						Archive Page Testing admin access
+					</p>
+				</div>
+			) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 			{/* <div className="flex justify-between items-center">
 				<div className="">
 					<input
