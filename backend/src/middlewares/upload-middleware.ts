@@ -32,27 +32,73 @@ const uploader = multer.diskStorage({
 
 const acceptedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
 
+// File magic bytes (signatures) for validation
+const FILE_SIGNATURES: { [key: string]: Buffer[] } = {
+	'image/png': [Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])],
+	'image/jpeg': [Buffer.from([0xFF, 0xD8, 0xFF])],
+	'image/jpg': [Buffer.from([0xFF, 0xD8, 0xFF])],
+	'image/gif': [Buffer.from([0x47, 0x49, 0x46, 0x38, 0x37, 0x61]), Buffer.from([0x47, 0x49, 0x46, 0x38, 0x39, 0x61])],
+};
+
+/**
+ * Validates file content by checking magic bytes (file signatures)
+ * This prevents MIME type spoofing attacks
+ */
+function validateFileSignature(buffer: Buffer, mimeType: string): boolean {
+	const signatures = FILE_SIGNATURES[mimeType];
+	if (!signatures) {
+		return false;
+	}
+
+	return signatures.some(signature => {
+		return buffer.subarray(0, signature.length).equals(signature);
+	});
+}
+
 export const uploadMiddleware = multer({
 	storage: multer.memoryStorage(),
+	limits: {
+		fileSize: 10 * 1024 * 1024, // 10MB limit
+	},
 	fileFilter(req, file, callback) {
-		// console.log('FILE FILTERING');
-		// console.log(file);
-
-		// If MIME TYPE of file is in the accepted list
-		if (acceptedMimeTypes.includes(file.mimetype)) {
-			// To accept the file pass `true`, like so:
-			callback(null, true);
-		} else {
-			// To reject this file pass `false`, like so:
-			callback(null, false);
+		// SECURITY: Validate MIME type
+		if (!acceptedMimeTypes.includes(file.mimetype)) {
+			return callback(new Error('Invalid file type. Only PNG, JPEG, and GIF images are allowed.'));
 		}
-		// The function should call `cb` with a boolean
-		// to indicate if the file should be accepted
 
-		// You can always pass an error if something goes wrong:
-		// callback(new Error("I don't have a clue!"));
+		// Note: File buffer validation happens after multer processes the file
+		// We'll validate in the controller or add a custom storage handler
+		callback(null, true);
 	},
 });
+
+/**
+ * Additional validation function to check file signatures after upload
+ * Call this in controllers after receiving files
+ */
+export function validateUploadedFiles(files: Express.Multer.File[]): { valid: boolean; error?: string } {
+	for (const file of files) {
+		if (!acceptedMimeTypes.includes(file.mimetype)) {
+			return { valid: false, error: `Invalid MIME type: ${file.mimetype}` };
+		}
+
+		if (!file.buffer || file.buffer.length === 0) {
+			return { valid: false, error: 'File buffer is empty' };
+		}
+
+		// Validate file signature
+		if (!validateFileSignature(file.buffer, file.mimetype)) {
+			return { valid: false, error: `File content does not match declared type: ${file.mimetype}` };
+		}
+
+		// Check file size (additional check)
+		if (file.size > 10 * 1024 * 1024) {
+			return { valid: false, error: 'File size exceeds 10MB limit' };
+		}
+	}
+
+	return { valid: true };
+}
 
 function formatDate(date: Date) {
 	const pad = (n: any) => n.toString().padStart(2, '0');

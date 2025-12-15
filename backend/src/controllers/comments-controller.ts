@@ -26,6 +26,7 @@ import { createTaskSubscriptionService } from '../services/task-subscription-ser
  */
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
+import { validateUploadedFiles } from '../middlewares/upload-middleware';
 import { createImageHelper } from '../lib/helpers/image-helper';
 import { pingUsersOfNewCommentOnTask } from '../lib/helpers/socket-helper';
 
@@ -69,7 +70,14 @@ export async function createComment(req: Request, res: Response) {
 				// If there were images uploaded
 				// store them to database
 				let imageRows;
-				if (Array.isArray(req.files)) {
+				if (Array.isArray(req.files) && req.files.length > 0) {
+					// SECURITY: Validate file signatures to prevent MIME type spoofing
+					const validation = validateUploadedFiles(req.files);
+					if (!validation.valid) {
+						return res
+							.status(400)
+							.json(buildError(400, validation.error || 'Invalid file upload', null));
+					}
 					const uploaded = req.files;
 					imageRows = await imageHelper.uploadImages(
 						tx,
