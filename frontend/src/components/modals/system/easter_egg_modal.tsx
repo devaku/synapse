@@ -12,11 +12,11 @@ interface Developer {
 }
 
 const developers: Developer[] = [
-	{ name: 'Kim', linkedinUrl: 'https://www.linkedin.com/in/devaku/' },
-	{ name: 'Theodore', linkedinUrl: 'https://www.linkedin.com/in/theodore-frocklage/' },
-	{ name: 'Pedro', linkedinUrl: 'https://www.linkedin.com/in/pedro-henrique-gomes-de-toledo/' },
-	{ name: 'Jimmy', linkedinUrl: 'https://www.linkedin.com/in/george-sabo/' },
-	{ name: 'Joseph', linkedinUrl: 'https://www.linkedin.com/in/josephandrewsabo/' },
+	{ name: 'Kim - (Certified GOAT)', linkedinUrl: 'https://www.linkedin.com/in/devaku/' },
+	{ name: 'Theodore - (Settings Enthusiast)', linkedinUrl: 'https://www.linkedin.com/in/theodore-frocklage/' },
+	{ name: 'Pedro - (AI Hype Man)', linkedinUrl: 'https://www.linkedin.com/in/pedro-henrique-gomes-de-toledo/' },
+	{ name: 'Jimmy - (UI Final Boss)', linkedinUrl: 'https://www.linkedin.com/in/george-sabo/' },
+	{ name: 'Joseph - (“Weak Link” - Anwar)', linkedinUrl: 'https://www.linkedin.com/in/josephandrewsabo/' },
 ];
 
 export function EasterEggModal({ isOpen, onClose }: EasterEggModalProps) {
@@ -24,7 +24,7 @@ export function EasterEggModal({ isOpen, onClose }: EasterEggModalProps) {
 		<PopupModalContainer isOpen={isOpen}>
 			<div className="flex flex-col mx-12 my-8 gap-6 max-w-lg">
 				<div className="text-center">
-					<h2 className="text-4xl font-bold mb-4">🎉 Credits</h2>
+					<h2 className="text-4xl font-bold mb-4">😎 Hidden Credits 😎</h2>
 					<p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
 						Credits for this application go to the developers during their 2025 capstone project:
 					</p>
@@ -62,6 +62,8 @@ export function EasterEggModal({ isOpen, onClose }: EasterEggModalProps) {
 				<div className="text-center text-sm text-gray-600 dark:text-gray-400">
 					<p>Developed as part of the 2025 Capstone Project</p>
 					<p className="mt-2">Synapse - Task Management System</p>
+					<br />
+					<p className="mt-2">⭐THANK YOU TARTIGRADE FOR THIS OPPORTUNITY⭐</p>
 				</div>
 
 				<div className="flex justify-center gap-4">
