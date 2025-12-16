@@ -29,7 +29,7 @@
 	--color-ttg-black: #ffffff;
 }
 
-/* Scrollbar  */
+/* Scrollbar */
 
 @utility hidden-scrollbar {
 	&::-webkit-scrollbar {
@@ -87,3 +87,5 @@
 		transform: rotate(0deg);
 	}
 }
+
+/* Commit for testing pull request issue */
