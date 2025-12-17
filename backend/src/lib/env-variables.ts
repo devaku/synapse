@@ -17,7 +17,13 @@ export const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET
 
 export const SESSION_SECRET = process.env.SESSION_SECRET
 	? process.env.SESSION_SECRET
-	: 'DERGS';
+	: (() => {
+			if (process.env.NODE_ENV === 'production') {
+				throw new Error('SESSION_SECRET must be set in production environment');
+			}
+			console.warn('WARNING: Using default SESSION_SECRET. This is insecure for production!');
+			return 'DERGS';
+		})();
 
 export const IMAGE_STORAGE_URL = `${process.env.SERVER_URL}/public/uploads`;
 export const IMAGE_STORAGE_PATH = ``;
