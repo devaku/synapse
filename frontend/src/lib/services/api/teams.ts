@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from '../../env-variables';
+
+const BASE_URL = API_URL;
 
 /**
  * Fetch all teams

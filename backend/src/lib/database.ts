@@ -1,9 +1,10 @@
 import { PrismaClient } from '../../database/generated/prisma';
+import { NODE_ENV } from './env-variables';
 
 // export const prisma = new PrismaClient({ log: ['query'] });
 
 export function txtimeoutValue() {
-	if (process.env.NODE_ENV === 'DEVELOPMENT') {
+	if (NODE_ENV === 'DEVELOPMENT') {
 		return 999999;
 	} else {
 		return 5000;

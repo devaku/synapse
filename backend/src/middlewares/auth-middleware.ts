@@ -5,6 +5,7 @@ import { User } from '../../database/generated/prisma';
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { prismaDb } from '../lib/database';
 import { createUserService } from '../services/user-service';
+import { RSA256_PUBLIC_KEY } from '../lib/env-variables';
 
 const userService = createUserService(prismaDb);
 
@@ -39,7 +40,7 @@ export async function verifyJwt(
 
 		const public_key =
 			'-----BEGIN PUBLIC KEY-----\n' +
-			process.env.RSA256_PUBLIC_KEY +
+			RSA256_PUBLIC_KEY +
 			'\n-----END PUBLIC KEY-----';
 
 		// Validate token

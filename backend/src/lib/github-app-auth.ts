@@ -2,6 +2,7 @@
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
+import { GITHUB_APP_ID, GITHUB_PRIVATE_KEY_PATH, GITHUB_INSTALLATION_ID } from './env-variables';
 
 /*
  * @returns {string} The JWT token
@@ -14,9 +15,9 @@ import axios from 'axios';
  * @returns {string} The JWT token
  */
 export function createGithubAppJwt(): string {
-	const appId = process.env.GITHUB_APP_ID!;
+	const appId = GITHUB_APP_ID;
 	const privateKey = fs.readFileSync(
-		process.env.GITHUB_PRIVATE_KEY_PATH!,
+		GITHUB_PRIVATE_KEY_PATH,
 		'utf8'
 	);
 
@@ -32,7 +33,7 @@ export function createGithubAppJwt(): string {
 }
 
 export async function getInstallationAccessToken(): Promise<string> {
-	const url = `https://api.github.com/app/installations/${process.env.GITHUB_INSTALLATION_ID}/access_tokens`;
+	const url = `https://api.github.com/app/installations/${GITHUB_INSTALLATION_ID}/access_tokens`;
 
 	try {
 		const response = await axios.post(

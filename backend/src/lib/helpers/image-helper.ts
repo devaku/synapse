@@ -1,6 +1,7 @@
 import { createImageService } from '../../services/images-service';
 
 import { PrismaClientOrTransaction } from '../../types';
+import { SERVER_URL } from '../env-variables';
 
 export const createImageHelper = () => {
 	return {
@@ -28,9 +29,7 @@ export const createImageHelper = () => {
 							imageBlob: Buffer.from(el.buffer),
 
 							// TODO: Change URL to an official one
-							imageUrl: `${
-								process.env.SERVER_URL
-							}/api/v1/debug/image/${maxId + index + 1}`,
+							imageUrl: `${SERVER_URL}/api/v1/debug/image/${maxId + index + 1}`,
 							mimeType: el.mimetype,
 						};
 					});

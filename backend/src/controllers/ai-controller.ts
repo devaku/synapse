@@ -4,6 +4,7 @@ import { TaskHandlers } from '../mcp/handlers/task-handlers';
 import { TeamHandlers } from '../mcp/handlers/team-handlers';
 import { CommentHandlers } from '../mcp/handlers/comment-handlers';
 import { UserHandlers } from '../mcp/handlers/user-handlers';
+import { NODE_ENV } from '../lib/env-variables';
 
 interface ChatRequest {
 	messages: Array<{
@@ -70,7 +71,7 @@ export const chatWithAI = async (req: Request, res: Response) => {
 		return res.status(500).json({
 			success: false,
 			error: error.message || 'Failed to process chat request',
-			details: process.env.NODE_ENV === 'DEVELOPMENT' ? {
+			details: NODE_ENV === 'DEVELOPMENT' ? {
 				type: error.constructor.name,
 				stack: error.stack,
 			} : undefined,
@@ -126,7 +127,7 @@ export const streamChat = async (req: Request, res: Response) => {
 			res.status(500).json({
 				success: false,
 				error: error.message || 'Failed to stream chat',
-				details: process.env.NODE_ENV === 'DEVELOPMENT' ? {
+				details: NODE_ENV === 'DEVELOPMENT' ? {
 					type: error.constructor.name,
 					stack: error.stack,
 				} : undefined,
