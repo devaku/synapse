@@ -1,8 +1,6 @@
 # FOR PRODUCTION
 
 services:
-  
-
     frontend_service:
       image: devaku/synapse-frontend:latest
       container_name: synapse_frontend
