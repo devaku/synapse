@@ -4,7 +4,7 @@ services:
   
 
     frontend_service:
-      image: devaku/synapse-frontend:latest
+      build: ./frontend/
       container_name: synapse_frontend
       restart: unless-stopped  
       env_file: 
@@ -17,8 +17,7 @@ services:
           - synapse_network
 
     backend_service:
-      image: devaku/synapse-backend:latest
-      # build: ./backend/
+      build: ./backend/
       container_name: synapse_backend
       restart: unless-stopped  
       env_file: 

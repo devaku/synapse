@@ -17,6 +17,6 @@ export const SOCKET_URL = getConfig(import.meta.env.VITE_SOCKET_URL, 'http://loc
 export const FRONTEND_URL = getConfig(import.meta.env.VITE_FRONTEND_URL, 'http://localhost:3000');
 
 // Keycloak Configuration (hardcoded in production)
-export const KEYCLOAK_URL = getConfig(import.meta.env.VITE_KEYCLOAK_URL, 'http://localhost:4000');
+export const KEYCLOAK_URL = getConfig(import.meta.env.VITE_KEYCLOAK_URL, 'https://auth.ttgteams.com');
 export const KEYCLOAK_REALM = getConfig(import.meta.env.VITE_KEYCLOAK_REALM, 'synapse_realm');
 export const KEYCLOAK_CLIENT_ID = getConfig(import.meta.env.VITE_KEYCLOAK_CLIENT_ID, 'client_synapse');
