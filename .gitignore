@@ -11,6 +11,7 @@ misc
 nginx/dist
 
 # Backend
+backend/src/database
 backend/.env
 backend/src/public/uploads/*
 backend/scratch.ts

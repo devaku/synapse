@@ -1,6 +1,19 @@
 # Use official Node.js LTS image
 FROM node:22
 
+# ENV VARIABLES
+
+ARG VITE_SERVER_UR
+ARG VITE_API_URL
+ARG VITE_SOCKET_URL
+ARG VITE_KEYCLOAK_URL
+ARG VITE_KEYCLOAK_REALM
+ARG VITE_KEYCLOAK_CLIENT_ID
+
+# Backend for seeding
+ARG DATABASE_URL
+ARG SERVER_URL
+
 # Set working directory inside container
 WORKDIR /usr/src/app/
 
