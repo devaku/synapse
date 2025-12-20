@@ -1,7 +1,7 @@
 # Miscellaneous
 notes.txt
 misc
-.env
+.env*
 
 # Apply to both
 */**/.env.*
