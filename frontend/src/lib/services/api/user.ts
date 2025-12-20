@@ -1,5 +1,7 @@
 import type { jsonResponse } from '../../types/custom';
-const url = import.meta.env.VITE_API_URL;
+import { API_URL } from '../../env-variables';
+
+const url = API_URL;
 
 export async function readAllUsers(token: string) {
 	let response: jsonResponse = await fetch(`${url}/users`, {

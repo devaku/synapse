@@ -61,11 +61,11 @@ export default function Sidebar() {
 						routePath="/my_tasks"
 						iconPath="My Tasks"
 					/>
-					<SidebarButton
+					{/* <SidebarButton
 						tabName="Charts"
 						routePath="/charts"
 						iconPath="Charts"
-					/>
+					/> */}
 					<SidebarButton
 						tabName="Access"
 						routePath="/access"

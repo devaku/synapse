@@ -7,6 +7,7 @@ import type { Server as HttpServer } from 'http';
 import { createSocketService } from '../services/socket-service';
 import { createTaskService } from '../services/task-service';
 import { createUserService } from '../services/user-service';
+import { RSA256_PUBLIC_KEY } from '../lib/env-variables';
 
 const socketService = createSocketService(prismaDb);
 const taskService = createTaskService(prismaDb);
@@ -122,7 +123,7 @@ async function validateSocket(socket: Socket, next: (err?: Error) => void) {
 		// Check if JWT is valid
 		const public_key =
 			'-----BEGIN PUBLIC KEY-----\n' +
-			process.env.RSA256_PUBLIC_KEY +
+			RSA256_PUBLIC_KEY +
 			'\n-----END PUBLIC KEY-----';
 
 		// Validate token

@@ -1,4 +1,6 @@
-const url = import.meta.env.VITE_DJANGO_BACKEND_URL;
+import { API_URL } from '../env-variables';
+
+const url = API_URL;
 
 export async function CreateTeam(name: string, description: string) {
 	const data = {
