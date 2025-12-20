@@ -6,13 +6,17 @@ import path from 'path';
 
 import { setupServerMiddleware } from './middlewares/initial-middleware';
 import { socketMiddleware } from './middlewares/socket-middleware';
-import { PORT } from './lib/env-variables';
 
 globalThis.ROOT_DIR = __dirname;
-const ENV_PATH = path.join(__dirname, '..', '.env');
+// const ENV_PATH = path.join(__dirname, '..', '.env');
 
-// Load the ENV settings
-dotenv.config({ path: ENV_PATH });
+// Try accessing an ENV that would only be given to it in production and not in development
+if (!process.env.VITE_SERVER_URL) {
+	// Only load .env variable if in development, essentially
+	dotenv.config({ path: '.env.debug' });
+}
+
+import { PORT } from './lib/env-variables';
 
 const app = express();
 
@@ -20,6 +24,8 @@ const app = express();
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.get('/docker', (req: Request, res: Response, next: NextFunction) => {
+	console.log('PRINTING ENV');
+	console.log(process.env);
 	res.json({
 		status: 'success',
 		message: 'Image is working correctly!',
