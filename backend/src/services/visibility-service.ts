@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { PrismaClientOrTransaction } from '../types';
 
 export const createVisibilityService = (tx: PrismaClientOrTransaction) => {
@@ -75,7 +74,7 @@ export const createVisibilityService = (tx: PrismaClientOrTransaction) => {
 };
 
 async function createTaskVisibleToTeamRelations(
-	tx: Prisma.TransactionClient,
+	tx: PrismaClientOrTransaction,
 	teamIds: number[],
 	taskId: number
 ) {
@@ -90,7 +89,7 @@ async function createTaskVisibleToTeamRelations(
 }
 
 async function createTaskVisibleToUsersRelations(
-	tx: Prisma.TransactionClient,
+	tx: PrismaClientOrTransaction,
 	userIds: number[],
 	taskId: number
 ) {
@@ -105,7 +104,7 @@ async function createTaskVisibleToUsersRelations(
 }
 
 async function createTaskHiddenFromUsersRelations(
-	tx: Prisma.TransactionClient,
+	tx: PrismaClientOrTransaction,
 	userIds: number[],
 	taskId: number
 ) {
@@ -120,7 +119,7 @@ async function createTaskHiddenFromUsersRelations(
 }
 
 async function deleteTaskVisibleToTeamRelations(
-	tx: Prisma.TransactionClient,
+	tx: PrismaClientOrTransaction,
 	teamIds: number[],
 	taskId: number
 ) {
@@ -135,7 +134,7 @@ async function deleteTaskVisibleToTeamRelations(
 }
 
 async function deleteTaskVisibleToUsersRelations(
-	tx: Prisma.TransactionClient,
+	tx: PrismaClientOrTransaction,
 	userIds: number[],
 	taskId: number
 ) {
@@ -150,7 +149,7 @@ async function deleteTaskVisibleToUsersRelations(
 }
 
 async function deleteTaskHiddenFromUsersRelations(
-	tx: Prisma.TransactionClient,
+	tx: PrismaClientOrTransaction,
 	userIds: number[],
 	taskId: number
 ) {

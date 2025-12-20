@@ -1,7 +1,7 @@
 # Miscellaneous
 notes.txt
 misc
-.env
+.env*
 
 # Apply to both
 */**/.env.*
@@ -11,6 +11,7 @@ misc
 nginx/dist
 
 # Backend
+backend/src/database
 backend/.env
 backend/src/public/uploads/*
 backend/scratch.ts

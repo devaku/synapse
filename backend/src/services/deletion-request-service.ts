@@ -1,4 +1,4 @@
-import { DeletionRequest } from '../../database/generated/prisma';
+import { DeletionRequest } from '../database/generated/prisma/client';
 import { prismaDb } from '../lib/database';
 
 export async function createDeletionRequest(deletionRequest: DeletionRequest) {

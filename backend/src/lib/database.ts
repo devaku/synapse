@@ -1,5 +1,6 @@
-import { PrismaClient } from '../../database/generated/prisma';
-import { NODE_ENV } from './env-variables';
+import { PrismaClient } from '../database/generated/prisma/client';
+import { NODE_ENV, DATABASE_URL } from './env-variables';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 // export const prisma = new PrismaClient({ log: ['query'] });
 
@@ -10,4 +11,7 @@ export function txtimeoutValue() {
 		return 5000;
 	}
 }
-export const prismaDb: PrismaClient = new PrismaClient();
+const adapter = new PrismaPg({
+	connectionString: DATABASE_URL,
+});
+export const prismaDb: PrismaClient = new PrismaClient({ adapter });

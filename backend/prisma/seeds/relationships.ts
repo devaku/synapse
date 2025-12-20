@@ -1,4 +1,4 @@
-module.exports.subscriptionSeeds = [
+export const subscriptionSeeds = [
 	// Manager1 is subscribed
 	{ userId: 2, taskId: 1 },
 	{ userId: 2, taskId: 4 },
@@ -22,7 +22,7 @@ module.exports.subscriptionSeeds = [
 	{ userId: 5, taskId: 2 },
 ];
 
-module.exports.teamsUserBelongTo = [
+export const teamsUserBelongTo = [
 	// Manager1
 	{ teamId: 1, userId: 2 },
 	{ teamId: 2, userId: 2 },
@@ -48,7 +48,7 @@ module.exports.teamsUserBelongTo = [
 	{ teamId: 1, userId: 7 },
 ];
 
-module.exports.deletionRequest = [
+export const deletionRequest = [
 	// User1 submitted request
 	{
 		taskId: 1,
@@ -57,7 +57,7 @@ module.exports.deletionRequest = [
 	},
 ];
 
-module.exports.imagesAttachedToTasks = [
+export const imagesAttachedToTasks = [
 	{
 		imageId: 51,
 		taskId: 1,

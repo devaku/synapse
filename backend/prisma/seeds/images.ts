@@ -1,4 +1,4 @@
-module.exports.userIcons = [
+export const userIcons = [
 	{
 		imagePath: './prisma/images/icons/usericon (1).jpg',
 		userId: 1,
@@ -251,7 +251,7 @@ module.exports.userIcons = [
 	},
 ];
 
-module.exports.taskImages = [
+export const taskImages = [
 	{
 		imagePath: `./prisma/images/azul.jpg`,
 		mimeType: 'image/jpg',

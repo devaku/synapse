@@ -11,7 +11,7 @@ export async function readTeamMembers(teamIds: number[]) {
 		// RETURNE EVERYONE lol
 		return team?.teamsUsersBelongTo.map((el) => el.userId);
 	} else {
-		const userIds = [];
+		const userIds: any = [];
 		for (let index = 0; index < teamIds.length; index++) {
 			const element = teamIds[index];
 			const team = await teamsService.readTeam(element);
