@@ -205,7 +205,7 @@ export async function addUserToRepo(req: Request, res: Response) {
 		console.error('ADD USER TO REPO ERROR:', error);
 
 		// Create a safe error object to pass to buildError
-		let safeErrorDetails = null;
+		let safeErrorDetails = {};
 		let errorMessage = 'Failed to add user to repository';
 
 		if (error) {
@@ -324,8 +324,9 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid request ID', null));
 			}
 
-			requests =
-				await githubService.readRepoCollaboratorRequestById(requestId);
+			requests = await githubService.readRepoCollaboratorRequestById(
+				requestId
+			);
 			if (!requests) {
 				return res
 					.status(404)
@@ -348,10 +349,9 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid user ID', null));
 			}
 
-			requests =
-				await githubService.readRepoCollaboratorRequestsByUserId(
-					userIdNum
-				);
+			requests = await githubService.readRepoCollaboratorRequestsByUserId(
+				userIdNum
+			);
 			message =
 				requests.length > 0
 					? 'User repository collaborator requests retrieved successfully.'
@@ -365,10 +365,9 @@ export async function readRepoCollaboratorRequest(req: Request, res: Response) {
 					.json(buildError(400, 'Invalid repo ID', null));
 			}
 
-			requests =
-				await githubService.readRepoCollaboratorRequestsByRepoId(
-					repoIdNum
-				);
+			requests = await githubService.readRepoCollaboratorRequestsByRepoId(
+				repoIdNum
+			);
 			message =
 				requests.length > 0
 					? 'Repository collaborator requests retrieved successfully.'
@@ -482,7 +481,7 @@ export async function deleteRepoCollaboratorRequest(
 		const { id } = req.params;
 		const requestIdArray = req.body?.requestIdArray;
 
-		const deletedRequests = [];
+		const deletedRequests: any = [];
 		let message = '';
 
 		if (id) {

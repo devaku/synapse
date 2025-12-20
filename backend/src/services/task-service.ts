@@ -1,4 +1,4 @@
-import { Task } from '../../database/generated/prisma';
+import { Task } from '../database/generated/prisma/client';
 import { PrismaClientOrTransaction } from '../types';
 
 export const createTaskService = (tx: PrismaClientOrTransaction) => {
