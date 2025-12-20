@@ -11,6 +11,7 @@ import AdminInfoSelectionModal from '../../components/modals/access/admin_infose
 import SlideModalContainer from '../../components/container/modal_containers/slide_modal_container';
 import SvgComponent from '../../components/ui/svg_component';
 import { useAuthContext } from '../../lib/contexts/AuthContext';
+import { useModal } from '../../lib/hooks/ui/useModal';
 
 export default function AdminGithubManagerPage() {
 	const [data, setData] = useState<any[]>([]);
@@ -18,10 +19,33 @@ export default function AdminGithubManagerPage() {
 	const [filterText, setFilterText] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedRow, setSelectedRow] = useState<any | null>(null);
+	const infoSelectionModal = useModal();
 
-	const { token } = useAuthContext();
+	// Admin check for rendering page
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const { keycloak, isAuthenticated, token, userData } = useAuthContext();
+
+	// Check if user is admin and set isAdmin state
+	useEffect(() => {
+		if (
+			userData?.resource_access?.client_synapse.roles.includes('admins')
+		) {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+	}, [userData]);
+	// End of admin check
+
+	const testData = [
+		{
+			id: "1"
+		},
+		{
+			id: "2"
+		}
+	]
 
 	const columns = [
 		{
@@ -73,7 +97,7 @@ export default function AdminGithubManagerPage() {
 						title={`View request ${row.id}`}
 						onClick={() => {
 							setSelectedRow(row);
-							setModalOpen(true);
+							infoSelectionModal.open();
 						}}
 					>
 						<SvgComponent iconName="INFO" className="" />
@@ -249,27 +273,33 @@ export default function AdminGithubManagerPage() {
 		};
 	}, [token]);
 
+	
 	return (
+		<>
 		<HeaderContainer pageTitle="GitHub Manager">
 			<SlideModalContainer
-				isOpen={modalOpen}
+				isOpen={infoSelectionModal.isOpen}
+				close={infoSelectionModal.close}
 				noFade={false}
 				onRequestClose={() => {
-					setModalOpen(false);
+					infoSelectionModal.close();
 					setSelectedRow(null);
 				}}
 			>
 				<AdminInfoSelectionModal
-					isOpen={modalOpen}
+					isOpen={infoSelectionModal.isOpen}
 					request={selectedRow}
 					onClose={() => {
-						setModalOpen(false);
+						infoSelectionModal.close();
 						setSelectedRow(null);
 					}}
 					onActionComplete={async () => await refreshList()}
 				/>
 			</SlideModalContainer>
-			{loading && (
+			
+			{isAdmin ? (
+				<>
+				{loading && (
 				<div className="text-sm text-gray-600 mb-2">
 					Loading repositories...
 				</div>
@@ -296,6 +326,16 @@ export default function AdminGithubManagerPage() {
 				dense={true}
 				className="max-h-full border border-gray-200"
 			/>
+			</>
+			) : (
+				<div className="w-full h-full">
+					<p className="text-2xl font-semibold mb-4">
+						You do not have access to view this page.
+					</p>
+				</div>
+			)}
 		</HeaderContainer>
+		
+			</>
 	);
 }
