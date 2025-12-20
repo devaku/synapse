@@ -14,6 +14,7 @@ import { createTaskService } from '../services/task-service';
 import { createTaskSubscriptionService } from '../services/task-subscription-service';
 import { createVisibilityService } from '../services/visibility-service';
 import { createTeamsService } from '../services/teams-service';
+import { createUserService } from '../services/user-service';
 
 /**
  * HELPERS
@@ -21,6 +22,7 @@ import { createTeamsService } from '../services/teams-service';
 
 import { buildResponse, buildError } from '../lib/helpers/response-helper';
 import { deleteUploadedFiles } from '../lib/file-helper';
+import { validateUploadedFiles } from '../middlewares/upload-middleware';
 import { removeImages, uploadImages } from '../lib/helpers/task-helper';
 import { readTeamMembers } from '../lib/helpers/team-helper';
 import {
@@ -94,7 +96,16 @@ export async function createTask(req: Request, res: Response) {
 
 				// Save and Link the images
 				const files = req.files;
-				if (Array.isArray(files)) {
+				if (Array.isArray(files) && files.length > 0) {
+					// SECURITY: Validate file signatures to prevent MIME type spoofing
+					const validation = validateUploadedFiles(files);
+					if (!validation.valid) {
+						// Clean up the created task
+						await taskService.deleteTask(task.id);
+						return res
+							.status(400)
+							.json(buildError(400, validation.error || 'Invalid file upload', null));
+					}
 					await uploadImages(tx, files, userId!, task.id);
 				}
 
@@ -199,16 +210,6 @@ export async function readTask(req: Request, res: Response) {
 
 		// Read a task
 		if (id) {
-			/**
-			 * Theoretically, this is insecure. Anyone can view the specifics of any task
-			 * assuming they know the ID for it, regardless if they are allowed to view it.
-			 * Because all they need is an ID. lol
-			 *
-			 * We could probably secure this by cross checking
-			 * the task the request is trying to view based on the visibility rules of the task
-			 *
-			 * But I don't really want to bother. lol
-			 */
 			const taskId = parseInt(id);
 			if (isNaN(taskId)) {
 				let error = new Error('Invalid Task Id');
@@ -225,6 +226,41 @@ export async function readTask(req: Request, res: Response) {
 					.json(buildError(404, 'Task not found', error));
 			}
 
+			// SECURITY: Check if user has permission to view this task
+			const userId = req.session.userData?.user.id;
+			if (!userId) {
+				return res
+					.status(401)
+					.json(buildError(401, 'Unauthorized', null));
+			}
+
+			// Check visibility: user must be in visible users, not in hidden users,
+			// or be part of a visible team, or be the creator
+			const isCreator = task.createdByUserId === userId;
+			const isVisibleToUser = task.taskVisibleToUsers?.some(
+				(tvu: any) => tvu.user.id === userId
+			);
+			const isHiddenFromUser = task.taskHiddenFromUsers?.some(
+				(thu: any) => thu.user.id === userId
+			);
+			
+			// Get user's teams to check team visibility
+			const userService = createUserService(prismaDb);
+			const user = await userService.readUser(userId);
+			const userTeamIds = user?.teamsUsersBelongTo?.map((t: any) => t.teamId) || [];
+			const isVisibleToTeam = task.taskVisibleToTeams?.some(
+				(tvt: any) => userTeamIds.includes(tvt.team.id)
+			);
+
+			// User can view if: they're the creator, OR (visible to user OR visible to team) AND not hidden
+			const canView = isCreator || ((isVisibleToUser || isVisibleToTeam) && !isHiddenFromUser);
+
+			if (!canView) {
+				return res
+					.status(403)
+					.json(buildError(403, 'Forbidden: You do not have permission to view this task', null));
+			}
+
 			message = 'Task retrieved successfully.';
 		} else if (useronly) {
 			const userId = req.session.userData!.user.id;
@@ -235,11 +271,23 @@ export async function readTask(req: Request, res: Response) {
 					? 'User tasks retrieved successfully.'
 					: 'No tasks found for this user.';
 		} else {
-			task = await taskService.readAllTask();
-			message =
-				task.length > 0
-					? 'Tasks retrieved successfully.'
-					: 'No tasks found.';
+			// SECURITY: Only admins can view all tasks without filtering
+			const userRoles = req.session.userData?.roles || [];
+			if (!userRoles.includes('admins')) {
+				// Non-admins should use filtered view
+				const userId = req.session.userData!.user.id;
+				task = await taskService.readTasksFilteredForUser(userId);
+				message =
+					task.length > 0
+						? 'Tasks retrieved successfully.'
+						: 'No tasks found.';
+			} else {
+				task = await taskService.readAllTask();
+				message =
+					task.length > 0
+						? 'Tasks retrieved successfully.'
+						: 'No tasks found.';
+			}
 		}
 
 		return res.status(200).json(buildResponse(200, message, task));
@@ -336,7 +384,14 @@ export async function updateTask(req: Request, res: Response) {
 
 					// Save and Link the images
 					const files = req.files;
-					if (Array.isArray(files)) {
+					if (Array.isArray(files) && files.length > 0) {
+						// SECURITY: Validate file signatures to prevent MIME type spoofing
+						const validation = validateUploadedFiles(files);
+						if (!validation.valid) {
+							return res
+								.status(400)
+								.json(buildError(400, validation.error || 'Invalid file upload', null));
+						}
 						await uploadImages(tx, files, userId!, taskId);
 					}
 
@@ -455,33 +510,10 @@ export async function deleteTask(req: Request, res: Response) {
 	const taskService = createTaskService(prismaDb);
 	try {
 
-		// Used AI for lines 453-497 in tasks-controller.ts
-		// Prompt: "Add admin role authorization to the deleteTask function. 
-		// Only users with 'admins' role in Keycloak JWT token (resource_access.client_synapse.roles) should be allowed to delete tasks. 
-		// Decode the JWT from the Authorization header and return 403 Forbidden if user is not an admin."
 		// SECURITY CHECK: Only admins can delete tasks
-		const authHeader = req.headers.authorization;
-		if (!authHeader) {
-			return res
-				.status(401)
-				.json(buildError(401, 'Unauthorized: No token provided', null));
-		}
-
-		const token = authHeader.split(' ')[1];
-		
-		// Decode the JWT token to get roles
-		const base64Url = token.split('.')[1];
-		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-		const jsonPayload = decodeURIComponent(
-			Buffer.from(base64, 'base64')
-				.toString()
-				.split('')
-				.map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-				.join('')
-		);
-		const decodedToken = JSON.parse(jsonPayload);
-		
-		const userRoles = decodedToken?.resource_access?.client_synapse?.roles || [];
+		// Use session data that was already verified by verifyJwt middleware
+		// This ensures the JWT was properly verified, not just decoded
+		const userRoles = req.session.userData?.roles || [];
 		
 		if (!userRoles.includes('admins')) {
 			return res

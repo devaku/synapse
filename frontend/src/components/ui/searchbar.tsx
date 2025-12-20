@@ -13,7 +13,7 @@ export default function SearchBar({
     const [inputValue, setInputValue] = useState('');
 
 	return (
-		<div className="flex flex-row gap-1 pb-1">
+		<div className="flex flex-row gap-1">
 			<input
 				type="text"
 				placeholder={'Search ' + placeholder}

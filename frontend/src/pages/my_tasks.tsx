@@ -11,7 +11,6 @@ import DataTable from '../components/container/DataTableBase';
 import { type TableColumn } from 'react-data-table-component';
 import SvgComponent from '../components/ui/svg_component';
 import StatusPill from '../components/ui/status_pill';
-import SearchBar from '../components/ui/searchbar';
 
 /**
  * MODALS
@@ -94,10 +93,6 @@ export default function MyTasksPage() {
 			name: 'ID',
 			selector: (row) => row.id,
 			sortable: true,
-			width: '60px',
-			style: {
-				paddingRight: '0px',
-			},
 		},
 		{
 			name: 'Task',
@@ -110,21 +105,12 @@ export default function MyTasksPage() {
 				return formatDate(new Date(row.createdAt!));
 			},
 			sortable: true,
-			width: '180px',
-			// This is an actual thing for the react data table component
-			// to fix it so that it hides on md screen and below
-			// why there is an error?????
-			hide: 'md',
 		},
 		{
 			name: 'Status',
 			selector: (row) => row.priority,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.priority}></StatusPill>,
-			width: '110px',
-			style: {
-				paddingRight: '0px',
-			}
 		},
 		{
 			name: 'Actions',
@@ -144,11 +130,6 @@ export default function MyTasksPage() {
 					</button>
 				</div>
 			),
-			width: '90px',
-			center: true,
-			style: {
-				paddingRight: '0px',
-			}
 		},
 	];
 
@@ -157,7 +138,7 @@ export default function MyTasksPage() {
 			name: 'ID',
 			selector: (row) => row.id,
 			sortable: true,
-			width: '60px',
+			width: '50px',
 			style: {
 				paddingRight: '0px',
 			},
@@ -182,17 +163,17 @@ export default function MyTasksPage() {
 			selector: (row) => row.status,
 			sortable: true,
 			cell: (row) => <StatusPill text={row.status}></StatusPill>,
-			width: '110px',
 			style: {
-				paddingRight: '0px',
+				textAlign: 'left',
 			},
+			width: '120px',
 		},
 		{
 			name: 'Actions',
 			cell: (row) => (
 				<>
 					<button
-						className="cursor-pointer w-6 h-6 m-auto"
+						className="cursor-pointer w-6 h-6"
 						onClick={() => handleNotificationClickInfo(row)}
 					>
 						<SvgComponent iconName="INFO" className="" />
@@ -200,10 +181,6 @@ export default function MyTasksPage() {
 				</>
 			),
 			width: '80px',
-			center: true,
-			style: {
-				paddingRight: '0px',
-			}
 		},
 	];
 
@@ -390,11 +367,25 @@ export default function MyTasksPage() {
 					<div>
 						{/* Search Bar */}
 						<div className="flex flex-row gap-2">
-							<SearchBar
+							<input
+								type="text"
 								placeholder="Search My Tasks..."
+								className="mb-4 p-2 border rounded border-gray-300 w-50"
 								value={filterTextMyTasks}
-								onSearch={(text) => setFilterTextMyTasks(text)}
+								onChange={(e) =>
+									setFilterTextMyTasks(e.target.value)
+								}
 							/>
+							<div className="w-10">
+								<Button
+									type="Info"
+									text="X"
+									onClick={() => {
+										setFilterTextMyTasks('');
+									}}
+									className=""
+								></Button>
+							</div>
 						</div>
 						<div className="max-h-[400px]">
 							<DataTable
@@ -411,11 +402,24 @@ export default function MyTasksPage() {
 					<div>
 						{/* Search Bar */}
 						<div className="flex flex-row gap-2">
-							<SearchBar
-								placeholder="Notifications..."
+							<input
+								type="text"
+								placeholder="Search notifications..."
+								className="mb-4 p-2 border rounded border-gray-300 w-50"
 								value={filterTextNotifications}
-								onSearch={(text) => setFilterTextNotifications(text)}
+								onChange={(e) =>
+									setFilterTextNotifications(e.target.value)
+								}
 							/>
+							<div className="w-10">
+								<Button
+									type="Info"
+									onClick={() => {
+										setFilterTextNotifications('');
+									}}
+									text="X"
+								></Button>
+							</div>
 						</div>
 						<div className="max-h-[400px]">
 							<DataTable
@@ -430,7 +434,7 @@ export default function MyTasksPage() {
 				</div>
 			</HeaderContainer>
 			{/* TASK MODALS */}
-			<SlideModalContainer isOpen={modalTaskInfo.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskInfo.isOpen} close={modalTaskInfo.close} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="View Task"
 					taskId={modalTaskInfoId}
@@ -441,7 +445,7 @@ export default function MyTasksPage() {
 					></MyTaskReadModal>
 				</MyTaskModalHeader>
 			</SlideModalContainer>
-			<SlideModalContainer isOpen={modalTaskDelete.isOpen} noFade={false}>
+			<SlideModalContainer isOpen={modalTaskDelete.isOpen} close={modalTaskDelete.close} noFade={false}>
 				<MyTaskModalHeader
 					modalTitle="Deletion Request"
 					taskId={modalTaskDeleteId}
@@ -456,11 +460,13 @@ export default function MyTasksPage() {
 			{/* NOTIFICATION MODALS */}
 			<SlideModalContainer
 				isOpen={modalNotificationinfo.isOpen}
+				close={modalNotificationinfo.close}
 				noFade={false}
 			>
 				<NotificationModal
 					notificationId={modalNotificationInfoId}
-					handleModalDisplay={modalNotificationinfo.open}
+					// changed to toggle since wont close on "back" button
+					handleModalDisplay={modalNotificationinfo.toggle}
 				></NotificationModal>
 			</SlideModalContainer>
 		</>

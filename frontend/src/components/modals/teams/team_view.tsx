@@ -1,4 +1,4 @@
-import { useState, useEffect, type RefObject, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Spinner from '../../ui/spinner';
 import { useAuthContext } from '../../../lib/contexts/AuthContext';
 import { getTeams } from '../../../lib/services/api/teams';
@@ -38,7 +38,6 @@ export default function TeamsViewModal({
 	const { token } = useAuthContext();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [teamData, setTeamData] = useState<TeamData | null>(null);
-	const ref = useRef(null);
 
 	// Used AI for this section (lines 37–69)
 	// Prompt: "Write a React useEffect that fetches a list of teams using a token,
@@ -78,21 +77,7 @@ export default function TeamsViewModal({
 		loadTeam();
 	}, [teamId, token]);
 
-	useEffect(() => {
-		function clickHandler(e: MouseEvent) {
-			if (ref.current && !ref.current.contains(e.target as Node)) {
-				handleModalDisplay();
-			}
-		}
-
-		document.addEventListener('mousedown', clickHandler);
-
-		return () => {
-			document.removeEventListener('mousedown', clickHandler);
-		};
-	}, [ref, handleModalDisplay]);
-
-	const columns: TableColumn<User>[] = [
+	const columns: TableColumn<{ userId: number; teamId: number; user: User }>[] = [
 			{
 				name: 'Name',
 				selector: (row) => row.user.username
@@ -100,7 +85,7 @@ export default function TeamsViewModal({
 		]
 
 	return (
-		<div ref={ref}>
+		<>
 			{isLoading ? (
 				<Spinner />
 			) : (
@@ -171,6 +156,6 @@ export default function TeamsViewModal({
 					></Button>
 				</div>
 			)}
-		</div>
+		</>
 	);
 }
