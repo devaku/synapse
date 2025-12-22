@@ -6,8 +6,8 @@ services:
           context: .
           args:
             # Backend for seeding
-            DATABASE_URL: ${DATABASE_URL}     
-            SERVER_URL: ${SERVER_URL}            
+            NODE_ENV: ${NODE_ENV}
+            DATABASE_URL: ${DATABASE_URL}         
       container_name: synapse_backend
       restart: unless-stopped  
       env_file: 

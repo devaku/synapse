@@ -1,6 +1,5 @@
 import { createImageService } from '../../services/images-service';
 import { createImageLinkService } from '../../services/image-link-service';
-import { IMAGE_STORAGE_URL } from '../env-variables';
 
 import { createTaskService } from '../../services/task-service';
 import { deleteUploadedFiles } from '../file-helper';

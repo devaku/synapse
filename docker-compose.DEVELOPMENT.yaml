@@ -8,7 +8,7 @@ services:
         environment:
             POSTGRES_USER: myuser
             POSTGRES_PASSWORD: mypassword
-            POSTGRES_DB: synapse_db
+            POSTGRES_DB: synapses_db
 
         # Bind the LOCAL 4001 to the 5432 port of the container.
         # Access 5432 container port via LOCAL 4001
@@ -42,7 +42,7 @@ services:
 
             # Database Credentials
             # Should be the same as the one in the DB setup
-            KC_DB_URL_DATABASE: synapse_db
+            KC_DB_URL_DATABASE: synapses_db
             KC_DB_USERNAME: myuser
             KC_DB_PASSWORD: mypassword
 

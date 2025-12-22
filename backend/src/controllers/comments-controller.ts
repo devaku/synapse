@@ -1,6 +1,5 @@
 import { prismaDb, txtimeoutValue } from '../lib/database';
 import { Request, Response } from 'express';
-import { IMAGE_STORAGE_URL } from '../lib/env-variables';
 import { Server as SocketIOServer } from 'socket.io';
 
 /**
