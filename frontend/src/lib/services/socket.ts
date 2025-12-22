@@ -1,4 +1,6 @@
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+import { SOCKET_URL } from '../env-variables';
+
+const socketUrl = SOCKET_URL;
 import { io, Socket } from 'socket.io-client';
 
 let internalSocket: Socket;

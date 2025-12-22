@@ -1,4 +1,4 @@
-import { Prisma } from '../../database/generated/prisma';
+import { Prisma } from '../database/generated/prisma/client';
 import { prismaDb, txtimeoutValue } from '../lib/database';
 import { Request, Response } from 'express';
 
@@ -104,7 +104,13 @@ export async function createTask(req: Request, res: Response) {
 						await taskService.deleteTask(task.id);
 						return res
 							.status(400)
-							.json(buildError(400, validation.error || 'Invalid file upload', null));
+							.json(
+								buildError(
+									400,
+									validation.error || 'Invalid file upload',
+									null
+								)
+							);
 					}
 					await uploadImages(tx, files, userId!, task.id);
 				}
@@ -243,22 +249,31 @@ export async function readTask(req: Request, res: Response) {
 			const isHiddenFromUser = task.taskHiddenFromUsers?.some(
 				(thu: any) => thu.user.id === userId
 			);
-			
+
 			// Get user's teams to check team visibility
 			const userService = createUserService(prismaDb);
 			const user = await userService.readUser(userId);
-			const userTeamIds = user?.teamsUsersBelongTo?.map((t: any) => t.teamId) || [];
-			const isVisibleToTeam = task.taskVisibleToTeams?.some(
-				(tvt: any) => userTeamIds.includes(tvt.team.id)
+			const userTeamIds =
+				user?.teamsUsersBelongTo?.map((t: any) => t.teamId) || [];
+			const isVisibleToTeam = task.taskVisibleToTeams?.some((tvt: any) =>
+				userTeamIds.includes(tvt.team.id)
 			);
 
 			// User can view if: they're the creator, OR (visible to user OR visible to team) AND not hidden
-			const canView = isCreator || ((isVisibleToUser || isVisibleToTeam) && !isHiddenFromUser);
+			const canView =
+				isCreator ||
+				((isVisibleToUser || isVisibleToTeam) && !isHiddenFromUser);
 
 			if (!canView) {
 				return res
 					.status(403)
-					.json(buildError(403, 'Forbidden: You do not have permission to view this task', null));
+					.json(
+						buildError(
+							403,
+							'Forbidden: You do not have permission to view this task',
+							null
+						)
+					);
 			}
 
 			message = 'Task retrieved successfully.';
@@ -390,7 +405,14 @@ export async function updateTask(req: Request, res: Response) {
 						if (!validation.valid) {
 							return res
 								.status(400)
-								.json(buildError(400, validation.error || 'Invalid file upload', null));
+								.json(
+									buildError(
+										400,
+										validation.error ||
+											'Invalid file upload',
+										null
+									)
+								);
 						}
 						await uploadImages(tx, files, userId!, taskId);
 					}
@@ -509,22 +531,27 @@ export async function archiveTask(req: Request, res: Response) {
 export async function deleteTask(req: Request, res: Response) {
 	const taskService = createTaskService(prismaDb);
 	try {
-
 		// SECURITY CHECK: Only admins can delete tasks
 		// Use session data that was already verified by verifyJwt middleware
 		// This ensures the JWT was properly verified, not just decoded
 		const userRoles = req.session.userData?.roles || [];
-		
+
 		if (!userRoles.includes('admins')) {
 			return res
 				.status(403)
-				.json(buildError(403, 'Forbidden: Only admins can delete tasks', null));
+				.json(
+					buildError(
+						403,
+						'Forbidden: Only admins can delete tasks',
+						null
+					)
+				);
 		}
 
 		const { id } = req.params;
 		const taskIdArray = req.body?.taskIdArray;
 
-		const deletedTasks = [];
+		const deletedTasks: any = [];
 		let message = '';
 
 		if (id) {

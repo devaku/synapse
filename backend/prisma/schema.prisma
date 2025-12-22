@@ -5,14 +5,14 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider      = "prisma-client-js"
-    output        = "../database/generated/prisma"
+    provider      = "prisma-client"
+    output        = "../src/database/generated/prisma"
     binaryTargets = ["windows", "debian-openssl-3.0.x"]
 }
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
+    schemas  = ["synapse"]
 }
 
 model User {
@@ -41,6 +41,8 @@ model User {
     imagesUploaded           Image[]                  @relation("ImagesUploadedByUser")
     notificationForUsers     NotificationForUsers[]
     notification             Notification[]
+
+    @@schema("synapse")
 }
 
 model Task {
@@ -64,6 +66,8 @@ model Task {
     deletionRequest       DeletionRequest[]
     taskUserSubscribeTo   TaskUserSubscribeTo[]
     imagesAttachedToTasks ImagesAttachedToTasks[]
+
+    @@schema("synapse")
 }
 
 model Team {
@@ -76,6 +80,8 @@ model Team {
     isDeleted          Int                  @default(0)
     taskVisibleToTeams TaskVisibleToTeams[]
     teamsUsersBelongTo TeamsUsersBelongTo[]
+
+    @@schema("synapse")
 }
 
 model Notification {
@@ -88,6 +94,8 @@ model Notification {
     notificationForUsers NotificationForUsers[]
     createdAt            DateTime               @default(now()) @db.Timestamp(6)
     isDeleted            Int                    @default(0)
+
+    @@schema("synapse")
 }
 
 model Logs {
@@ -98,6 +106,8 @@ model Logs {
     user        User     @relation(fields: [userId], references: [id])
     createdAt   DateTime @default(now()) @db.Timestamp(6)
     isDeleted   Int      @default(0)
+
+    @@schema("synapse")
 }
 
 model Comment {
@@ -110,6 +120,8 @@ model Comment {
     createdAt                DateTime                   @default(now()) @db.Timestamp(6)
     isDeleted                Int                        @default(0)
     imagesAttachedToComments ImagesAttachedToComments[]
+
+    @@schema("synapse")
 }
 
 model Session {
@@ -118,6 +130,7 @@ model Session {
     expire DateTime @db.Timestamp(6)
 
     @@index([expire], name: "IDX_session_expire")
+    @@schema("synapse")
 }
 
 model DeletionRequest {
@@ -129,6 +142,8 @@ model DeletionRequest {
     reason            String   @db.VarChar(255)
     createdAt         DateTime @default(now()) @db.Timestamp(6)
     isDeleted         Int      @default(0)
+
+    @@schema("synapse")
 }
 
 model RepoColaboratorRequest {
@@ -139,6 +154,8 @@ model RepoColaboratorRequest {
     repoId         Int
     permission     String   @db.VarChar(255)
     createdAt      DateTime @default(now()) @db.Timestamp(6)
+
+    @@schema("synapse")
 }
 
 model Image {
@@ -152,11 +169,15 @@ model Image {
     imagesAttachedToComments ImagesAttachedToComments[]
     usersUsingAsProfileImage User[]                     @relation("UserProfileImage")
     ImagesAttachedToTasks    ImagesAttachedToTasks[]
+
+    @@schema("synapse")
 }
 
 model Socket {
     keycloakId String @unique
     sessionId  String @unique
+
+    @@schema("synapse")
 }
 
 /**
@@ -172,6 +193,7 @@ model NotificationForUsers {
     updatedAt      DateTime     @default(now()) @db.Timestamp(6)
 
     @@id([userId, notificationId])
+    @@schema("synapse")
 }
 
 model ImagesAttachedToTasks {
@@ -181,6 +203,7 @@ model ImagesAttachedToTasks {
     task    Task  @relation(fields: [taskId], references: [id])
 
     @@id([imageId, taskId])
+    @@schema("synapse")
 }
 
 model ImagesAttachedToComments {
@@ -190,6 +213,7 @@ model ImagesAttachedToComments {
     comment   Comment @relation(fields: [commentId], references: [id])
 
     @@id([imageId, commentId])
+    @@schema("synapse")
 }
 
 model TaskUserSubscribeTo {
@@ -199,6 +223,7 @@ model TaskUserSubscribeTo {
     user   User @relation(fields: [userId], references: [id])
 
     @@id([userId, taskId])
+    @@schema("synapse")
 }
 
 model TeamsUsersBelongTo {
@@ -208,6 +233,7 @@ model TeamsUsersBelongTo {
     team   Team @relation(fields: [teamId], references: [id])
 
     @@id([userId, teamId])
+    @@schema("synapse")
 }
 
 model TaskVisibleToUsers {
@@ -217,6 +243,7 @@ model TaskVisibleToUsers {
     user   User @relation(fields: [userId], references: [id])
 
     @@id([userId, taskId])
+    @@schema("synapse")
 }
 
 model TaskVisibleToTeams {
@@ -226,6 +253,7 @@ model TaskVisibleToTeams {
     team   Team @relation(fields: [teamId], references: [id])
 
     @@id([teamId, taskId])
+    @@schema("synapse")
 }
 
 model TaskHiddenFromUsers {
@@ -235,4 +263,5 @@ model TaskHiddenFromUsers {
     user   User @relation(fields: [userId], references: [id])
 
     @@id([userId, taskId])
+    @@schema("synapse")
 }

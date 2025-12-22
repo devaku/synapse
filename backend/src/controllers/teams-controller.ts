@@ -60,9 +60,10 @@ export async function readAllTeams(req: Request, res: Response) {
 		if (isAdmin) {
 			// Admins can view all teams
 			teams = await teamsService.readAllTeam();
-			message = teams.length > 0 
-				? 'Data was retrieved successfully.' 
-				: 'Table is empty';
+			message =
+				teams.length > 0
+					? 'Data was retrieved successfully.'
+					: 'Table is empty';
 		} else {
 			// Non-admins can only view teams they belong to
 			if (!userId) {
@@ -74,21 +75,32 @@ export async function readAllTeams(req: Request, res: Response) {
 			// Get user's teams
 			const userService = createUserService(prismaDb);
 			const user = await userService.readUser(userId);
-			
-			if (!user || !user.teamsUsersBelongTo || user.teamsUsersBelongTo.length === 0) {
+
+			if (
+				!user ||
+				!user.teamsUsersBelongTo ||
+				user.teamsUsersBelongTo.length === 0
+			) {
 				teams = [];
 				message = 'No teams found for this user.';
 			} else {
 				// Get full team details for each team the user belongs to
-				const teamIds = user.teamsUsersBelongTo.map((t: any) => t.teamId);
+				const teamIds = user.teamsUsersBelongTo.map(
+					(t: any) => t.teamId
+				);
 				const fetchedTeams = await Promise.all(
-					teamIds.map((teamId: number) => teamsService.readTeam(teamId))
+					teamIds.map((teamId: number) =>
+						teamsService.readTeam(teamId)
+					)
 				);
 				// Filter out any null results (in case team was deleted)
-				teams = fetchedTeams.filter((team: any) => team !== null && team.isDeleted === 0);
-				message = teams.length > 0
-					? 'Data was retrieved successfully.'
-					: 'No teams found for this user.';
+				teams = fetchedTeams.filter(
+					(team: any) => team !== null && team.isDeleted === 0
+				);
+				message =
+					teams.length > 0
+						? 'Data was retrieved successfully.'
+						: 'No teams found for this user.';
 			}
 		}
 
@@ -118,16 +130,26 @@ export async function softDeleteTeam(req: Request, res: Response) {
 		const userRoles = req.session.userData?.roles || [];
 		const isAdmin = userRoles.includes('admins');
 
-		if (!teamIdArray || !Array.isArray(teamIdArray) || teamIdArray.length === 0) {
+		if (
+			!teamIdArray ||
+			!Array.isArray(teamIdArray) ||
+			teamIdArray.length === 0
+		) {
 			return res
 				.status(400)
-				.json(buildError(400, 'teamIdArray is required and must be a non-empty array', null));
+				.json(
+					buildError(
+						400,
+						'teamIdArray is required and must be a non-empty array',
+						null
+					)
+				);
 		}
 
-		let deletedTeams = [];
+		let deletedTeams: any = [];
 		for (let x = 0; x < teamIdArray.length; x++) {
 			const teamId = teamIdArray[x];
-			
+
 			// SECURITY: Check if user is the team creator or an admin
 			const existingTeam = await teamsService.readTeam(teamId);
 			if (!existingTeam) {
@@ -146,7 +168,13 @@ export async function softDeleteTeam(req: Request, res: Response) {
 		if (deletedTeams.length === 0) {
 			return res
 				.status(403)
-				.json(buildError(403, 'Forbidden: No teams were deleted. Check permissions.', null));
+				.json(
+					buildError(
+						403,
+						'Forbidden: No teams were deleted. Check permissions.',
+						null
+					)
+				);
 		}
 
 		let message = `${deletedTeams.length} team(s) soft deleted successfully.`;
@@ -177,18 +205,34 @@ export async function deleteTeam(req: Request, res: Response) {
 		if (!userRoles.includes('admins')) {
 			return res
 				.status(403)
-				.json(buildError(403, 'Forbidden: Only admins can permanently delete teams', null));
+				.json(
+					buildError(
+						403,
+						'Forbidden: Only admins can permanently delete teams',
+						null
+					)
+				);
 		}
 
 		const teamIdArray = req.body.teamIdArray;
 
-		if (!teamIdArray || !Array.isArray(teamIdArray) || teamIdArray.length === 0) {
+		if (
+			!teamIdArray ||
+			!Array.isArray(teamIdArray) ||
+			teamIdArray.length === 0
+		) {
 			return res
 				.status(400)
-				.json(buildError(400, 'teamIdArray is required and must be a non-empty array', null));
+				.json(
+					buildError(
+						400,
+						'teamIdArray is required and must be a non-empty array',
+						null
+					)
+				);
 		}
 
-		let deletedTeams = [];
+		let deletedTeams: any = [];
 		for (let x = 0; x < teamIdArray.length; x++) {
 			const teamId = teamIdArray[x];
 			try {
@@ -203,7 +247,13 @@ export async function deleteTeam(req: Request, res: Response) {
 		if (deletedTeams.length === 0) {
 			return res
 				.status(400)
-				.json(buildError(400, 'No teams were deleted. Check if team IDs are valid.', null));
+				.json(
+					buildError(
+						400,
+						'No teams were deleted. Check if team IDs are valid.',
+						null
+					)
+				);
 		}
 
 		let message = `${deletedTeams.length} team(s) permanently deleted successfully.`;
@@ -231,7 +281,7 @@ export async function updateTeam(req: Request, res: Response) {
 	try {
 		const team = req.body;
 		const userId = req.session.userData?.user.id;
-		
+
 		// SECURITY: Check if user is the team creator or an admin
 		const existingTeam = await teamsService.readTeam(team.id);
 		if (!existingTeam) {
@@ -247,7 +297,13 @@ export async function updateTeam(req: Request, res: Response) {
 		if (!isAdmin && !isCreator) {
 			return res
 				.status(403)
-				.json(buildError(403, 'Forbidden: Only team creator or admins can update teams', null));
+				.json(
+					buildError(
+						403,
+						'Forbidden: Only team creator or admins can update teams',
+						null
+					)
+				);
 		}
 
 		const updatedTeam = await teamsService.updateTeam(team.id, team);

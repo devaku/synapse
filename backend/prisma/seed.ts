@@ -1,11 +1,19 @@
-const { PrismaClient } = require('../src/database/generated/prisma/client');
+import { PrismaClient } from '../src/database/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
 
-const fs = require('fs');
+const ENV_PATH = path.join(__dirname, '..', '.env.debug');
 
-const DATABASE_URL = process.env.DATABSE_URL;
+// Load env vars if needed
+if (!process.env.DATABASE_URL) {
+	dotenv.config({ path: ENV_PATH });
+}
+
+const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
-	require('dotenv').config();
+	throw new Error('DATABASE_URL is not defined');
 }
 
 const adapter = new PrismaPg({
@@ -14,24 +22,26 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-const path = require('path');
+// Seed imports
+import { adminSeeds, managerSeeds, employeeSeeds } from './seeds/users';
 
-const { adminSeeds, managerSeeds, employeeSeeds } = require('./seeds/users');
-const { userIcons, taskImages } = require('./seeds/images');
-const {
+import { userIcons, taskImages } from './seeds/images';
+
+import {
 	teamsUserBelongTo,
 	subscriptionSeeds,
 	deletionRequest,
 	imagesAttachedToTasks,
-} = require('./seeds/relationships');
-const { taskSeeds } = require('./seeds/tasks');
+} from './seeds/relationships';
+
+import { taskSeeds } from './seeds/tasks';
 
 const STORAGE_LOCATION = `${path.join(__dirname, '..')}/src/public/uploads`;
 
 // Create folder if it doesn't exist
 fs.mkdirSync(STORAGE_LOCATION, { recursive: true });
 
-async function seed() {
+async function seed(): Promise<void> {
 	await iterateSeedList(adminSeeds, prisma.user);
 	await iterateSeedList(managerSeeds, prisma.user);
 	await iterateSeedList(employeeSeeds, prisma.user);
@@ -50,34 +60,35 @@ async function seed() {
 	// Attach profile pictures
 	const users = await prisma.user.findMany();
 
-	users.forEach(async (el, index) => {
+	for (let index = 0; index < users.length; index++) {
+		const el = users[index];
 		await prisma.user.update({
-			where: {
-				id: el.id,
-			},
-			data: {
-				imageId: index + 1,
-			},
+			where: { id: el.id },
+			data: { imageId: index + 1 },
 		});
-	});
+	}
 
 	console.log('Successfully seeded table');
 }
 
-async function iterateImageList(seedList, prismaModel) {
+async function iterateImageList<T extends { imagePath: string }>(
+	seedList: T[],
+	prismaModel: any
+): Promise<void> {
 	for (let index = 0; index < seedList.length; index++) {
-		const element = seedList[index];
+		const element = { ...seedList[index] };
 
 		const {
 			_max: { id: maxId },
-		} = await await prismaModel.aggregate({ _max: { id: true } });
+		} = await prismaModel.aggregate({ _max: { id: true } });
 
 		const imageBlob = fs.readFileSync(element.imagePath);
-		delete element.imagePath;
+		delete (element as Partial<T>).imagePath;
+
 		await prismaModel.create({
 			data: {
 				imageUrl: `${process.env.SERVER_URL}/api/v1/debug/image/${
-					maxId + 1
+					(maxId ?? 0) + 1
 				}`,
 				imageBlob,
 				...element,
@@ -86,15 +97,24 @@ async function iterateImageList(seedList, prismaModel) {
 	}
 }
 
-async function iterateSeedList(seedList, prismaModel) {
+async function iterateSeedList<T>(
+	seedList: T[],
+	prismaModel: any
+): Promise<void> {
 	for (let index = 0; index < seedList.length; index++) {
-		const element = seedList[index];
 		await prismaModel.create({
 			data: {
-				...element,
+				...seedList[index],
 			},
 		});
 	}
 }
 
-seed();
+seed()
+	.catch((err) => {
+		console.error(err);
+		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
+	});

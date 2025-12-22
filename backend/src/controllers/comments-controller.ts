@@ -7,7 +7,7 @@ import { Server as SocketIOServer } from 'socket.io';
  * TYPES
  */
 import { PrismaClientOrTransaction } from '../types';
-import { Notification, User } from '../../database/generated/prisma';
+import { Notification, User } from '../database/generated/prisma/client';
 import { PAYLOAD_ACTIONS } from '../lib/socket-events';
 
 /**
@@ -76,7 +76,13 @@ export async function createComment(req: Request, res: Response) {
 					if (!validation.valid) {
 						return res
 							.status(400)
-							.json(buildError(400, validation.error || 'Invalid file upload', null));
+							.json(
+								buildError(
+									400,
+									validation.error || 'Invalid file upload',
+									null
+								)
+							);
 					}
 					const uploaded = req.files;
 					imageRows = await imageHelper.uploadImages(
@@ -171,8 +177,9 @@ async function setupNotification(
 		};
 
 		// Create the notification
-		const notificationRow =
-			await notificationService.createNotification(notificationData);
+		const notificationRow = await notificationService.createNotification(
+			notificationData
+		);
 
 		// Create the links
 		await notificationForUsersService.linkNotificationToUsers(

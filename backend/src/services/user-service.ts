@@ -1,4 +1,4 @@
-import { User } from '../../database/generated/prisma';
+import { User } from '../database/generated/prisma/client';
 import { PrismaClientOrTransaction } from '../types';
 
 export const createUserService = (tx: PrismaClientOrTransaction) => {

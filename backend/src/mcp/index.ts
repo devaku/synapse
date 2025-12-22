@@ -11,9 +11,7 @@ import { CommentTools, AdditionalTaskTools, CommentSchemas } from './tools/comme
 import { TaskHandlers } from './handlers/task-handlers.js';
 import { TeamHandlers } from './handlers/team-handlers.js';
 import { CommentHandlers } from './handlers/comment-handlers.js';
-
-// Default user ID - you can override with environment variable
-const DEFAULT_USER_ID = 1;
+import { MCP_USER_ID } from '../lib/env-variables.js';
 
 class TaskMCPServer {
 	private server: Server;
@@ -239,9 +237,7 @@ class TaskMCPServer {
 }
 
 // Start server
-const userId = process.env.MCP_USER_ID
-	? parseInt(process.env.MCP_USER_ID)
-	: DEFAULT_USER_ID;
+const userId = MCP_USER_ID;
 
 const server = new TaskMCPServer(userId);
 server.start().catch((error) => {

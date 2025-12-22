@@ -77,7 +77,7 @@ export default function TeamsViewModal({
 		loadTeam();
 	}, [teamId, token]);
 
-	const columns: TableColumn<User>[] = [
+	const columns: TableColumn<{ userId: number; teamId: number; user: User }>[] = [
 			{
 				name: 'Name',
 				selector: (row) => row.user.username

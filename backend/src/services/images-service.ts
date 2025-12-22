@@ -14,7 +14,7 @@ export const createImageService = (tx: PrismaClientOrTransaction) => {
 		) {
 			let finalData = images.map((el, index) => {
 				return {
-					imageBlob: el.imageBlob,
+					imageBlob: Buffer.from(el.imageBlob),
 					userId,
 					imageUrl: el.imageUrl,
 					mimeType: el.mimeType,

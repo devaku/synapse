@@ -42,7 +42,7 @@ export default function PopupModalContainer({
 		return createPortal(
 			<div
 				className={
-					'absolute z-10 top-0 h-screen flex w-full items-center justify-center dim-background ' +
+					'absolute z-10 top-0 h-screen flex w-full items-center justify-center ' +
 					(isVisible ? 'bg-black/50' : 'bg-black/0')
 				}
 				onTransitionEnd={handleTransitionEnd}
@@ -52,7 +52,7 @@ export default function PopupModalContainer({
 			>
 				<div
 					className={
-						'h-fit bg-white w-xl fade ' +
+						'h-fit bg-ttg-white w-xl ' +
 						(isVisible ? 'opacity-100' : 'opacity-0')
 					}
 				>

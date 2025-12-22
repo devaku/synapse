@@ -16,7 +16,7 @@ export default function SlideModalContainer({
 }: ModalContainer) {
 	const [shouldRender, setShouldRender] = useState<boolean>();
 	const [playAnimation, setPlayAnimation] = useState<boolean>();
-	const ref = useRef(null);
+	const ref = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (isOpen) {

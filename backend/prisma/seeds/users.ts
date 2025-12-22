@@ -1,4 +1,4 @@
-module.exports.adminSeeds = [
+export const adminSeeds = [
 	{
 		username: 'admin1',
 		email: 'admin1@email.com',
@@ -17,7 +17,7 @@ module.exports.adminSeeds = [
 	},
 ];
 
-module.exports.managerSeeds = [
+export const managerSeeds = [
 	{
 		username: 'manager1',
 		email: 'manager1@email.com',
@@ -64,7 +64,7 @@ module.exports.managerSeeds = [
 	},
 ];
 
-module.exports.employeeSeeds = [
+export const employeeSeeds = [
 	{
 		username: 'user1',
 		email: 'user1@email.com',

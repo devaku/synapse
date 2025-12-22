@@ -279,12 +279,11 @@ export default function AdminGithubManagerPage() {
 		<HeaderContainer pageTitle="GitHub Manager">
 			<SlideModalContainer
 				isOpen={infoSelectionModal.isOpen}
-				close={infoSelectionModal.close}
-				noFade={false}
-				onRequestClose={() => {
+				close={() => {
 					infoSelectionModal.close();
 					setSelectedRow(null);
 				}}
+				noFade={false}
 			>
 				<AdminInfoSelectionModal
 					isOpen={infoSelectionModal.isOpen}
