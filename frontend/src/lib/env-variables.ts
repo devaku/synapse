@@ -38,9 +38,9 @@ export const KEYCLOAK_URL = getConfig(
 );
 export const KEYCLOAK_REALM = getConfig(
 	import.meta.env.VITE_KEYCLOAK_REALM,
-	'synapse_realm'
+	'synapses_realm'
 );
 export const KEYCLOAK_CLIENT_ID = getConfig(
 	import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
-	'client_synapse'
+	'client_synapses'
 );
