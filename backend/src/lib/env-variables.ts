@@ -1,3 +1,15 @@
+import dotenv from 'dotenv';
+import path from 'path';
+const ENV_PATH = path.join(__dirname, '../../', '.env.debug');
+
+// Try accessing an ENV that would only be given to it in production and not in development
+if (!process.env.VITE_SERVER_URL) {
+	// Only load .env variable if in development, essentially
+	console.log('LOADING DEBUG ENV INSIDE ENV_VARIABLES');
+	console.log(ENV_PATH);
+	dotenv.config({ path: ENV_PATH });
+}
+
 // Build Configuration
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProduction = NODE_ENV === 'production';
@@ -14,6 +26,7 @@ const getKubeConfig = (envValue: string | undefined, fallback: string = '') => {
 
 // Helper function: for secrets from Kubernetes (always from env)
 const getSecret = (envValue: string | undefined, fallback: string = '') => {
+	// console.log(process.env);
 	return envValue || fallback;
 };
 
