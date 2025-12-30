@@ -1,5 +1,4 @@
 import express, { Request, Response, NextFunction } from 'express';
-import dotenv from 'dotenv';
 import router from './routes/main';
 import favicon from 'serve-favicon';
 import path from 'path';
@@ -8,13 +7,6 @@ import { setupServerMiddleware } from './middlewares/initial-middleware';
 import { socketMiddleware } from './middlewares/socket-middleware';
 
 globalThis.ROOT_DIR = __dirname;
-const ENV_PATH = path.join(__dirname, '.env.debug');
-
-// Try accessing an ENV that would only be given to it in production and not in development
-if (!process.env.VITE_SERVER_URL) {
-	// Only load .env variable if in development, essentially
-	dotenv.config({ path: ENV_PATH });
-}
 
 import { PORT } from './lib/env-variables';
 
