@@ -12,23 +12,24 @@ const getConfig = (envValue: string | undefined, defaultValue: string) => {
 };
 
 // Server Configuration (hardcoded in production)
+// Production uses relative paths - Ingress routes /api to backend
 export const SERVER_URL = getConfig(
 	import.meta.env.VITE_SERVER_URL,
-	'http://localhost:8080'
+	''
 );
 export const API_URL = getConfig(
 	import.meta.env.VITE_API_URL,
-	'http://localhost:8080/api/v1'
+	'/api/v1'
 );
 export const SOCKET_URL = getConfig(
 	import.meta.env.VITE_SOCKET_URL,
-	'http://localhost:8080'
+	''
 );
 
 // Frontend Configuration (hardcoded in production)
 export const FRONTEND_URL = getConfig(
 	import.meta.env.VITE_FRONTEND_URL,
-	'http://localhost:3000'
+	''
 );
 
 // Keycloak Configuration (hardcoded in production)
