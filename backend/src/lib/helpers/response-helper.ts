@@ -34,10 +34,13 @@ export function buildError(
 		statusCode,
 		statusText: getReasonPhrase(statusCode),
 		message,
-		error: {
-			errorMessage: error.message ? error.message : '',
-		},
 	};
+
+	if (errorObj) {
+		responseJson.error = {
+			errorMessage: error.message ? error.message : '',
+		};
+	}
 
 	if (process.env.NODE_ENV === 'DEVELOPMENT') {
 		responseJson.error.stackTrace = error.stack;
