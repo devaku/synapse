@@ -1,18 +1,29 @@
 # FOR PRODUCTION
 
 services:
-    backend_service:
-      build: 
-          context: .
-          args:
-            # Backend for seeding
-            NODE_ENV: ${NODE_ENV}
-            DATABASE_URL: ${DATABASE_URL}         
-      container_name: synapse_backend
-      restart: unless-stopped  
-      env_file: 
-        - .env
+  backend:
+    build: 
+      context: ./backend
+      args:
+        # Backend for seeding
+        NODE_ENV: ${NODE_ENV}
+        DATABASE_URL: ${DATABASE_URL}         
+    container_name: synapse_backend
+    restart: unless-stopped  
+    env_file: 
+      - .env
 
-      # HOST - CONTAINER
-      ports:
-          - '8080:8080'
+    # HOST - CONTAINER
+    ports:
+        - '8080:8080'
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: synapse_frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    env_file: 
+    - .env
